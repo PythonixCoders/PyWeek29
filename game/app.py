@@ -7,7 +7,6 @@ import random
 from .terminal import Terminal
 from .signal import Signal
 from .game import Game
-from .camera import Camera
 
 
 class App:

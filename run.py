@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-import game.butterfly
+# import game.butterfly
 
-game.butterfly.show_butterflies()
-quit()
+# game.butterfly.show_butterflies()
+# quit()
 
 import sys
 
