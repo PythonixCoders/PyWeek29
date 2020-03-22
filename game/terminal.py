@@ -13,13 +13,13 @@ class Terminal(Entity):
         self.app = app
         self.state = state
         
-        self.font_size = 16
-        font_fn = 'data/Inconsolata-g.ttf'
+        self.font_size = ivec2(16,16)
+        font_fn = 'data/unifont.ttf'
         
-        self.font = self.app.cache.get(font_fn) # is font already loaded?
+        self.font = self.app.cache.get(font_fn+":"+str(self.font_size.y)) # is font already loaded?
         if not self.font:
             self.font = self.app.cache[font_fn] = pygame.font.Font(
-                font_fn, self.font_size
+                font_fn, self.font_size.y
             )
 
         self.size = app.size / self.font_size
@@ -57,8 +57,6 @@ class Terminal(Entity):
                 self.write(
                     text[i], (pos[0] + i,pos[1]), color
                 )
-                self.dirty_line[pos[1]] = True
-                self.pend()
             return
 
         # color string name
@@ -74,6 +72,8 @@ class Terminal(Entity):
         self.terminal[pos[1]][pos[0]] = self.font.render(
             text, True, color
         )
+        self.dirty_line[pos[1]] = True
+        self.pend()
         
     def scramble(self):
         
@@ -84,7 +84,7 @@ class Terminal(Entity):
                     random.randint(0, 255),
                     random.randint(0, 255)
                 )
-                self.write(chr(random.randint(1,255)), (x, y), col)
+                self.write(chr(random.randint(32,126)), (x, y), col)
         
     def update(self, t):
         
@@ -94,24 +94,26 @@ class Terminal(Entity):
         
         if self.dirty:
 
+            # self.surface.fill((255,255,255,0), (0, 0, *self.app.size))
+
             for y in range(len(self.terminal)):
                 
                 if not self.dirty_line[y]:
                     continue
                 
                 # clear line
-                self.surface.fill((255,255,255,0), (0, y*16, self.app.size.x, self.font_size))
+                self.surface.fill((255,255,255,0), (0, y*self.font_size.y, self.app.size.x, self.font_size.y))
                 
                 for x in range(len(self.terminal[y])):
                     text = self.terminal[y][x]
                     if text:
                         self.surface.blit(
                             text,
-                            (x * self.font_size, y * self.font_size)
+                            (x * self.font_size.x, y * self.font_size.y)
                         )
                     self.dirty_line[y] = False
             
             self.dirty = False
         
         self.app.screen.blit(self.surface, -ivec2(*camera.position))
-    
+

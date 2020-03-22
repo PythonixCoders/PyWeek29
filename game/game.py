@@ -4,6 +4,7 @@ from .signal import *
 from .terminal import *
 from .camera import *
 from .state import *
+from .player import *
 
 class Game(State):
     
@@ -14,18 +15,21 @@ class Game(State):
         self.scene = Signal()
          
         self.terminal = Terminal(self.app, self)
-        self.terminal.scramble()
-        self.terminal.write('HELLO WORLD', (0,0), 'white')
+        # self.terminal.write(u'|ф|', (10,10), 'white')
+        # self.terminal.scramble()
 
         self.camera = Camera(app, self)
+        self.player = Player(app, self)
         
         # connect object to scene
         self.scene.connect(self.terminal)
         self.scene.connect(self.camera)
+        self.scene.connect(self.player)
         
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
         
+        self.time = 0
         self.dirty = True
     
     def pend(self):
@@ -34,11 +38,29 @@ class Game(State):
         self.app.pend() # tell app we need to update
         
     def update(self, t):
+
+        self.time += t
         
         # do scene entity logic
+        
         self.scene.do(lambda x, t: x.update(t), t)
-
+        
         # self.camera.position = self.camera.position + vec2(t) * 10.0
+        
+        frames = [
+            '|',
+            '\\',
+            '-',
+            '/',
+        ]
+        
+        # self.terminal.write('(◕ᴥ◕)', (0,self.terminal.size.y-2), 'yellow')
+
+        self.terminal.write(
+            frames[int(self.time*10) % len(frames)] * self.terminal.size.x,
+            (0,self.terminal.size.y-1),
+            'green'
+        )
 
     def render(self):
 
