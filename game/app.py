@@ -11,6 +11,10 @@ from .game import Game
 
 class App:
     def __init__(self):
+        """
+        The main beginning of our application.
+        Initializes pygame and default state (Game).
+        """
 
         pygame.init()
 
@@ -18,24 +22,36 @@ class App:
         self.cache = {}  # resources w/ filename as key
 
         self.screen = pygame.display.set_mode(self.size)
-        self.quitflag = False
+        self.quit = False
         self.clock = pygame.time.Clock()
         self.time = 0
         self.dirty = True
 
         self.state = Game(self)
 
-    def quit(self):
-
-        self.quitflag = True
+    def load(self, filename, resource_func):
+        """
+        Attempt to load a resource from the cache, otherwise, loads it
+        :param resource_func: a function that loads the resource if its
+            not already available in the cache
+        """
+        if filename not in self.cache:
+            r = self.cache[filename] = resource_func()
+            return r
+        return self.cache[filename]
 
     # def pend(self):
 
     #     self.dirty = True
 
     def __call__(self):
+        """
+        Main game loop
+        Runs until `quit` is set
+        Runs update(t) and render() of the current game state (default: Game)
+        """
 
-        while not self.quitflag:
+        while (not self.quit) and self.state:
 
             t = self.clock.tick(60) / 1000
             self.time += t
@@ -54,6 +70,11 @@ class App:
                 break
 
     def update(self, t):
+        """
+        Called every frame to update our game logic
+        :param t: time since last frame in seconds
+        :return: returns False to quit gameloop
+        """
 
         if not self.state:
             return False
@@ -61,6 +82,10 @@ class App:
         self.state.update(t)
 
     def render(self):
+        """
+        Called every frame to render our game state and update pygame display
+        :return: returns False to quit gameloop
+        """
 
         # if not self.dirty:
         #     return
@@ -72,3 +97,4 @@ class App:
         self.state.render()
 
         pygame.display.update()
+

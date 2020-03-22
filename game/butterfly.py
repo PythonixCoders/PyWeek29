@@ -125,8 +125,11 @@ class Butterfly(Entity):
         
         self.num = num
 
-        image: pygame.SurfaceType = pygame.image.load(
-            path.join(SPRITES_DIR, "butterfly-orange.png")
+        fn = path.join(SPRITES_DIR,"butterfly-orange.png")
+        
+        # load an image if its not already in the cache, otherwise grab it
+        image: pygame.SurfaceType = self.app.load(fn,
+            lambda: pygame.image.load(fn)
         )
 
         h, s, v = rgb2hsv(*color)

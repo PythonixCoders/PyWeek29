@@ -5,7 +5,10 @@ from .signal import Signal
 
 class Entity:
     def __init__(self, app, state):
-
+        """
+        Intialize our
+        """
+        
         self.app = app
         self.state = state
         self._position = vec2(0)
@@ -19,7 +22,6 @@ class Entity:
     def pend(self):
 
         self.dirty = True
-        self.state.pend()
         self.on_pend()
 
     def update(self, t):
@@ -35,5 +37,11 @@ class Entity:
 
     @position.setter
     def position(self, v):
+        """
+        Sets position of our entity, which controls where it appears in
+            our scene.
+        :param v: unpackable type (vec2, tuple, list)
+        """
 
         self._position = vec2(*v)
+

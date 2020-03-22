@@ -16,14 +16,16 @@ class Terminal(Entity):
         self.font_size = ivec2(16, 16)
         font_fn = "data/unifont.ttf"
 
-        self.font = self.app.cache.get(
-            font_fn + ":" + str(self.font_size.y)
-        )  # is font already loaded?
-        if not self.font:
-            self.font = self.app.cache[font_fn] = pygame.font.Font(
+        # load the font if its not already loaded (cacheble)
+        # we're appending :16 to cache name since we may need to cache
+        # different sizes in the future
+        self.font = self.app.load(font_fn + ":" + str(self.font_size.y),
+            lambda: pygame.font.Font(
                 font_fn, self.font_size.y
             )
+        )
 
+        # terminal size in characters
         self.size = app.size / self.font_size
 
         # dirty flags for lazy redrawing
@@ -39,15 +41,28 @@ class Terminal(Entity):
             self.app.size, pygame.SRCALPHA, 32
         ).convert_alpha()
 
-    def clear(self, pos):
+    def clear(self, pos=None):
+        """
+        Clear the terminal at position
+        :param pos: can be:
+            an (x,y) coordiate to clear a char
+            a column number (to clear a line)
+            None (default): clear the whole terminal
+        """
+        
+        if pos is None: # clear whole screen
+            for x in range(self.size.y):
+                self.clear(y)
+            return
 
-        # if pos is int, clear that line
+        # if pos is int, clear that terminal row
         if isinstance(pos, int):
             for x in range(self.size.x):
                 self.clear((x, pos))
-                return
+            return
 
-        # other, clear the character at pos x,y
+        # clear the character at pos (x,y)
+        # we use indices instead of .x .y since pos could be tuple/list
         self.terminal[pos[1]][pos[0]] = None
         self.dirty_line[pos[1]] = True
         self.pend()
@@ -74,6 +89,9 @@ class Terminal(Entity):
         self.pend()
 
     def scramble(self):
+        """
+        Randomly sets every character in terminal to random character and color
+        """
 
         for y in range(len(self.terminal)):
             for x in range(len(self.terminal[y])):
@@ -116,3 +134,4 @@ class Terminal(Entity):
             self.dirty = False
 
         self.app.screen.blit(self.surface, -ivec2(*camera.position))
+
