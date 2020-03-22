@@ -11,9 +11,14 @@ class Entity:
         self.on_pend = Signal()
         self.dirty = True
 
+    def pending(self):
+        
+        return self.dirty
+    
     def pend(self):
         
         self.dirty = True
+        self.state.pend()
         self.on_pend()
         
     def update(self, t):

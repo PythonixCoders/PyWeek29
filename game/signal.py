@@ -4,8 +4,12 @@ class Slot:
     def __init__(self, func, sig):
         self.func = func
         self.sig = sig
+        self.once = False
     def __call__(self, *args):
-        return self.func(*args)
+        r = self.func(*args)
+        if self.once:
+            self.sig.disconnect(self)
+        return r
     def do(self, func, *args):
         return func(self.func, *args)
     def disconnect(self):
@@ -20,6 +24,11 @@ class Signal:
     def do(self, func, *args):
         for slot in self.slots:
             slot.do(func, *args)
+    def once(self, func):
+        slot = Slot(func, self)
+        slot.once = True
+        self.slots.append(slot)
+        return slot
     def connect(self, func):
         slot = Slot(func, self)
         self.slots.append(slot)
@@ -30,6 +39,10 @@ class Signal:
                 del self.slots[i]
                 return True
         return False
+    def clear(self):
+        b = bool(len(self.slots))
+        self.slots = []
+        return b
 
 if __name__ == '__main__':
     s = Signal()

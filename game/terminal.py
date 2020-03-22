@@ -8,6 +8,7 @@ from glm import ivec2, vec2
 class Terminal(Entity):
     
     def __init__(self, app, state):
+        super().__init__(app, state)
         
         self.app = app
         self.state = state
@@ -88,15 +89,6 @@ class Terminal(Entity):
     def update(self, t):
         
         pass
-
-    def pending(self):
-
-        return self.dirty
-        
-    def pend(self):
-        
-        self.dirty = True
-        self.state.pend()
 
     def render(self, camera):
         

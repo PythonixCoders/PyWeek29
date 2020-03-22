@@ -24,7 +24,7 @@ class Game(State):
         self.scene.connect(self.camera)
         
         # when camera moves, set our dirty flag to redraw
-        self.camera.on_pend.connect(self.pend)
+        # self.camera.on_pend.connect(self.pend)
         
         self.dirty = True
     
