@@ -30,7 +30,8 @@ if __name__=='__main__':
     s = Signal()
     hello = s.connect(lambda: print('hello ', end=''))
     s.connect(lambda: print('world'))
-    s() 'hello'
+    s() # 'hello'
     assert s.disconnect(hello)
     s() # 'world'
+    print(s.slots)
 
