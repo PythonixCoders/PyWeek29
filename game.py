@@ -21,7 +21,7 @@ class Game:
         
         self.terminal = Terminal(self)
         self.terminal.scramble()
-        self.terminal.write('HELLO WORLD', (0,0), 'blue')
+        self.terminal.write('HELLO WORLD', (0,0), 'white')
 
     def quit(self):
         
