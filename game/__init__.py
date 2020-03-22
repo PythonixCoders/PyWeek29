@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 from glm import ivec2 # positions
 import random
-from terminal import *
+from .terminal import *
 
 class Game:
     
