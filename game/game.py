@@ -1,67 +1,31 @@
-#!/usr/bin/python
-import sys
+#!/usr/bin/env python
 import pygame
-from pygame.locals import *
-from glm import ivec2 # positions
-import random
-from .terminal import *
 from .signal import *
+from .terminal import *
 
 class Game:
     
-    def __init__(self):
+    def __init__(self, app):
         
-        pygame.init()
-        self.size = ivec2(800, 600)
-        self.screen = pygame.display.set_mode(self.size)
-        self.font_size = 16
-        self.font = pygame.font.Font('data/Inconsolata-g.ttf',self.font_size)
-        self.clock = pygame.time.Clock()
-        self.time = 0
-        self.quitflag = False
+        self.app = app
         
         self.scene = Signal()
         
-        self.terminal = Terminal(self)
+        self.scene = Signal()
+ 
+        self.terminal = Terminal(self.app, self)
         self.terminal.scramble()
         self.terminal.write('HELLO WORLD', (0,0), 'white')
 
         # connect object to scene
         self.scene.connect(self.terminal)
-
-    def quit(self):
         
-        self.quitflag = True
-
-    def __call__(self):
-        
-        while not self.quitflag:
-            
-            t = self.clock.tick(60) / 1000
-            self.time += t
-            
-            for ev in pygame.event.get():
-                if ev.type == QUIT:
-                    return 0
-            
-            self.terminal.update(t)
-            self.update(t)
-            
-            # check once more here to abort before last render
-            if self.quitflag:
-                return 0
-                
-            self.render()
-    
     def update(self, t):
         
-        self.scene.do(lambda x, t=t: x.update(t))
+        self.scene.do(lambda x, t: x.update(t), t)
 
     def render(self):
         
-        self.screen.fill((0,0,0))
-        
+        self.app.screen.fill((0,0,0))
         self.scene.do(lambda x: x.render())
-
-        pygame.display.update()
 

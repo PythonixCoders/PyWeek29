@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import sys
-from .game import *
+from .app import *
 
 def main():
-    return Game()()
+    return App()()
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
