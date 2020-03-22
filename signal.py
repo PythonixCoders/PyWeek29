@@ -7,7 +7,7 @@ class Slot:
     def __call__(self, *args):
         return self.func(*args)
     def disconnect(self):
-        self.sig.disconnect(self)
+        return self.sig.disconnect(self)
 
 class Signal:
     def __init__(self): 
