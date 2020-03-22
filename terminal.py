@@ -9,7 +9,6 @@ class Terminal:
     def __init__(self, game):
         
         self.game = game
-        
         self.size = game.size / game.font_size
 
         # 2d array of pygame text objects
@@ -17,14 +16,27 @@ class Terminal:
         for y in range(self.size.y):
             self.terminal.append([None] * self.size.x)
 
-    def put(self, char, pos, color=(255,255,255)): # x, y, color
-        
+    def write(self, text, pos, color=(255,255,255)): # x, y, color
+
+        if len(text)>1: # write more than 1 char? write chars 1 by 1
+            for i in range(len(text)):
+                self.write(
+                    text[i], (pos[0]+i,pos[1]), color=(255,255,255)
+                )
+            return
+
         # color string name
         if isinstance(color, str):
             color = pygame.Color(color)
 
+        try:
+            self.terminal[pos[1]][pos[0]]
+        except IndexError:
+            # outside of screen
+            return
+        
         self.terminal[pos[1]][pos[0]] = self.game.font.render(
-            char, True, color
+            text, True, color
         )
         
     def scramble(self):
@@ -36,7 +48,7 @@ class Terminal:
                     random.randint(0, 255),
                     random.randint(0, 255)
                 )
-                self.put(chr(random.randint(1,255)), (x, y), col)
+                self.write(chr(random.randint(1,255)), (x, y), col)
         
     def update(self, t):
         
