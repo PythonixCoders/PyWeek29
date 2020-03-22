@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import pygame
 from pygame.locals import *
-from glm import vec2 # positions
 import random
 
 class Terminal:
@@ -18,10 +17,10 @@ class Terminal:
 
     def write(self, text, pos, color=(255,255,255)): # x, y, color
 
-        if len(text)>1: # write more than 1 char? write chars 1 by 1
+        if len(text) > 1: # write more than 1 char? write chars 1 by 1
             for i in range(len(text)):
                 self.write(
-                    text[i], (pos[0]+i,pos[1]), color
+                    text[i], (pos[0] + i,pos[1]), color
                 )
             return
 

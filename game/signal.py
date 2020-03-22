@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class Slot:
-    def __init__(self, func, sig): 
+    def __init__(self, func, sig):
         self.func = func
         self.sig = sig
     def __call__(self, *args):
@@ -10,7 +10,7 @@ class Slot:
         return self.sig.disconnect(self)
 
 class Signal:
-    def __init__(self): 
+    def __init__(self):
         self.slots = []
     def __call__(self, *args):
         for slot in self.slots:
@@ -26,13 +26,13 @@ class Signal:
                 return True
         return False
 
-if __name__=='__main__':
+if __name__ == '__main__':
     s = Signal()
     hello = s.connect(lambda: print('hello ', end=''))
     s.connect(lambda: print('world'))
-    assert len(s.slots)==2
+    assert len(s.slots) == 2
     s() # 'hello world'
     assert s.disconnect(hello)
     s() # 'world'
-    assert len(s.slots)==1
+    assert len(s.slots) == 1
 
