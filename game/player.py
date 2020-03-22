@@ -5,9 +5,9 @@ from .terminal import Terminal
 
 
 class Player(Entity):
-    def __init__(self, app, state):
-        super().__init__(app, state)
-        # self.terminal = state.terminal
+    def __init__(self, app, scene):
+        super().__init__(app, scene)
+        # self.terminal = scene.terminal
         # self.position = (self.terminal.size.x / 2 - 2, self.terminal.size.y - 2)
 
     def update(self, t):

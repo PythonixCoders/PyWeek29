@@ -4,16 +4,17 @@ from .signal import Signal
 
 
 class Entity:
-    def __init__(self, app, state):
+    def __init__(self, app, scene):
         """
         Intialize our
         """
         
         self.app = app
-        self.state = state
+        self.scene = scene
         self._position = vec2(0)
         self.on_pend = Signal()
         self.dirty = True
+        self.z = 0
 
     def pending(self):
 
@@ -44,4 +45,7 @@ class Entity:
         """
 
         self._position = vec2(*v)
+
+    def remove(self):
+        self.scene.disconnect(self)
 

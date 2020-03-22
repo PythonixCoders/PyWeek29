@@ -7,11 +7,11 @@ from glm import ivec2, vec2
 
 
 class Terminal(Entity):
-    def __init__(self, app, state):
-        super().__init__(app, state)
+    def __init__(self, app, scene):
+        super().__init__(app, scene)
 
         self.app = app
-        self.state = state
+        self.scene = scene
 
         self.font_size = ivec2(16, 16)
         font_fn = "data/unifont.ttf"
@@ -51,8 +51,8 @@ class Terminal(Entity):
         """
         
         if pos is None: # clear whole screen
-            for x in range(self.size.y):
-                self.clear(y)
+            for x in range(self.size[1]):
+                self.clear(pos[1])
             return
 
         # if pos is int, clear that terminal row
@@ -120,7 +120,12 @@ class Terminal(Entity):
                 # clear line
                 self.surface.fill(
                     (255, 255, 255, 0),
-                    (0, y * self.font_size.y, self.app.size.x, self.font_size.y),
+                    (
+                        0,
+                        y * self.font_size.y,
+                        self.app.size.x,
+                        self.font_size.y
+                    ),
                 )
 
                 for x in range(len(self.terminal[y])):

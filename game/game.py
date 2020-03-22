@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 import pygame
-from .signal import Signal
+from .signal import Signal, Slot
 from .terminal import Terminal
 from .camera import Camera
 from .state import State
 from .player import Player
 from .butterfly import Butterfly, random_color, randrange
+from glm import vec2
+import functools
 
+# key function to do depth sort
+z_compare = functools.cmp_to_key(lambda a,b: a.func.z < b.func.z)
 
 class Game(State):
     def __init__(self, app, state=None):
@@ -15,12 +19,12 @@ class Game(State):
 
         self.scene = Signal()
 
-        self.terminal = Terminal(self.app, self)
+        self.terminal = Terminal(self.app, self.scene)
         # self.terminal.write(u'|ф|', (10,10), 'white')
         # self.terminal.scramble()
 
-        self.camera = Camera(app, self)
-        self.player = Player(app, self)
+        self.camera = Camera(app, self.scene)
+        self.player = Player(app, self.scene)
         
         # spawn some Butterflies
         nb_butterfly = 40
@@ -53,12 +57,13 @@ class Game(State):
         :param t: time since last frame in seconds
         """
 
-        self.time += t
-
+        # self.scene.sort(lambda a, b: a.z < b.z)
+        self.scene.slots = sorted(self.scene.slots, key=z_compare)
+        
         # call update(t) on all scene entities
         self.scene.do(lambda x, t: x.update(t), t)
 
-        # self.camera.position = self.camera.position + vec2(t) * 10.0
+        self.camera.position = self.camera.position + vec2(t) * 10.0
 
         frames = [
             "|",
@@ -74,6 +79,8 @@ class Game(State):
             (0, self.terminal.size.y - 1),
             "black",
         )
+        
+        self.time += t
 
     def render(self):
         """

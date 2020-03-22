@@ -113,15 +113,16 @@ def random_color():
 #     show_butterflies()
 
 class Butterfly(Entity):
-    def __init__(self, app, state, color=ORANGE, scale=5, num=0):
+    def __init__(self, app, scene, color=ORANGE, scale=5, num=0):
         """
         :param app: our main App object
-        :param state: Current state (probably Game)
+        :param scene: Current scene (probably Game)
         :param color: RGB tuple
         :param scale:
         """
-        super().__init__(app, state)
+        super().__init__(app, scene)
         self.scale = scale
+        self.z = self.scale / 5
         
         self.num = num
 
@@ -163,6 +164,8 @@ class Butterfly(Entity):
     def render(self, camera):
         
         pos  =  self.position - camera.position
+        
+        pos *= self.z
         
         self.app.screen.blit(self.frames[int(self.time + self.num) % 4], pos)
 
