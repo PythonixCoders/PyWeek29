@@ -2,8 +2,10 @@
 import pygame
 from pygame.locals import *
 import random
+from .entity import *
+from glm import ivec2, vec2
 
-class Terminal:
+class Terminal(Entity):
     
     def __init__(self, app, state):
         
@@ -34,6 +36,19 @@ class Terminal:
             self.app.size, pygame.SRCALPHA, 32
         ).convert_alpha()
 
+    def clear(self, pos):
+
+        # if pos is int, clear that line
+        if isinstance(pos, int):
+            for x in range(self.size.x):
+                self.clear((x, pos))
+                return
+        
+        # other, clear the character at pos x,y
+        self.terminal[pos[1]][pos[0]] = None
+        self.dirty_line[pos[1]] = True
+        self.pend()
+        
     def write(self, text, pos, color=(255,255,255)): # x, y, color
 
         if len(text) > 1: # write more than 1 char? write chars 1 by 1
@@ -41,7 +56,8 @@ class Terminal:
                 self.write(
                     text[i], (pos[0] + i,pos[1]), color
                 )
-                self.dirty_line[pos[1]] = self.dirty = True
+                self.dirty_line[pos[1]] = True
+                self.pend()
             return
 
         # color string name
@@ -80,16 +96,20 @@ class Terminal:
     def pend(self):
         
         self.dirty = True
+        self.state.pend()
 
-    def render(self):
+    def render(self, camera):
         
         if self.dirty:
 
-            self.surface.fill((255,255,255,0))
-            
             for y in range(len(self.terminal)):
+                
                 if not self.dirty_line[y]:
                     continue
+                
+                # clear line
+                self.surface.fill((255,255,255,0), (0, y*16, self.app.size.x, self.font_size))
+                
                 for x in range(len(self.terminal[y])):
                     text = self.terminal[y][x]
                     if text:
@@ -101,5 +121,5 @@ class Terminal:
             
             self.dirty = False
         
-        self.app.screen.blit(self.surface, (0,0))
-
+        self.app.screen.blit(self.surface, -ivec2(*camera.position))
+    

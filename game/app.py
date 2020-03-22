@@ -7,6 +7,7 @@ import random
 from .terminal import *
 from .signal import *
 from .game import *
+from .camera import *
 
 class App:
     
@@ -21,6 +22,7 @@ class App:
         self.quitflag = False
         self.clock = pygame.time.Clock()
         self.time = 0
+        self.dirty = True
         
         self.state = Game(self)
         
@@ -28,6 +30,10 @@ class App:
         
         self.quitflag = True
 
+    def pend(self):
+
+        self.dirty = True
+    
     def __call__(self):
         
         while not self.quitflag:
@@ -56,8 +62,12 @@ class App:
         self.state.update(t)
     
     def render(self):
-
-        if not self.state:
+ 
+        # if not self.dirty:
+        #     return
+        # self.dirty = False
+            
+        if self.state is None:
             return False
         
         self.state.render()
