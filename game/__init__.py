@@ -2,9 +2,10 @@
 import sys
 from .app import *
 
+
 def main():
     return App()()
 
-if __name__ == '__main__':
-    sys.exit(main() or 0)
 
+if __name__ == "__main__":
+    sys.exit(main() or 0)

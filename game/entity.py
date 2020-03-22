@@ -2,9 +2,10 @@
 from glm import vec2
 from .signal import *
 
+
 class Entity:
     def __init__(self, app, state):
-        
+
         self.app = app
         self.state = state
         self._position = vec2(0)
@@ -12,15 +13,15 @@ class Entity:
         self.dirty = True
 
     def pending(self):
-        
+
         return self.dirty
-    
+
     def pend(self):
-        
+
         self.dirty = True
         self.state.pend()
         self.on_pend()
-        
+
     def update(self, t):
         pass
 
@@ -29,11 +30,10 @@ class Entity:
 
     @property
     def position(self):
-        
+
         return self._position
-    
+
     @position.setter
     def position(self, v):
-        
-        self._position = vec2(*v)
 
+        self._position = vec2(*v)
