@@ -64,7 +64,7 @@ class Game(State):
         # call update(t) on all scene entities
         self.scene.do(lambda x, t: x.update(t), t)
 
-        self.camera.position = self.camera.position + vec2(t) * 10.0
+        self.camera.position = self.camera.position + vec2(t) * 20.0
 
         frames = [
             "|",
