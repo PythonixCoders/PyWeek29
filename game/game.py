@@ -72,7 +72,7 @@ class Game(State):
         self.terminal.write(
             frames[int(self.time * 10) % len(frames)] * self.terminal.size.x,
             (0, self.terminal.size.y - 1),
-            "green",
+            "black",
         )
 
     def render(self):
@@ -85,7 +85,7 @@ class Game(State):
         #     return
         # self.dirty = False
 
-        self.app.screen.fill((0,0,0))
+        self.app.screen.fill(pygame.Color('lightblue'))
 
         # call render(camera) on all scene entities
         self.scene.do(lambda x, cam: x.render(cam), self.camera)
