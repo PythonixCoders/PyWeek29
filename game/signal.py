@@ -6,6 +6,8 @@ class Slot:
         self.sig = sig
     def __call__(self, *args):
         return self.func(*args)
+    def do(self, func, *args):
+        return func(self.func, *args)
     def disconnect(self):
         return self.sig.disconnect(self)
 
@@ -15,6 +17,9 @@ class Signal:
     def __call__(self, *args):
         for slot in self.slots:
             slot(*args)
+    def do(self, func, *args):
+        for slot in self.slots:
+            slot.do(func, *args)
     def connect(self, func):
         slot = Slot(func, self)
         self.slots.append(slot)

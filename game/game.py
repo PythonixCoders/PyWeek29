@@ -5,6 +5,7 @@ from pygame.locals import *
 from glm import ivec2 # positions
 import random
 from .terminal import *
+from .signal import *
 
 class Game:
     
@@ -19,9 +20,14 @@ class Game:
         self.time = 0
         self.quitflag = False
         
+        self.scene = Signal()
+        
         self.terminal = Terminal(self)
         self.terminal.scramble()
         self.terminal.write('HELLO WORLD', (0,0), 'white')
+
+        # connect object to scene
+        self.scene.connect(self.terminal)
 
     def quit(self):
         
@@ -49,13 +55,13 @@ class Game:
     
     def update(self, t):
         
-        pass
+        self.scene.do(lambda x, t=t: x.update(t))
 
     def render(self):
         
         self.screen.fill((0,0,0))
         
-        self.terminal.render()
+        self.scene.do(lambda x: x.render())
 
         pygame.display.update()
 
