@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import pygame
-from pygame.locals import *
+# from pygame.locals import *
 import random
-from .entity import *
+from .entity import Entity
 from glm import ivec2, vec2
 
 

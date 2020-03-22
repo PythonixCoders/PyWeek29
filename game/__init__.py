@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from .app import *
+from .app import App
 
 
 def main():

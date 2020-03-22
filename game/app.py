@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import sys
 import pygame
-from pygame.locals import *
+# from pygame.locals import *
 from glm import ivec2  # positions
 import random
-from .terminal import *
-from .signal import *
-from .game import *
-from .camera import *
+from .terminal import Terminal
+from .signal import Signal
+from .game import Game
+from .camera import Camera
 
 
 class App:
@@ -30,9 +30,9 @@ class App:
 
         self.quitflag = True
 
-    def pend(self):
+    # def pend(self):
 
-        self.dirty = True
+    #     self.dirty = True
 
     def __call__(self):
 
@@ -42,7 +42,7 @@ class App:
             self.time += t
 
             for ev in pygame.event.get():
-                if ev.type == QUIT:
+                if ev.type == pygame.QUIT:
                     return 0
 
             if self.state is None:

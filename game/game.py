@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import pygame
-from .signal import *
-from .terminal import *
-from .camera import *
-from .state import *
-from .player import *
+from .signal import Signal
+from .terminal import Terminal
+from .camera import Camera
+from .state import State
+from .player import Player
 
 
 class Game(State):
@@ -30,12 +30,12 @@ class Game(State):
         # self.camera.on_pend.connect(self.pend)
 
         self.time = 0
-        self.dirty = True
+        # self.dirty = True
 
-    def pend(self):
+    # def pend(self):
 
-        self.dirty = True
-        self.app.pend()  # tell app we need to update
+    #     self.dirty = True
+    #     self.app.pend()  # tell app we need to update
 
     def update(self, t):
 

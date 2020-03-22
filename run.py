@@ -10,6 +10,6 @@ import sys
 if sys.version_info[0] <= 2:
     sys.exit("This game requires python 3")
 print(sys.version)
-import game
+from game import main
 
-sys.exit(game.main() or 0)
+sys.exit(main() or 0)

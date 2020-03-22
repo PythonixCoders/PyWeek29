@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from glm import vec2
-from .signal import *
+from .signal import Signal
 
 
 class Entity:

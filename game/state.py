@@ -12,3 +12,7 @@ class State:
 
     def render():
         pass
+
+    def pend():
+        pass
+
