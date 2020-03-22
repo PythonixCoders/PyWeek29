@@ -115,13 +115,13 @@ def random_color():
 class Butterfly(Entity):
     def __init__(self, app, state, color=ORANGE, scale=5, num=0):
         """
-        Return an animation of a butterfly of the given color
-
+        :param app: our main App object
+        :param state: Current state (probably Game)
         :param color: RGB tuple
         :param scale:
-        :return: a list of surfaces
         """
         super().__init__(app, state)
+        self.scale = scale
         
         self.num = num
 
