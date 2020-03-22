@@ -56,6 +56,16 @@ class Game:
         self.screen.fill((0,0,0))
         
         self.terminal.render()
+    def update(self, t):
+        
+        pass
+
+    def render(self):
+        
+        self.screen.fill((0,0,0))
+        
+        self.terminal.render()
+
         
         pygame.display.update()
 
