@@ -56,11 +56,14 @@ class Butterfly(Entity):
         super().__init__(app, scene)
         self.scale = scale
         self.z = self.scale / 5
-        
+
         self.num = num
 
         self.frames = self.get_animation(color)
-        self.position = ivec2(randrange(10, self.app.size.x - 13 * scale), randrange(10, self.app.size.y - 13 * scale))
+        self.position = ivec2(
+            randrange(10, self.app.size.x - 13 * scale),
+            randrange(10, self.app.size.y - 13 * scale),
+        )
 
         self.time = 0
         self.frame = 0.0
@@ -69,9 +72,7 @@ class Butterfly(Entity):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
 
         # load an image if its not already in the cache, otherwise grab it
-        image: pygame.SurfaceType = self.app.load(fn,
-            lambda: pygame.image.load(fn)
-        )
+        image: pygame.SurfaceType = self.app.load(fn, lambda: pygame.image.load(fn))
 
         h, s, v = rgb2hsv(*color)
         brighter = hsv2rgb(h + 0.03, s + 0.1, v + 0.1)
@@ -86,9 +87,13 @@ class Butterfly(Entity):
         width = image.get_width() // self.NB_FRAMES
         height = image.get_height()
 
-        frames = [image.subsurface((width * i, 0, width, height)) for i in range(self.NB_FRAMES)]
         frames = [
-            pygame.transform.scale(fra, (width * self.scale, height * self.scale)) for fra in frames
+            image.subsurface((width * i, 0, width, height))
+            for i in range(self.NB_FRAMES)
+        ]
+        frames = [
+            pygame.transform.scale(fra, (width * self.scale, height * self.scale))
+            for fra in frames
         ]
 
         return frames
@@ -97,10 +102,11 @@ class Butterfly(Entity):
         self.time += t * 10
 
     def render(self, camera):
-        
-        pos  =  self.position - camera.position
-        
-        pos *= self.z
-        
 
-        self.app.screen.blit(self.frames[int(self.time + self.num) % self.NB_FRAMES], pos)
+        pos = self.position - camera.position
+
+        pos *= self.z
+
+        self.app.screen.blit(
+            self.frames[int(self.time + self.num) % self.NB_FRAMES], pos
+        )

@@ -8,7 +8,7 @@ class Entity:
         """
         Intialize our
         """
-        
+
         self.app = app
         self.scene = scene
         self._position = vec2(0)
@@ -48,4 +48,3 @@ class Entity:
 
     def remove(self):
         self.scene.disconnect(self)
-
