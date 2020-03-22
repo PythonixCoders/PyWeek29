@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 import pygame
+
 # from pygame.locals import *
 from glm import ivec2  # positions
 import random
@@ -97,4 +98,3 @@ class App:
         self.state.render()
 
         pygame.display.update()
-

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import pygame
+
 # from pygame.locals import *
 import random
 from .entity import Entity
@@ -19,10 +20,9 @@ class Terminal(Entity):
         # load the font if its not already loaded (cacheble)
         # we're appending :16 to cache name since we may need to cache
         # different sizes in the future
-        self.font = self.app.load(font_fn + ":" + str(self.font_size.y),
-            lambda: pygame.font.Font(
-                font_fn, self.font_size.y
-            )
+        self.font = self.app.load(
+            font_fn + ":" + str(self.font_size.y),
+            lambda: pygame.font.Font(font_fn, self.font_size.y),
         )
 
         # terminal size in characters
@@ -49,8 +49,8 @@ class Terminal(Entity):
             a column number (to clear a line)
             None (default): clear the whole terminal
         """
-        
-        if pos is None: # clear whole screen
+
+        if pos is None:  # clear whole screen
             for x in range(self.size[1]):
                 self.clear(pos[1])
             return
@@ -120,12 +120,7 @@ class Terminal(Entity):
                 # clear line
                 self.surface.fill(
                     (255, 255, 255, 0),
-                    (
-                        0,
-                        y * self.font_size.y,
-                        self.app.size.x,
-                        self.font_size.y
-                    ),
+                    (0, y * self.font_size.y, self.app.size.x, self.font_size.y),
                 )
 
                 for x in range(len(self.terminal[y])):
@@ -139,4 +134,3 @@ class Terminal(Entity):
             self.dirty = False
 
         self.app.screen.blit(self.surface, -ivec2(*camera.position))
-

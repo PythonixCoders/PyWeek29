@@ -10,7 +10,8 @@ from glm import vec2
 import functools
 
 # key function to do depth sort
-z_compare = functools.cmp_to_key(lambda a,b: a.get().z < b.get().z)
+z_compare = functools.cmp_to_key(lambda a, b: a.get().z < b.get().z)
+
 
 class Game(State):
     def __init__(self, app, state=None):
@@ -25,12 +26,12 @@ class Game(State):
 
         self.camera = Camera(app, self.scene)
         self.player = Player(app, self.scene)
-        
+
         # spawn some Butterflies
         nb_butterfly = 40
         butterflies = [
-            Butterfly(app, state, random_color(), randrange(2, 6), _) \
-                for _ in range(nb_butterfly)
+            Butterfly(app, state, random_color(), randrange(2, 6), _)
+            for _ in range(nb_butterfly)
         ]
         for butterfly in butterflies:
             self.scene.connect(butterfly)
@@ -59,7 +60,7 @@ class Game(State):
 
         # self.scene.sort(lambda a, b: a.z < b.z)
         self.scene.slots = sorted(self.scene.slots, key=z_compare)
-        
+
         # call update(t) on all scene entities
         self.scene.do(lambda x, t: x.update(t), t)
 
@@ -79,7 +80,7 @@ class Game(State):
             (0, self.terminal.size.y - 1),
             "black",
         )
-        
+
         self.time += t
 
     def render(self):
@@ -92,8 +93,7 @@ class Game(State):
         #     return
         # self.dirty = False
 
-        self.app.screen.fill(pygame.Color('lightblue'))
+        self.app.screen.fill(pygame.Color("lightblue"))
 
         # call render(camera) on all scene entities
         self.scene.do(lambda x, cam: x.render(cam), self.camera)
-

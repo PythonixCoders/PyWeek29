@@ -2,6 +2,7 @@
 
 import weakref
 
+
 class Slot:
     def __init__(self, func, sig):
         self.func = func
@@ -40,6 +41,7 @@ class Slot:
             func = self.func()
         return func
 
+
 class Signal:
     def __init__(self):
         self.slots = []
@@ -47,12 +49,12 @@ class Signal:
         self.queued = []
 
     def __call__(self, *args):
-        
+
         self.blocked += 1
         for slot in self.slots:
             slot(*args)
         self.blocked -= 1
-        
+
         if self.blocked == 0:
             for func in self.queued:
                 func()
@@ -60,19 +62,15 @@ class Signal:
 
     def do(self, func, *args):
         if self.blocked:
-            self.queued.append(lambda func=func, args=args:
-                self.do(func, *args)
-            )
+            self.queued.append(lambda func=func, args=args: self.do(func, *args))
             return None
-        
+
         for slot in self.slots:
             slot.do(func, *args)
 
     def once(self, func):
         if self.blocked:
-            self.queued.append(lambda func=func:
-                self.once(func)
-            )
+            self.queued.append(lambda func=func: self.once(func))
             return None
 
         slot = Slot(func, self)
@@ -86,14 +84,12 @@ class Signal:
                 slot = func
             else:
                 slot = Slot(func, self)
-            self.queued.append(lambda slot=slot:
-                self.slots.append(slot)
-            )
+            self.queued.append(lambda slot=slot: self.slots.append(slot))
             return slot
-        
+
         # already a slot, add it
         if isinstance(func, Slot):
-            slot = func # already a slot
+            slot = func  # already a slot
             self.slots.append(slot)
             return slot
 
@@ -104,9 +100,7 @@ class Signal:
 
     def disconnect(self, slot):
         if self.blocked:
-            self.queued.append(lambda slot=slot:
-                self.disconnect(slot)
-            )
+            self.queued.append(lambda slot=slot: self.disconnect(slot))
             return None
 
         if isinstance(slot, Slot):
@@ -125,28 +119,25 @@ class Signal:
 
     def clear(self):
         if self.blocked:
-            self.queued.append(lambda:
-                self.clear()
-            )
+            self.queued.append(lambda: self.clear())
             return None
 
         b = bool(len(self.slots))
         self.slots = []
         return b
+
     def sort(self, key=None):
         if self.blocked:
             self.queued.append(lambda: self.sort())
             return None
-        
+
         if key is None:
             self.slots.sort()
             return self
 
-        self.slots = sorted(
-            self.slots,
-            key=lambda x: key(x)
-        )
+        self.slots = sorted(self.slots, key=lambda x: key(x))
         return self
+
 
 if __name__ == "__main__":
     s = Signal()
@@ -164,17 +155,17 @@ if __name__ == "__main__":
     s.blocked += 1
     a = s.connect(lambda: print("queued"))
     assert len(s.queued) == 1
-    s() # nothing
+    s()  # nothing
     s.blocked -= 1
     for slot in s.queued:
         slot()
     s.queued = []
-    s() # "queued"
-    
+    s()  # "queued"
+
     # queued disconnection
     s.blocked += 1
     a.disconnect()
-    assert len(s.slots) == 1 # still attached
+    assert len(s.slots) == 1  # still attached
     assert len(s.queued) == 1
     s.blocked -= 1
     assert len(s.slots) == 1
@@ -182,4 +173,3 @@ if __name__ == "__main__":
         q()
     s.queued = []
     assert len(s.slots) == 0
-
