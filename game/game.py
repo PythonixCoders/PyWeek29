@@ -10,7 +10,7 @@ from glm import vec2
 import functools
 
 # key function to do depth sort
-z_compare = functools.cmp_to_key(lambda a,b: a.func.z < b.func.z)
+z_compare = functools.cmp_to_key(lambda a,b: a.get().z < b.get().z)
 
 class Game(State):
     def __init__(self, app, state=None):

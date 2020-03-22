@@ -11,32 +11,34 @@ class Slot:
     def __call__(self, *args):
         func = self.func
         if isinstance(self.func, weakref.ref):
-            func = self.func()
-            if not func:
-                return None
-        func = self.func
-        if isinstance(self.func, weakref.ref):
-            func = self.func()
+            func = func()
             if not func:
                 self.disconnect()
+                return None
         r = func(*args)
         if self.once:
             self.disconnect(self)
         return r
 
-    def do(self, dofunc, *args):
+    def do(self, action, *args):
         func = self.func
-        if isinstance(self.func, weakref.ref):
-            dofunc = self.func()
+        if isinstance(func, weakref.ref):
+            func = func()
             if not func:
                 return None
-        return dofunc(func, *args)
+        return action(func, *args)
 
     def disconnect(self):
         sig = self.sig()
         if not sig:
             return None
         return sig.disconnect(self)
+
+    def get(self):
+        func = self.func
+        if isinstance(func, weakref.ref):
+            func = self.func()
+        return func
 
 class Signal:
     def __init__(self):
@@ -58,7 +60,7 @@ class Signal:
 
     def do(self, func, *args):
         if self.blocked:
-            self.queued.append(lambda func=func, self=self, args=args:
+            self.queued.append(lambda func=func, args=args:
                 self.do(func, *args)
             )
             return None
@@ -133,9 +135,7 @@ class Signal:
         return b
     def sort(self, key=None):
         if self.blocked:
-            self.queued.append(lambda:
-                self.sort()
-            )
+            self.queued.append(lambda: self.sort())
             return None
         
         if key is None:
@@ -164,11 +164,12 @@ if __name__ == "__main__":
     s.blocked += 1
     a = s.connect(lambda: print("queued"))
     assert len(s.queued) == 1
+    s() # nothing
     s.blocked -= 1
     for slot in s.queued:
         slot()
     s.queued = []
-    s()
+    s() # "queued"
     
     # queued disconnection
     s.blocked += 1
