@@ -136,4 +136,4 @@ class Terminal(Entity):
 
             self.dirty = False
 
-        self.app.screen.blit(self.surface, -ivec2(*camera.position))
+        self.app.screen.blit(self.surface, -ivec2(*camera.position.xy))

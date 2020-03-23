@@ -2,7 +2,7 @@
 import random
 from random import randrange
 
-from glm import vec2, ivec2
+from glm import vec2, ivec2, vec3
 
 from game.entities.butterfly import Butterfly, random_color
 from game.entities.camera import Camera
@@ -61,11 +61,11 @@ class Game(State):
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
 
-        self.camera.z -= 0.01
+        # Move the camera along the z axis
+        self.camera.position.z -= 0.01
 
-        self.scene.update(dt)
         self.spawn(self.level.update(dt))
-        # self.camera.position = self.camera.position + vec2(dt) * 1.0
+        self.scene.update(dt)
 
         frames = [
             "|",
@@ -74,7 +74,6 @@ class Game(State):
             "/",
         ]
 
-        # self.terminal.write('(◕ᴥ◕)', (0,self.terminal.size.y-2), 'yellow')
 
         self.terminal.write(
             frames[int(self.time * 10) % len(frames)] * self.terminal.size.x,
@@ -105,11 +104,9 @@ class Game(State):
 
         for pos in positions:
             pos = (1 + vec2(pos)) * self.app.size / 2
+            pos = vec3(*pos, self.camera.position.z + 0.1)
             butt = Butterfly(
-                self.app, self.scene, ivec2(pos), random_color(), randrange(2, 6), 0
+                self.app, self.scene, pos, random_color(), randrange(2, 6), 0
             )
 
-            # scale initial butterfly positions to fill screen
-            butt.z = self.camera.z + 0.1
-            # butt.position *= 1 / butt.z
             self.scene.add(butt)
