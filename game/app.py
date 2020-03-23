@@ -23,6 +23,7 @@ class App:
         self.cache = {}  # resources w/ filename as key
 
         self.screen = pygame.display.set_mode(self.size)
+        self.on_event = Signal()
         self.quit = False
         self.clock = pygame.time.Clock()
         self.time = 0
@@ -60,6 +61,10 @@ class App:
             for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
                     return 0
+                elif ev.type == pygame.KEYUP:
+                    self.on_event(ev)
+                elif ev.type == pygame.KEYDOWN:
+                    self.on_event(ev)
 
             if self.state is None:
                 break

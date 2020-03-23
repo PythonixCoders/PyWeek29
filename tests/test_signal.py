@@ -47,3 +47,21 @@ def test_signal_queue():
         q()
     s.queued = []
     assert len(s) == 0
+
+def test_signal_weak():
+    
+    s = Signal()
+    w = s.connect(lambda: print("test"), weak=True)
+    del w
+    assert len(s) == 1
+    s()
+    assert len(s) == 0
+
+    s = Signal()
+    func = lambda: print('test')
+    w = s.connect(func)
+    del s # slot outlives signal?
+    assert w.sig() == None # it works
+    del w
+
+

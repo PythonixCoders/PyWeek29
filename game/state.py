@@ -10,8 +10,9 @@ class State:
     def update(self, t):
         pass
 
-    def render():
+    def render(self):
+        pass
+    
+    def pend(self):
         pass
 
-    def pend():
-        pass

@@ -17,7 +17,8 @@ class Entity:
         self.dirty = True
         self.z = 0
         self._velocity_z = 0
-
+        self.slots = []
+    
     def pending(self):
 
         return self.dirty
@@ -72,4 +73,13 @@ class Entity:
 
     def remove(self):
         self.scene.disconnect(self)
+
+    def event(self, ev):
+        # return True if the event was handled
+        return False
+
+    def __del__(self):
+        for slot in self.slots:
+            slot.disconnect()
+        self.slots = []
 
