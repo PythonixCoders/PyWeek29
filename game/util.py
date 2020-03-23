@@ -1,5 +1,3 @@
-import numpy as np
-
 
 def surf_fader(max_dist, dz):
     """
@@ -9,5 +7,5 @@ def surf_fader(max_dist, dz):
         max_dist {int} -- Maximum distance until butterflies disappear completely
         dz {int} -- Difference of Z pos between camera and butterfly
     """
-    fade_alpha = np.interp(dz, (0, max_dist), (0, 255))
-    return fade_alpha
+
+    return dz / max_dist * 255
