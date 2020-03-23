@@ -19,7 +19,7 @@ class App:
 
         pygame.init()
 
-        self.size = ivec2(1920, 1080)/2
+        self.size = ivec2(1920, 1080) / 2
         self.cache = {}  # resources w/ filename as key
 
         self.screen = pygame.display.set_mode(self.size)
@@ -79,7 +79,7 @@ class App:
         slot = self.on_event.connect(obj.event, weak=True)
         obj.slots.append(slot)
         return slot
-    
+
     def update(self, t):
         """
         Called every frame to update our game logic
