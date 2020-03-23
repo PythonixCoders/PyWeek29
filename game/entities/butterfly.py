@@ -5,7 +5,7 @@ from glm import ivec2
 
 from game.constants import SPRITES_DIR, ORANGE
 from game.abstract.entity import Entity
-from .util import *
+from game.util import *
 
 
 class Butterfly(Entity):
