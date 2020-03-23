@@ -12,11 +12,10 @@ class Player(Entity):
 
     def event(self, ev):
         print(ev)
-        
+
     def update(self, t):
         pass
 
     def render(self, t):
         # self.terminal.write("(◕ᴥ◕)", ivec2(self.position), "yellow")
         pass
-

@@ -40,9 +40,10 @@ class Slot:
         if isinstance(func, weakref.ref):
             func = self.func()
         return func
-    
+
     def __del__(self):
         self.disconnect()
+
 
 class Signal:
     def __init__(self):
@@ -61,7 +62,7 @@ class Signal:
                 wref = slot
                 slot = wref()
                 if slot is None:
-                    self.disconnect(wref) # we're blocked, so this will queue
+                    self.disconnect(wref)  # we're blocked, so this will queue
             if slot is not None:
                 slot(*args)
         self.blocked -= 1
@@ -90,7 +91,7 @@ class Signal:
         return slot
 
     def connect(self, func, weak=False):
-        
+
         if self.blocked:
             # if we're blocked, then queue the call
             if isinstance(func, Slot):
@@ -123,7 +124,7 @@ class Signal:
             wref = slot
             slot = wref()
             for i in range(len(self.slots)):
-                if slot: # weakref dereffed?
+                if slot:  # weakref dereffed?
                     if self.slots[i] is slot:
                         del self.slots[i]
                         return True
@@ -165,7 +166,6 @@ class Signal:
 
         self.slots = sorted(self.slots, key=lambda x: key(x))
         return self
-    
+
     def __del__(self):
         self.clear()
-

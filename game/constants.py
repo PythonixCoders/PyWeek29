@@ -15,9 +15,9 @@ ORANGE = (255, 165, 0)
 
 # we're in "2d" so X and Y basis vectors should be 2d
 # 3d is optional in positions and velocities
-X = vec2(1,0)
-Y = vec2(1,0)
-Z = vec3(0,0,1)
+X = vec2(1, 0)
+Y = vec2(1, 0)
+Z = vec3(0, 0, 1)
 
 # Cleanup so we "could" import * without clutter
 del path

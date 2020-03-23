@@ -108,7 +108,7 @@ class Butterfly(Entity):
         self.time += t * 10
 
     def render(self, camera):
-        
+
         # print(self.z)
         # pos = (self.position - camera.position) * self.z ** camera.depth
         pos = self.position
@@ -118,8 +118,6 @@ class Butterfly(Entity):
         if dz > 0:
             frame = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
-                ivec2(self.width * dz , self.height * dz) * 10
+                ivec2(self.width * dz, self.height * dz) * 10,
             )
-            self.app.screen.blit(
-                frame, ivec2(pos)
-            )
+            self.app.screen.blit(frame, ivec2(pos))

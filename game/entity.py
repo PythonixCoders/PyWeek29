@@ -18,7 +18,7 @@ class Entity:
         self.z = 0
         self._velocity_z = 0
         self.slots = []
-    
+
     def pending(self):
 
         return self.dirty
@@ -30,7 +30,7 @@ class Entity:
 
     def update(self, t):
         if self._velocity or self._velocity_z:
-            self.position += self._velocity * t # triggers position setter
+            self.position += self._velocity * t  # triggers position setter
             self.z += self._velocity_z * t
 
     def render(self, camera):
@@ -82,4 +82,3 @@ class Entity:
         for slot in self.slots:
             slot.disconnect()
         self.slots = []
-

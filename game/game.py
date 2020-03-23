@@ -26,11 +26,11 @@ class Game(State):
         # self.terminal.scramble()
 
         self.camera = Camera(app, self.scene)
-        self.camera.position = -self.app.size/2
+        self.camera.position = -self.app.size / 2
         self.player = Player(app, self.scene)
-        self.player.slots.append(self.app.on_event.connect(
-            lambda ev: self.player.event(ev), weak=True
-        ))
+        self.player.slots.append(
+            self.app.on_event.connect(lambda ev: self.player.event(ev), weak=True)
+        )
 
         # spawn some Butterflies
         nb_butterfly = 40
