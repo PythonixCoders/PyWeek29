@@ -55,7 +55,7 @@ class Entity:
 
     @property
     def velocity(self):
-        return self.velocity
+        return self._velocity
 
     @velocity.setter
     def velocity(self, v):

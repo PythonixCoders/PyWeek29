@@ -15,15 +15,13 @@ class Player(Entity):
             pygame.K_LEFT,
             pygame.K_RIGHT,
             pygame.K_UP,
-            pygame.K_DOWN,
-            pygame.K_SPACE,
-            pygame.K_LSHIFT,
+            pygame.K_DOWN
         ]
         self.dir = [False] * len(self.keys)
         self.speed = speed
 
     def event(self, event):
-        if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
+        if event.type in (pygame.KEYUP, pygame.KEYDOWN):
             for i, key in enumerate(self.keys):
                 if key == event.key:
                     self.dir[i] = (event.type == pygame.KEYDOWN)
@@ -33,7 +31,7 @@ class Player(Entity):
             vec3(
                 -self.dir[0] + self.dir[1],
                 -self.dir[2] + self.dir[3],
-                -self.dir[4] + self.dir[5],
+                -1,  # always going forwards
             )
             * self.speed
         )
