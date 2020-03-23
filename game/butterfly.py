@@ -2,12 +2,12 @@ from random import random, randrange
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from os import path
 
-
 import pygame
 from glm import ivec2
 
 from game.constants import SPRITES_DIR, ORANGE
 from .entity import Entity
+from .util import *
 
 
 def clamp(x, mini=0, maxi=1):
@@ -69,7 +69,8 @@ class Butterfly(Entity):
         # print(self.position)
 
         self.time = 0
-        self.frame = 0.0
+        self.frame = 0  # @flipcoder, had to change from 0.0 to just 0
+        self.surf = pygame.Surface((self.frames[self.frame].get_width(), self.frames[self.frame].get_height()))
 
     def get_animation(self, color):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -114,10 +115,14 @@ class Butterfly(Entity):
         # pos = self.position
 
         dz = self.z - camera.z
+        max_fade_dist = 10 # Basically the render distance
+        fade = surf_fader(max_fade_dist, dz)
 
         if dz > 0:
             frame = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
                 ivec2(self.width * dz, self.height * dz) * 10,
             )
-            self.app.screen.blit(frame, ivec2(pos))
+            self.surf.blit(frame, (0, 0))
+            self.surf.set_alpha(fade)
+            self.app.screen.blit(self.surf, ivec2(pos))
