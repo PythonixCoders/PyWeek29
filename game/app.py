@@ -61,10 +61,10 @@ class App:
             for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
                     return 0
-                elif ev.type == pygame.KEYUP:
-                    self.on_event(ev)
-                elif ev.type == pygame.KEYDOWN:
-                    self.on_event(ev)
+                # elif ev.type == pygame.KEYUP:
+                # self.on_event(ev)
+                # elif ev.type == pygame.KEYDOWN:
+                self.on_event(ev)
 
             if self.state is None:
                 break

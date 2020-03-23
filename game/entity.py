@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from glm import vec2
+from glm import vec2, vec3
 from .signal import Signal
 
 
@@ -64,12 +64,12 @@ class Entity:
     def velocity(self, v):
 
         # 3d vec sets z velocity
-        if len(v) == 3:
-            self._position = vec2(v[0], v[1])
+        if isinstance(v, vec3) or len(v) == 3:
+            self.velocity = vec2(v[0], v[1])
             self._velocity_z = v[2]
             return
 
-        self.velocity = vec2(*v)
+        self._velocity = vec2(v[0], v[1])
 
     def remove(self):
         self.scene.disconnect(self)

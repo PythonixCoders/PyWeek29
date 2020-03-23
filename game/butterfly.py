@@ -110,8 +110,8 @@ class Butterfly(Entity):
     def render(self, camera):
 
         # print(self.z)
-        # pos = (self.position - camera.position) * self.z ** camera.depth
-        pos = self.position
+        pos = (self.position - camera.position) * self.z ** camera.depth
+        # pos = self.position
 
         dz = self.z - camera.z
 
