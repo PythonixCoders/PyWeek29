@@ -1,7 +1,7 @@
 from os import path
 
 import pygame
-from glm import ivec2
+from glm import ivec2, vec3
 
 from game.constants import SPRITES_DIR, ORANGE
 from game.base.entity import Entity
@@ -60,8 +60,11 @@ class Butterfly(Entity):
         self.time += dt * 10
 
     def render(self, camera):
-        pos, size = camera.world_to_screen(self.position, self.frames[0].get_size())
-        size *= 2
+        pos = camera.world_to_screen(self.position)
+        bottomleft = self.position + vec3(self.width, self.height, 0)
+        pos_bl = camera.world_to_screen(bottomleft)
+
+        size = pos_bl.xy - pos.xy
 
         max_fade_dist = 1  # Basically the render distance
         fade = surf_fader(max_fade_dist, 2 - camera.position.z + self.position.z)

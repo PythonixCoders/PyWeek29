@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 from typing import Union
 
-from pygame import Vector3 as vec3
-from pygame import Vector2 as vec2
+from glm import dot, cross, vec3, vec2, normalize
 
 from game.base.entity import Entity
 from game.constants import EPSILON
@@ -15,11 +14,26 @@ class Camera(Entity):
     All the coordinates are in pixels.
     """
 
-    def __init__(self, position: vec3, direction: vec3, up: vec3, screen_dist: float, app, scene):
+    def __init__(
+        self,
+        app,
+        scene,
+        position: vec3 = None,
+        direction: vec3 = None,
+        up: vec3 = None,
+        screen_dist: float = 600,
+    ):
+        if up is None:
+            up = vec3(0, 1, 0)
+        if direction is None:
+            direction = vec3(0, 0, -1)
+        if position is None:
+            position = vec3(0, 0, 0)
+
         super().__init__(app, scene)
         self.screen_dist = screen_dist
-        self.up = up.normalize()
-        self.direction = direction.normalize()
+        self.up = normalize(up)
+        self.direction = normalize(direction)
         self.position = position
 
     def update_pos(self, player):
@@ -35,17 +49,15 @@ class Camera(Entity):
 
         rel = world_pos - self.position
         # distance along the screen's z axis
-        dist = rel * self.direction
+        dist = dot(rel, self.direction)
 
         if dist < EPSILON:
             return None
 
-        absolute_y = rel * self.up
-        absolute_x = rel * (self.direction ^ self.up)
+        absolute_y = dot(rel, self.up)
+        absolute_x = dot(rel, cross(self.direction, self.up))
 
         x = absolute_x / dist * self.screen_dist
         y = absolute_y / dist * self.screen_dist
 
         return vec2(x, y)
-
-
