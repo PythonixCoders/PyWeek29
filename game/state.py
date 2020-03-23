@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from glm import ivec2
 
 
 class State:

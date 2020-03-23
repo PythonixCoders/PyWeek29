@@ -3,7 +3,6 @@ import sys
 import weakref
 from .constants import EPSILON
 
-sys.path.append("..")
 
 from .signal import Signal
 

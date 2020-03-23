@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import pygame
 import functools
 from .signal import Signal

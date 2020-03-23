@@ -1,10 +1,11 @@
 #!/usr/bin/python
-import pygame
 
-# from pygame.locals import *
 import random
+
+import pygame
+from glm import ivec2, ivec4
+
 from .entity import Entity
-from glm import ivec2, vec2, ivec4
 
 
 class Terminal(Entity):

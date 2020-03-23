@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-from glm import ivec2
-from .entity import Entity
-import enum
 import pygame
-from glm import vec2, vec3
+from glm import vec3
+
+from .entity import Entity
 
 
 class Camera(Entity):

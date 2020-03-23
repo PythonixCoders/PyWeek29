@@ -1,7 +1,6 @@
 #!/usr/bin/python
-from glm import vec2
+
 from .entity import Entity
-from .terminal import Terminal
 
 
 class Player(Entity):

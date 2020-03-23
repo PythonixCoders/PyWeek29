@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 import random
+from random import randrange
 
-import pygame
-
-from .level import BaseLevelBuilder
-from .signal import Signal, Slot
-from .terminal import Terminal
-from .camera import Camera
-from .state import State
-from .player import Player
-from .butterfly import Butterfly, random_color, randrange
-from .constants import *
-from .scene import Scene
 from glm import vec2, ivec2
+
+from .butterfly import Butterfly, random_color
+from .camera import Camera
+from .level import BaseLevelBuilder
+from .player import Player
+from .scene import Scene
+from .state import State
+from .terminal import Terminal
 
 
 class Game(State):

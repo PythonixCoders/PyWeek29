@@ -1,13 +1,9 @@
 #!/usr/bin/python
-import sys
 import pygame
+from glm import ivec2
 
-# from pygame.locals import *
-from glm import ivec2  # positions
-import random
-from .terminal import Terminal
-from .signal import Signal
 from .game import Game
+from .signal import Signal
 
 
 class App:
