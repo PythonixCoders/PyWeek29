@@ -47,7 +47,7 @@ class Butterfly(Entity):
     NB_FRAMES = 4
     DEFAULT_SCALE = 5
 
-    def __init__(self, app, scene, color=ORANGE, scale=DEFAULT_SCALE, num=0):
+    def __init__(self, app, scene, pos, color=ORANGE, scale=DEFAULT_SCALE, num=0):
         """
         :param app: our main App object
         :param scene: Current scene (probably Game)
@@ -62,11 +62,7 @@ class Butterfly(Entity):
         self.num = num
 
         self.frames = self.get_animation(color)
-        self.position = ivec2(
-            randrange(10, self.app.size.x - 13 * scale),
-            randrange(10, self.app.size.y - 13 * scale),
-        )
-        # print(self.position)
+        self.position = pos
 
         self.time = 0
         self.frame = 0.0
@@ -110,7 +106,7 @@ class Butterfly(Entity):
     def render(self, camera):
 
         # print(self.z)
-        pos = (self.position - camera.position) * self.z ** camera.depth
+        pos = self.position - camera.position # * self.z ** camera.depth
         # pos = self.position
 
         dz = self.z - camera.z

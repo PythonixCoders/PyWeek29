@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+import random
+
 import pygame
+
+from .level import BaseLevelBuilder
 from .signal import Signal, Slot
 from .terminal import Terminal
 from .camera import Camera
@@ -8,8 +12,9 @@ from .player import Player
 from .butterfly import Butterfly, random_color, randrange
 from .constants import *
 from .scene import Scene
-from glm import vec2
-    
+from glm import vec2, ivec2
+
+
 class Game(State):
     def __init__(self, app, state=None):
 
@@ -18,8 +23,6 @@ class Game(State):
         self.scene = Scene(self.app)
 
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
-        # self.terminal.write(u'|ф|', (10,10), 'white')
-        # self.terminal.scramble()
 
         self.camera = self.scene.add(Camera(app, self.scene))
         # self.camera.position = -self.app.size / 2
@@ -31,16 +34,7 @@ class Game(State):
         # )
         self.app.add_event_listener(self.camera)
 
-        # spawn some Butterflies
-        nb_butterfly = 40
-        butterflies = [
-            Butterfly(app, state, random_color(), randrange(2, 6), _)
-            for _ in range(nb_butterfly)
-        ]
-        for butterfly in butterflies:
-            # scale initial butterfly positions to fill screen
-            butterfly.position *= 1 / butterfly.z
-            self.scene.add(butterfly)
+        self.level = BaseLevelBuilder().uniform(10, 8)
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
@@ -63,8 +57,14 @@ class Game(State):
         :param t: time since last frame in seconds
         """
 
-        self.scene.update(t)
+        if self.level.is_over():
+            if random.random() < 0.9:
+                self.level = BaseLevelBuilder().uniform(10, 5)
+            else:
+                self.level = BaseLevelBuilder().wall(10)
 
+        self.scene.update(t)
+        self.spawn(self.level.update(t))
         # self.camera.position = self.camera.position + vec2(t) * 1.0
 
         frames = [
@@ -92,3 +92,19 @@ class Game(State):
 
         self.scene.render(self.camera)
     
+    def spawn(self, positions):
+        """
+        Spawn butterflies on the right of the screen.
+        :param ys: list of positions between -1 and 1
+        """
+
+        for pos in positions:
+            pos = (1 + vec2(pos)) * self.app.size / 2
+            butt = Butterfly(self.app, self.state,
+                             ivec2(pos),
+                             random_color(), randrange(2, 6), 0)
+
+            # scale initial butterfly positions to fill screen
+            butt.z = self.camera.z + 0.1
+            # butt.position *= 1 / butt.z
+            self.scene.add(butt)
