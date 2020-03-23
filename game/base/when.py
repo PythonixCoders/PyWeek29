@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import weakref
 
-from game.abstract.signal import Signal
+from game.base.signal import Signal
 from game.constants import EPSILON
 
 

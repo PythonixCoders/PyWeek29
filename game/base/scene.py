@@ -2,8 +2,8 @@
 
 import pygame
 import functools
-from game.abstract.signal import Signal
-from game.abstract.when import When
+from game.base.signal import Signal
+from game.base.when import When
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)

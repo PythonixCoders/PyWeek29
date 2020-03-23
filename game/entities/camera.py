@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from glm import vec3, vec2
 
-from game.abstract.entity import Entity
+from game.base.entity import Entity
 
 
 class Camera(Entity):

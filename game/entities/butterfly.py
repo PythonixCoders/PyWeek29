@@ -4,7 +4,7 @@ import pygame
 from glm import ivec2
 
 from game.constants import SPRITES_DIR, ORANGE
-from game.abstract.entity import Entity
+from game.base.entity import Entity
 from game.util import *
 
 

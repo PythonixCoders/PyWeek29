@@ -4,8 +4,8 @@ import sys
 sys.path.append("..")
 
 import math
-from game.abstract.entity import Entity
-from game.abstract.signal import Signal
+from game.base.entity import Entity
+from game.base.signal import Signal
 import glm
 
 

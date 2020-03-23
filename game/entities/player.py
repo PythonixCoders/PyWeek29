@@ -2,7 +2,7 @@
 import pygame
 from glm import vec3
 
-from game.abstract.entity import Entity
+from game.base.entity import Entity
 
 
 class Player(Entity):

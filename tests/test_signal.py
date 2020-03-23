@@ -3,7 +3,7 @@ import sys
 
 sys.path.append("..")
 
-from game.abstract.signal import Signal
+from game.base.signal import Signal
 
 
 def test_signal():

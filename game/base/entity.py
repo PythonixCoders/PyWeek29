@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from glm import vec2, vec3
-from game.abstract.signal import Signal
+from game.base.signal import Signal
 
 
 class Entity:
