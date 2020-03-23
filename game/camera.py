@@ -14,7 +14,7 @@ class Camera(Entity):
             pygame.K_LEFT,
             pygame.K_RIGHT,
             pygame.K_SPACE,
-            pygame.K_LCTRL,
+            pygame.K_LSHIFT,
             pygame.K_UP,
             pygame.K_DOWN,
         ]

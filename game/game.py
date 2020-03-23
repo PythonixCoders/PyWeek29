@@ -30,9 +30,10 @@ class Game(State):
         self.player = Player(app, self.scene)
 
         # control the camera
-        self.camera.slots.append(
-            self.app.on_event.connect(lambda ev: self.camera.event(ev), weak=True)
-        )
+        # self.camera.slots.append(
+        #     self.app.on_event.connect(self.camera.event, weak=True)
+        # )
+        self.app.add_event_listener(self.camera)
 
         # spawn some Butterflies
         nb_butterfly = 40
