@@ -15,7 +15,7 @@ class Terminal(Entity):
         self.app = app
         self.scene = scene
 
-        self.font_size = ivec2(16)
+        self.font_size = ivec2(14,24)
         font_fn = "data/Inconsolata-g.ttf"
 
         # load the font if its not already loaded (cacheble)
@@ -43,7 +43,7 @@ class Terminal(Entity):
         ).convert_alpha()
 
         self.bg_color = ivec4(255, 255, 255, 0) # transparent by default
-        self.shadow_color = ivec4(0)
+        self.shadow_color = ivec4(120, 120, 120, 0)
 
     def clear(self, pos=None):
         """
@@ -71,7 +71,7 @@ class Terminal(Entity):
         self.dirty_line[pos[1]] = True
         self.pend()
 
-    def write(self, text, pos, color=(255,255,255,0), shadow=(0,0,0,0)):
+    def write(self, text, pos, color=(255,255,255,0)):
 
         if len(text) > 1:  # write more than 1 char? write chars 1 by 1
             for i in range(len(text)):
@@ -134,6 +134,10 @@ class Terminal(Entity):
                     text = self.terminal[y][x]
                     if text:
                         # shadow
+                        self.surface.blit(
+                            text[1],
+                            ivec2(x,y) * self.font_size + ivec2(1,-1), # offset
+                        )
                         self.surface.blit(
                             text[1],
                             ivec2(x,y) * self.font_size + ivec2(-1,1), # offset
