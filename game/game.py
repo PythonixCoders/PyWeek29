@@ -9,7 +9,8 @@ from .butterfly import Butterfly, random_color, randrange
 from .constants import *
 from .scene import Scene
 from glm import vec2
-    
+
+
 class Game(State):
     def __init__(self, app, state=None):
 
@@ -90,5 +91,12 @@ class Game(State):
         Called every frame by App as long as Game is the current app.state
         """
 
+        # if not self.dirty:
+        #     return
+        # self.dirty = False
+
+        self.app.screen.fill(BACKGROUND)
+
+        # call render(camera) on all scene entities
+        # self.scene.do(lambda x, cam: x.render(cam), self.camera)
         self.scene.render(self.camera)
-    

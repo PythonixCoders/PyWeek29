@@ -63,4 +63,3 @@ def test_signal_weak():
     del s  # slot outlives signal?
     assert w.sig() == None  # it works
     del w
- 

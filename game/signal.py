@@ -182,7 +182,7 @@ class Signal:
                 if func is value:
                     del self.slots[i]
                     return True
-                
+
         return False
 
     def clear(self):
