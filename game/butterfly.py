@@ -10,16 +10,6 @@ from .entity import Entity
 from .util import *
 
 
-def clamp(x, mini=0, maxi=1):
-    if mini > maxi:
-        return x
-    if x < mini:
-        return mini
-    if x > maxi:
-        return maxi
-    return x
-
-
 def rgb2hsv(r, g, b):
     """Conversion between rgb in range 0-255 to hsv"""
     return rgb_to_hsv(r / 255, g / 255, b / 255)
