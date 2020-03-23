@@ -20,6 +20,7 @@ def test_entity_scene():
     e.remove()
     assert len(scene) == 0
 
+
 def test_entity():
 
     e = Entity(None, None)
