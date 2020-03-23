@@ -19,9 +19,7 @@ class Butterfly(Entity):
         :param color: RGB tuple
         :param scale:
         """
-        print(scene)
-        if scene is None:
-            raise ValueError
+
         super().__init__(app, scene)
         self.scale = scale
 
@@ -58,32 +56,22 @@ class Butterfly(Entity):
             image.subsurface((self.width * i, 0, self.width, self.height))
             for i in range(self.NB_FRAMES)
         ]
-        # frames = [
-        #     pygame.transform.scale(fra, (self.width * self.scale, self.height * self.scale))
-        #     for fra in frames
-        # ]
 
         return frames
 
     def update(self, dt):
-
-        # move right
-        # self.position.x += dt * 20
         self.time += dt * 10
 
     def render(self, camera):
-        # print(self.z)
         pos = self.position - camera.position  # * self.z ** camera.depth
-        # pos = self.position
 
-        dz = self.z - camera.z
         max_fade_dist = 1  # Basically the render distance
-        fade = surf_fader(max_fade_dist, dz)
+        fade = surf_fader(max_fade_dist, pos.z)
 
-        if dz > 0:
+        if pos.z > 0:
             frame = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
-                ivec2(self.width * dz, self.height * dz) * 10,
+                ivec2(self.width * pos.z, self.height * pos.z) * 10,
             )
             frame_size = frame.get_size()
             self.surf = pygame.Surface((frame_size[0], frame_size[1]))
@@ -93,5 +81,5 @@ class Butterfly(Entity):
             self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
 
-        if dz > 2:
+        if pos.z > 2:
             self.scene.remove(self)

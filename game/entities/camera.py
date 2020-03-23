@@ -10,9 +10,8 @@ class Camera(Entity):
     A camera whose position is the center of the screen
     """
 
-    def __init__(self, app, scene):
+    def __init__(self, app, scene, speed=vec3(200, 200, 1)):
         super().__init__(app, scene)
-        self.depth = 2
         self.keys = [
             pygame.K_LEFT,
             pygame.K_RIGHT,
@@ -22,25 +21,22 @@ class Camera(Entity):
             pygame.K_DOWN,
         ]
         self.dir = [False] * len(self.keys)
-
-        self.speed = 1000
+        self.speed = speed
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
-            for i in range(len(self.keys)):
-                if self.keys[i] == event.key:
-                    self.dir[i] = True if event.type == pygame.KEYDOWN else False
+            for i, key in enumerate(self.keys):
+                if key == event.key:
+                    self.dir[i] = (event.type == pygame.KEYDOWN)
 
         self.velocity = (
             vec3(
-                (-1 if self.dir[0] else 0) + (1 if self.dir[1] else 0),
-                (-1 if self.dir[2] else 0) + (1 if self.dir[3] else 0),
-                (-1 if self.dir[4] else 0) + (1 if self.dir[5] else 0),
+                -self.dir[0] + self.dir[1],
+                -self.dir[2] + self.dir[3],
+                -self.dir[4] + self.dir[5],
             )
             * self.speed
         )
-        self._velocity_z = self._velocity_z / 1000.0
 
     def update(self, dt):
         super().update(dt)
-        # print(self.position)

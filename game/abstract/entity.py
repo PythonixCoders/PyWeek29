@@ -4,34 +4,29 @@ from game.abstract.signal import Signal
 
 
 class Entity:
+    """
+    A basic component of the game.
+    An Entity represents something that will be draw on the screen.
+    """
     def __init__(self, app, scene):
-        """
-        Intialize our
-        """
-
         self.app = app
         self.scene = scene
-        self._position = vec2(0)
-        self._velocity = vec2(0)
+        self._position = vec3(0)
+        self._velocity = vec3(0)
         self.on_pend = Signal()
         self.dirty = True
-        self.z = 0
-        self._velocity_z = 0
         self.slots = []
 
     def pending(self):
-
         return self.dirty
 
     def pend(self):
-
         self.dirty = True
         self.on_pend()
 
     def update(self, dt):
-        if self._velocity or self._velocity_z:
+        if self._velocity:
             self.position += self._velocity * dt  # triggers position setter
-            self.z += self._velocity_z * dt
 
     def render(self, camera):
         pass
@@ -45,16 +40,16 @@ class Entity:
         """
         Sets position of our entity, which controls where it appears in
             our scene.
-        :param v: unpackable type (vec2, tuple, list), or 3D vec w/ z for scale
+        :param v: 3 coordinates (list, tuple, vec3)
         """
-        # 3d vec sets z value also
-        if len(v) == 3:
-            self._position = vec2(v[0], v[1])
-            self.z = v[2]
-            return
 
-        # otherwise z value is constant
-        self._position = vec2(*v)
+        if len(v) == 2:
+            print("Warning: Setting Entity position with a 2d vector.")
+            print("Vector:", v)
+            print("Entity:", self)
+            raise ValueError
+
+        self._position = vec3(*v)
 
     @property
     def velocity(self):
@@ -62,20 +57,30 @@ class Entity:
 
     @velocity.setter
     def velocity(self, v):
+        """
+        Sets position of our entity, which controls where it appears in
+            our scene.
+        :param v: 3 coordinates (list, tuple, vec3)
+        """
 
-        # 3d vec sets z velocity
-        if isinstance(v, vec3) or len(v) == 3:
-            self.velocity = vec2(v[0], v[1])
-            self._velocity_z = v[2]
-            return
+        if len(v) == 2:
+            print("Warning: Setting Entity velocity with a 2d vector.")
+            print("Vector:", v)
+            print("Entity:", self)
+            raise ValueError
 
-        self._velocity = vec2(v[0], v[1])
+        self._velocity = vec3(*v)
 
     def remove(self):
         self.scene.disconnect(self)
 
     def event(self, event):
-        # return True if the event was handled
+        """
+        Handle the event if needed.
+
+        :returns: True if the event was handled
+        """
+
         return False
 
     def __del__(self):
