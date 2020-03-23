@@ -8,6 +8,7 @@ class Player(Entity):
         super().__init__(app, scene)
         # self.terminal = scene.terminal
         # self.position = (self.terminal.size.x / 2 - 2, self.terminal.size.y - 2)
+        self.score = 0
 
     def event(self, event):
         print(event)
