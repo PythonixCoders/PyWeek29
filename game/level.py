@@ -1,7 +1,7 @@
 import random
 from collections import namedtuple, deque
 
-Spawn = namedtuple("Spawn", ['x', 'y', 'time'])
+Spawn = namedtuple("Spawn", ["x", "y", "time"])
 
 
 class Level:
@@ -26,6 +26,7 @@ class Level:
 
     def is_over(self):
         return len(self.spawn) == 0
+
 
 class BaseLevelBuilder:
     def __init__(self):
@@ -52,7 +53,7 @@ class BaseLevelBuilder:
         self._t += milliseconds / 1000
 
     def build(self):
-        level =  Level(self._spawns)
+        level = Level(self._spawns)
         # So that we can use the same builder multiple times
         self.__init__()
         return level

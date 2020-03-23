@@ -91,7 +91,7 @@ class Game(State):
         """
 
         self.scene.render(self.camera)
-    
+
     def spawn(self, positions):
         """
         Spawn butterflies on the right of the screen.
@@ -100,9 +100,9 @@ class Game(State):
 
         for pos in positions:
             pos = (1 + vec2(pos)) * self.app.size / 2
-            butt = Butterfly(self.app, self.state,
-                             ivec2(pos),
-                             random_color(), randrange(2, 6), 0)
+            butt = Butterfly(
+                self.app, self.state, ivec2(pos), random_color(), randrange(2, 6), 0
+            )
 
             # scale initial butterfly positions to fill screen
             butt.z = self.camera.z + 0.1

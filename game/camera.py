@@ -10,6 +10,7 @@ class Camera(Entity):
     """
     A camera whose position is the center of the screen
     """
+
     def __init__(self, app, scene):
         super().__init__(app, scene)
         self.depth = 2
