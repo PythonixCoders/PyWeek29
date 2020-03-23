@@ -61,8 +61,9 @@ class Game(State):
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
 
-        # TODO: @flipcoder: isn't there a way with your signals to bind this
-        self.camera.update_pos(self.player)
+        self.camera.slots.append(self.player.on_move.connect(lambda:
+            self.camera.update_pos(self.player)
+        ))
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)

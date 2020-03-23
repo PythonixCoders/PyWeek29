@@ -17,23 +17,18 @@ class Entity:
         self._position = kwargs.get("position") or vec3(0)
         self._velocity = kwargs.get("velocity") or vec3(0)
         self._life = kwargs.get("life")
-        self.on_pend = Signal()
+        self.on_move = Signal()
+        self.on_remove = Signal()
         # self.dirty = True
         self.slots = []
         self._surface = None
+        self.removed = False
 
         self.fn = fn
         if fn:
             self._surface = self.app.load(
                 fn, lambda: pygame.image.load(path.join(SPRITES_DIR, fn))
             )
-
-    def pending(self):
-        return self.dirty
-
-    def pend(self):
-        # self.dirty = True
-        self.on_pend()
 
     @property
     def position(self):
@@ -53,8 +48,10 @@ class Entity:
             print("Entity:", self)
             raise ValueError
 
+        old_pos = v
         self._position = vec3(*v)
-        self.pend()
+        if v != old_pos:
+            self.on_move()
 
     @property
     def velocity(self):
@@ -77,7 +74,13 @@ class Entity:
         self._velocity = vec3(*v)
 
     def remove(self):
-        self.scene.disconnect(self)
+        if not self.removed:
+            for slot in self.slots:
+                slot.disconnect()
+            self.slots = []
+            self.on_remove()
+            self.removed = True
+            self.scene.disconnect(self)
 
     # NOTE: Implementing the below method automatically registers event listener
     # So it's commented out.  It still works as before.
@@ -94,7 +97,6 @@ class Entity:
     def update(self, dt):
         if self._velocity:
             self.position += self._velocity * dt  # triggers position setter
-            self.pend()
 
         if self._life is not None:
             self._life -= dt
@@ -106,10 +108,9 @@ class Entity:
             return
 
         pos = camera.world_to_screen(self.position)
-        bottomleft = self.position + vec3(pos.xy, 0)
+        bottomleft = self.position.xy + vec3(self.position.xy, 0)
         pos_bl = camera.world_to_screen(bottomleft)
         size = pos_bl.xy - pos.xy
-        print(size)
         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
 
         pos, size = camera.world_to_screen(bottomleft)
@@ -118,7 +119,7 @@ class Entity:
             self.scene.remove(self)
             return
         size *= 2
-        if size < 1000:
+        if size > 100:
             return
         surf = pygame.transform.scale(self._surface, ivec2(size))
         self.app.screen.blit(surf, ivec2(pos))

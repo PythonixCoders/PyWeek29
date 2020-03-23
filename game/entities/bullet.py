@@ -10,7 +10,8 @@ class Bullet(Entity):
         super().__init__(self, app, "butterfly-orange.png")
 
     def update(self, t):
-        super.update(t)
+        super().update(t)
 
     def render(self, camera):
         pass
+
