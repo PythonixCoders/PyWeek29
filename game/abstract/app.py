@@ -2,22 +2,22 @@
 import pygame
 from glm import ivec2
 
-from game.states.game import Game
 from game.abstract.signal import Signal
 
 
 class App:
-    def __init__(self):
+    def __init__(self, initial_state_class):
         """
         The main beginning of our application.
-        Initializes pygame and default state (Game).
+        Initializes pygame and the initial state.
         """
 
         pygame.init()
 
         self.size = ivec2(1920, 1080) / 2
-        self.cache = {}  # resources w/ filename as key
-
+        """Display size"""
+        self.cache = {}
+        """Resources with filenames as keys"""
         self.screen = pygame.display.set_mode(self.size)
         self.on_event = Signal()
         self.quit = False
@@ -25,7 +25,7 @@ class App:
         self.time = 0
         self.dirty = True
 
-        self.state = Game(self)
+        self.state = initial_state_class(self)
 
     def load(self, filename, resource_func):
         """
@@ -42,10 +42,11 @@ class App:
 
     #     self.dirty = True
 
-    def __call__(self):
+    def run(self):
         """
-        Main game loop
-        Runs until `quit` is set
+        Main game loop.
+
+        Runs until the `quit` flag is set
         Runs update(t) and render() of the current game state (default: Game)
         """
 
@@ -54,13 +55,10 @@ class App:
             t = self.clock.tick(60) / 1000
             self.time += t
 
-            for ev in pygame.event.get():
-                if ev.type == pygame.QUIT:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     return 0
-                # elif ev.type == pygame.KEYUP:
-                # self.on_event(ev)
-                # elif ev.type == pygame.KEYDOWN:
-                self.on_event(ev)
+                self.on_event(event)
 
             if self.state is None:
                 break

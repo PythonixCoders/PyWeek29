@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import weakref
-from game.constants import EPSILON
-
 
 from game.abstract.signal import Signal
+from game.constants import EPSILON
 
 
 class When(Signal):
