@@ -33,7 +33,7 @@ class Player(Entity):
                     self.scene,
                     "butterfly-orange.png",
                     position=self.position,
-                    velocity=-Z*10,
+                    velocity=-Z * 10,
                     life=0.5,
                 )
             )

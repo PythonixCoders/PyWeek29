@@ -68,10 +68,13 @@ class Camera(Entity):
         absolute_y = dot(rel, self.up)
         absolute_x = dot(rel, self.horizontal)
 
-        pos = vec2(
-            absolute_x / dist * self.screen_dist,
-            absolute_y / dist * self.screen_dist,
-        ) + self.screen_size / 2
+        pos = (
+            vec2(
+                absolute_x / dist * self.screen_dist,
+                absolute_y / dist * self.screen_dist,
+            )
+            + self.screen_size / 2
+        )
 
         return pos
 
@@ -87,10 +90,12 @@ class Camera(Entity):
         and (10, 10, 100) is 10 pixels up and right from the previous
         """
 
-        return self.position \
-               + rel.x * self.horizontal \
-               + rel.y * self.up \
-               - rel.z * self.direction
+        return (
+            self.position
+            + rel.x * self.horizontal
+            + rel.y * self.up
+            - rel.z * self.direction
+        )
 
     def rotate_around_direction(self, angle):
         """

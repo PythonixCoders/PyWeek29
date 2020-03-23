@@ -124,4 +124,3 @@ class Entity:
         for slot in self.slots:
             slot.disconnect()
         self.slots = []
-
