@@ -2,7 +2,7 @@
 
 from typing import Union
 
-from glm import dot, cross, vec3, vec2, normalize
+from glm import dot, cross, vec3, vec2, normalize, rotate
 
 from game.base.entity import Entity
 from game.constants import EPSILON
@@ -91,3 +91,35 @@ class Camera(Entity):
                + rel.x * self.horizontal \
                + rel.y * self.up \
                - rel.z * self.direction
+
+    def rotate_around_direction(self, angle):
+        """
+        Rotates the camera around the center of the screen, changing
+        which way is up
+
+        :param angle: (counterclockwise) rotation in radians
+        """
+
+        self.up = rotate(self.up, angle, self.direction)
+
+    def rotate_around_horizontal(self, angle):
+        """
+        Rotates the camera around the horizontal axis, also
+        know as tilt.
+
+        :param angle: (counterclockwise) rotation in radians
+        """
+
+        horiz = self.horizontal
+        self.up = rotate(self.up, angle, horiz)
+        self.direction = rotate(self.direction, angle, horiz)
+
+    def rotate_around_up(self, angle):
+        """
+        Rotates the camera around the center of the screen,
+        also known as turn left/right
+
+        :param angle: (counterclockwise) rotation in radians
+        """
+
+        self.direction = rotate(self.direction, angle, self.up)
