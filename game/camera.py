@@ -2,7 +2,7 @@
 import pygame
 from glm import vec3
 
-from .entity import Entity
+from game.abstract.entity import Entity
 
 
 class Camera(Entity):

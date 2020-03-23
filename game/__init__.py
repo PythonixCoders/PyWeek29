@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from .app import App
+from game.abstract.app import App
 
 
 def main():

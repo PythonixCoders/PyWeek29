@@ -5,7 +5,7 @@ import random
 import pygame
 from glm import ivec2, ivec4
 
-from .entity import Entity
+from game.abstract.entity import Entity
 
 
 class Terminal(Entity):
