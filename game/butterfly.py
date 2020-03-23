@@ -119,4 +119,5 @@ class Butterfly(Entity):
 
             self.surf.blit(frame, (0, 0))
             self.surf.set_alpha(fade)
+            self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
