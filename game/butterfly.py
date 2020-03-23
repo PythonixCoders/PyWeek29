@@ -5,7 +5,7 @@ from os import path
 import pygame
 from glm import ivec2
 
-from game.constants import SPRITES_DIR, ORANGE
+from game.constants import SPRITES_DIR, ORANGE, BACKGROUND
 from .entity import Entity
 from .util import *
 
@@ -70,7 +70,6 @@ class Butterfly(Entity):
 
         self.time = 0
         self.frame = 0  # @flipcoder, had to change from 0.0 to just 0
-        self.surf = pygame.Surface((self.frames[self.frame].get_width(), self.frames[self.frame].get_height()))
 
     def get_animation(self, color):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -109,13 +108,12 @@ class Butterfly(Entity):
         self.time += t * 10
 
     def render(self, camera):
-
         # print(self.z)
         pos = (self.position - camera.position) * self.z ** camera.depth
         # pos = self.position
 
         dz = self.z - camera.z
-        max_fade_dist = 10 # Basically the render distance
+        max_fade_dist = 1 # Basically the render distance
         fade = surf_fader(max_fade_dist, dz)
 
         if dz > 0:
@@ -123,6 +121,12 @@ class Butterfly(Entity):
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
                 ivec2(self.width * dz, self.height * dz) * 10,
             )
+            frame_size = frame.get_size()
+            self.surf = pygame.Surface((
+                frame_size[0],
+                frame_size[1]
+            ))
+
             self.surf.blit(frame, (0, 0))
             self.surf.set_alpha(fade)
             self.app.screen.blit(self.surf, ivec2(pos))

@@ -107,7 +107,7 @@ class Game(State):
         #     return
         # self.dirty = False
 
-        self.app.screen.fill(pygame.Color("lightblue"))
+        self.app.screen.fill(BACKGROUND)
 
         # call render(camera) on all scene entities
         self.scene.do(lambda x, cam: x.render(cam), self.camera)

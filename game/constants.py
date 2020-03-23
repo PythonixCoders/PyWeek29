@@ -6,12 +6,14 @@ whether they are path, names, colors, gravity constants...
 
 from os import path
 from glm import vec2, vec3
+from pygame import Color
 
 TOP_LEVEL_DIR = path.dirname(path.dirname(__file__))
 ASSETS_DIR = path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = path.join(ASSETS_DIR, "sprites")
 
 ORANGE = (255, 165, 0)
+BACKGROUND = Color("lightblue")
 
 # we're in "2d" so X and Y basis vectors should be 2d
 # 3d is optional in positions and velocities
@@ -23,3 +25,4 @@ Z = vec3(0, 0, 1)
 del path
 del vec2
 del vec3
+del Color
