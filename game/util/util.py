@@ -21,7 +21,7 @@ def surf_fader(max_dist, dz):
         dz {int} -- Difference of Z pos between camera and butterfly
     """
 
-    return clamp(dz / max_dist * 255, 0, 255)
+    return clamp((max_dist - dz) / max_dist * 255, 0, 255)
 
 
 def rgb2hsv(r, g, b):
