@@ -40,8 +40,8 @@ class Terminal(Entity):
         self.surface = pygame.Surface(
             self.app.size, pygame.SRCALPHA, 32
         ).convert_alpha()
-        
-        self.bg_color = ivec4(255,255,255,0)
+
+        self.bg_color = ivec4(255, 255, 255, 0)
 
     def clear(self, pos=None):
         """

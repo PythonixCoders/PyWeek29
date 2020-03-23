@@ -103,7 +103,7 @@ class Butterfly(Entity):
         # pos = self.position
 
         dz = self.z - camera.z
-        max_fade_dist = 1 # Basically the render distance
+        max_fade_dist = 1  # Basically the render distance
         fade = surf_fader(max_fade_dist, dz)
 
         if dz > 0:
@@ -112,10 +112,7 @@ class Butterfly(Entity):
                 ivec2(self.width * dz, self.height * dz) * 10,
             )
             frame_size = frame.get_size()
-            self.surf = pygame.Surface((
-                frame_size[0],
-                frame_size[1]
-            ))
+            self.surf = pygame.Surface((frame_size[0], frame_size[1]))
 
             self.surf.blit(frame, (0, 0))
             self.surf.set_alpha(fade)

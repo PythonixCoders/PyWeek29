@@ -1,4 +1,3 @@
-
 def clamp(x, mini=0, maxi=1):
     if mini > maxi:
         return x

@@ -6,14 +6,16 @@ sys.path.append("..")
 
 from game.when import When
 
+
 def test_when():
     class Counter:
         def __init__(self):
             self.x = 0
+
         def increment(self):
             print(self.x)
             self.x += 1
-    
+
     c = Counter()
     s = When()
     slot = s.every(2, lambda: c.increment())
@@ -29,4 +31,3 @@ def test_when():
     assert c.x == 1
     s.update(1)
     # assert c.x == 2
-
