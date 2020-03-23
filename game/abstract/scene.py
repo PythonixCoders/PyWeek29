@@ -23,16 +23,16 @@ class Scene(Signal):
     def remove(self, entity):
         return self.disconnect(entity)
 
-    def update(self, t):
+    def update(self, dt):
 
         # do time-based events
-        self.when.update(t)
+        self.when.update(dt)
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)
 
-        # call update(t) on each entitiy
-        self.each(lambda x, t: x.update(t), t)
+        # call update(dt) on each entitiy
+        self.each(lambda x, dt: x.update(dt), dt)
 
     def render(self, camera):
         # call render(camera) on all scene entities

@@ -49,10 +49,10 @@ class Game(State):
         # self.dirty = True
         self.app.pend()  # tell app we need to update
 
-    def update(self, t):
+    def update(self, dt):
         """
         Called every frame by App as long as Game is the current app.state
-        :param t: time since last frame in seconds
+        :param dt: time since last frame in seconds
         """
 
         if self.level.is_over():
@@ -63,9 +63,9 @@ class Game(State):
 
         self.camera.z -= 0.01
 
-        self.scene.update(t)
-        self.spawn(self.level.update(t))
-        # self.camera.position = self.camera.position + vec2(t) * 1.0
+        self.scene.update(dt)
+        self.spawn(self.level.update(dt))
+        # self.camera.position = self.camera.position + vec2(dt) * 1.0
 
         frames = [
             "|",
@@ -82,7 +82,7 @@ class Game(State):
             "black",
         )
 
-        self.time += t
+        self.time += dt
 
     def render(self):
         """

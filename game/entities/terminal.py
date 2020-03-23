@@ -105,7 +105,7 @@ class Terminal(Entity):
                 )
                 self.write(chr(random.randint(32, 126)), (x, y), col)
 
-    def update(self, t):
+    def update(self, dt):
 
         pass
 

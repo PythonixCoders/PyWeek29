@@ -47,13 +47,13 @@ class App:
         Main game loop.
 
         Runs until the `quit` flag is set
-        Runs update(t) and render() of the current game state (default: Game)
+        Runs update(dt) and render() of the current game state (default: Game)
         """
 
         while (not self.quit) and self.state:
 
-            t = self.clock.tick(60) / 1000
-            self.time += t
+            dt = self.clock.tick(60) / 1000
+            self.time += dt
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -63,7 +63,7 @@ class App:
             if self.state is None:
                 break
 
-            if self.update(t) is False:
+            if self.update(dt) is False:
                 break
 
             if self.render() is False:
@@ -74,17 +74,17 @@ class App:
         obj.slots.append(slot)
         return slot
 
-    def update(self, t):
+    def update(self, dt):
         """
         Called every frame to update our game logic
-        :param t: time since last frame in seconds
+        :param dt: time since last frame in seconds
         :return: returns False to quit gameloop
         """
 
         if not self.state:
             return False
 
-        self.state.update(t)
+        self.state.update(dt)
 
     def render(self):
         """
