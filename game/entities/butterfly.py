@@ -21,9 +21,6 @@ class Butterfly(Entity):
         """
 
         super().__init__(app, scene)
-        self.scale = scale
-
-        self.z = self.scale / self.DEFAULT_SCALE
 
         self.num = num
 
