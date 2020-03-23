@@ -56,7 +56,8 @@ class Butterfly(Entity):
         """
         super().__init__(app, scene)
         self.scale = scale
-        self.z = self.scale/5
+        
+        self.z = self.scale / self.DEFAULT_SCALE
 
         self.num = num
 
@@ -104,8 +105,8 @@ class Butterfly(Entity):
 
     def render(self, camera):
 
-        pos = (self.position - camera.position) * self.z * 3
-
+        pos = (self.position - camera.position) * self.z
+        
         self.app.screen.blit(
-            self.frames[int(self.time + self.num) % self.NB_FRAMES], pos
+            self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(pos)
         )
