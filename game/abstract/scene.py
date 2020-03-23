@@ -18,6 +18,8 @@ class Scene(Signal):
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slots.append(slot)
+        if hasattr(entity,'event'):
+            entity.slots.append(self.app.add_event_listener(entity))
         return entity
 
     def remove(self, entity):

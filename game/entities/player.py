@@ -7,17 +7,17 @@ from game.abstract.entity import Entity
 
 class Player(Entity):
 
-    def __init__(self, app, scene, speed=vec3(200, 200, 1)):
+    def __init__(self, app, scene, speed=vec3(1000, 1000, 1)):
         super().__init__(app, scene)
         self.score = 0
 
         self.keys = [
             pygame.K_LEFT,
             pygame.K_RIGHT,
-            pygame.K_SPACE,
-            pygame.K_LSHIFT,
             pygame.K_UP,
             pygame.K_DOWN,
+            pygame.K_SPACE,
+            pygame.K_LSHIFT,
         ]
         self.dir = [False] * len(self.keys)
         self.speed = speed

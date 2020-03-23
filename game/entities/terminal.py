@@ -15,15 +15,15 @@ class Terminal(Entity):
         self.app = app
         self.scene = scene
 
-        self.font_size = ivec2(16, 16)
-        font_fn = "data/unifont.ttf"
+        self.font_size = ivec2(16)
+        font_fn = "data/Inconsolata-g.ttf"
 
         # load the font if its not already loaded (cacheble)
         # we're appending :16 to cache name since we may need to cache
         # different sizes in the future
         self.font = self.app.load(
             font_fn + ":" + str(self.font_size.y),
-            lambda: pygame.font.Font(font_fn, self.font_size.y),
+            lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
         )
 
         # terminal size in characters
@@ -42,7 +42,8 @@ class Terminal(Entity):
             self.app.size, pygame.SRCALPHA, 32
         ).convert_alpha()
 
-        self.bg_color = ivec4(255, 255, 255, 0)
+        self.bg_color = ivec4(255, 255, 255, 0) # transparent by default
+        self.shadow_color = ivec4(0)
 
     def clear(self, pos=None):
         """
@@ -70,7 +71,7 @@ class Terminal(Entity):
         self.dirty_line[pos[1]] = True
         self.pend()
 
-    def write(self, text, pos, color=(255, 255, 255)):  # x, y, color
+    def write(self, text, pos, color=(255,255,255,0), shadow=(0,0,0,0)):
 
         if len(text) > 1:  # write more than 1 char? write chars 1 by 1
             for i in range(len(text)):
@@ -87,7 +88,10 @@ class Terminal(Entity):
             # outside of screen
             return
 
-        self.terminal[pos[1]][pos[0]] = self.font.render(text, True, color)
+        self.terminal[pos[1]][pos[0]] = (
+            self.font.render(text, True, color),
+            self.font.render(text, True, self.shadow_color)
+        )
         self.dirty_line[pos[1]] = True
         self.pend()
 
@@ -129,11 +133,19 @@ class Terminal(Entity):
                 for x in range(len(self.terminal[y])):
                     text = self.terminal[y][x]
                     if text:
+                        # shadow
                         self.surface.blit(
-                            text, (x * self.font_size.x, y * self.font_size.y)
+                            text[1],
+                            ivec2(x,y) * self.font_size + ivec2(-1,1), # offset
+                        )
+                        # text
+                        self.surface.blit(
+                            text[0],
+                            (x * self.font_size.x, y * self.font_size.y)
                         )
                     self.dirty_line[y] = False
 
             self.dirty = False
 
-        self.app.screen.blit(self.surface, -ivec2(*camera.position.xy))
+        self.app.screen.blit(self.surface, (0,0)) # screen space
+        # self.app.screen.blit(self.surface, -ivec2(*camera.position.xy))

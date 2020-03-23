@@ -74,14 +74,17 @@ class Entity:
     def remove(self):
         self.scene.disconnect(self)
 
-    def event(self, event):
-        """
-        Handle the event if needed.
+    # NOTE: Implementing the below method automatically registers event listener
+    # So it's commented out.  It still works as before.
+    
+    # def event(self, event):
+    #     """
+    #     Handle the event if needed.
 
-        :returns: True if the event was handled
-        """
+    #     :returns: True if the event was handled
+    #     """
 
-        return False
+    #     return False
 
     def __del__(self):
         for slot in self.slots:

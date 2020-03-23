@@ -30,7 +30,7 @@ class Game(State):
         # self.camera.slots.append(
         #     self.app.on_event.connect(self.camera.event, weak=True)
         # )
-        self.app.add_event_listener(self.camera)
+        # self.app.add_event_listener(self.camera)
 
         self.level = BaseLevelBuilder().uniform(10, 8)
 
@@ -80,7 +80,7 @@ class Game(State):
         # Render Player's Score
         score_display = "Score: {}".format(self.player.score)
         score_pos = (self.terminal.size.x - len(score_display), 0)
-        self.terminal.write(score_display, score_pos, "black")
+        self.terminal.write(score_display, score_pos)
 
         self.scene.render(self.camera)
 
@@ -100,11 +100,12 @@ class Game(State):
             self.scene.add(butt)
 
     def update_ground(self):
-        frames = r"|\-/"
-        frame = frames[int(self.time * 10) % len(frames)]
+        pass
+        # frames = r"|\-/"
+        # frame = frames[int(self.time * 10) % len(frames)]
 
-        self.terminal.write(
-            frame * self.terminal.size.x,
-            (0, self.terminal.size.y - 1),
-            "black",
-        )
+        # self.terminal.write(
+        #     frame * self.terminal.size.x,
+        #     (0, self.terminal.size.y - 1),
+        #     "black",
+        # )
