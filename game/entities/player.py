@@ -7,7 +7,7 @@ from game.base.entity import Entity
 
 class Player(Entity):
 
-    def __init__(self, app, scene, speed=vec3(1000, 1000, 1)):
+    def __init__(self, app, scene, speed=vec3(1000, 1000, 200)):
         super().__init__(app, scene)
         self.score = 0
 

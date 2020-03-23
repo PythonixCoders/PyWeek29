@@ -22,7 +22,7 @@ class Game(State):
 
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
 
-        self.camera = self.scene.add(Camera(app, self.scene))
+        self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         # self.camera.position = -self.app.size / 2
         self.player = self.scene.add(Player(app, self.scene))
 
@@ -60,6 +60,7 @@ class Game(State):
                 self.level = BaseLevelBuilder().uniform(10, 5)
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
+        print(len(self.level.spawn))
 
         # TODO: @flipcoder: isn't there a way with your signals to bind this
         self.camera.update_pos(self.player)
@@ -90,8 +91,12 @@ class Game(State):
         """
 
         for pos in positions:
-            pos = (1 + vec2(pos)) * self.app.size / 2 + self.camera.position.xy
-            pos = vec3(*pos, self.camera.position.z - 2)
+            pos = (vec2(pos)) * self.app.size / 2
+            pos = pos.x * self.camera.horizontal \
+                  + pos.y * self.camera.up \
+                  + self.camera.direction * self.camera.screen_dist \
+                  + self.camera.position
+
             butt = Butterfly(
                 self.app, self.scene, pos, random_color(), randrange(2, 6), 0
             )

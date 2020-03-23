@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from typing import Union
 
 from glm import dot, cross, vec3, vec2, normalize
@@ -18,6 +19,7 @@ class Camera(Entity):
         self,
         app,
         scene,
+        screen_size: vec2,
         position: vec3 = None,
         direction: vec3 = None,
         up: vec3 = None,
@@ -31,15 +33,24 @@ class Camera(Entity):
             position = vec3(0, 0, 0)
 
         super().__init__(app, scene)
+        self.screen_size = screen_size
         self.screen_dist = screen_dist
         self.up = normalize(up)
         self.direction = normalize(direction)
         self.position = position
 
+    @property
+    def horizontal(self):
+        return cross(self.direction, self.up)
+
     def update_pos(self, player):
         """Set the camera position to have the player in center"""
 
         self.position = player.position
+
+    def distance(self, world_pos):
+        """Distance from the camera along the `direction` axis"""
+        return dot(world_pos - self.position, self.direction)
 
     def world_to_screen(self, world_pos: vec3) -> Union[vec2, None]:
         """
@@ -55,9 +66,12 @@ class Camera(Entity):
             return None
 
         absolute_y = dot(rel, self.up)
-        absolute_x = dot(rel, cross(self.direction, self.up))
+        absolute_x = dot(rel, self.horizontal)
 
-        x = absolute_x / dist * self.screen_dist
-        y = absolute_y / dist * self.screen_dist
+        pos = vec2(
+            absolute_x / dist * self.screen_dist,
+            absolute_y / dist * self.screen_dist,
+        ) + self.screen_size / 2
 
-        return vec2(x, y)
+        print(world_pos, pos)
+        return pos
