@@ -19,6 +19,8 @@ X = vec2(1, 0)
 Y = vec2(1, 0)
 Z = vec3(0, 0, 1)
 
+EPSILON = 0.0001 # for floating point comparisons
+
 # Cleanup so we "could" import * without clutter
 del path
 del vec2

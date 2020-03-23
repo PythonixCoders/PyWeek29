@@ -40,7 +40,7 @@ class Game(State):
         for butterfly in butterflies:
             # scale initial butterfly positions to fill screen
             butterfly.position *= 1 / butterfly.z
-            self.scene.connect(butterfly)
+            self.scene.add(butterfly)
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
