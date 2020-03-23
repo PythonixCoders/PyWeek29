@@ -10,7 +10,7 @@ from glm import vec2
 import functools
 
 # key function to do depth sort
-z_compare = functools.cmp_to_key(lambda a, b: a.get().z > b.get().z)
+z_compare = functools.cmp_to_key(lambda a, b: a.get().z - b.get().z)
 
 
 class Game(State):
@@ -34,6 +34,8 @@ class Game(State):
             for _ in range(nb_butterfly)
         ]
         for butterfly in butterflies:
+            # scale initial butterfly positions to fill screen
+            butterfly.position *= 1/butterfly.z
             self.scene.connect(butterfly)
 
         # connect object to scene
@@ -64,7 +66,7 @@ class Game(State):
         # call update(t) on all scene entities
         self.scene.do(lambda x, t: x.update(t), t)
 
-        self.camera.position = self.camera.position + vec2(t) * 20.0
+        # self.camera.position = self.camera.position + vec2(t) * 1.0
 
         frames = [
             "|",

@@ -101,6 +101,9 @@ class Butterfly(Entity):
         return frames
 
     def update(self, t):
+
+        # move left
+        self.position.x -= t * 20
         self.time += t * 10
 
     def render(self, camera):
