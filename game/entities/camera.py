@@ -74,3 +74,20 @@ class Camera(Entity):
         ) + self.screen_size / 2
 
         return pos
+
+    def rel_to_world(self, rel):
+        """
+        Convert a vector relative to the camera to the world system.
+
+        x axis is increase to the right of the screen
+        y to the top
+        z increases towards the gamer.
+
+        Therefore (0, 0, -100) is 100 pixels in front of the camera
+        and (10, 10, 100) is 10 pixels up and right from the previous
+        """
+
+        return self.position \
+               + rel.x * self.horizontal \
+               + rel.y * self.up \
+               - rel.z * self.direction
