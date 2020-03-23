@@ -2,8 +2,8 @@
 import pygame
 from glm import ivec2
 
-from .game import Game
-from .signal import Signal
+from game.game import Game
+from game.abstract.signal import Signal
 
 
 class App:

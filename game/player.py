@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from .entity import Entity
+from game.abstract.entity import Entity
 
 
 class Player(Entity):
