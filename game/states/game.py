@@ -2,15 +2,15 @@
 import random
 from random import randrange
 
-from glm import vec2, ivec2, vec3
+from glm import vec2, vec3
 
-from game.entities.butterfly import Butterfly, random_color
-from game.entities.camera import Camera
-from game.level import BaseLevelBuilder
-from game.entities.player import Player
 from game.abstract.scene import Scene
 from game.abstract.state import State
+from game.entities.butterfly import Butterfly, random_color
+from game.entities.camera import Camera
+from game.entities.player import Player
 from game.entities.terminal import Terminal
+from game.level import BaseLevelBuilder
 
 
 class Game(State):
@@ -62,24 +62,12 @@ class Game(State):
                 self.level = BaseLevelBuilder().circle(30, 4)
 
         # Move the camera along the z axis
-        self.camera.position.z -= 0.01
+        self.player.position.z -= 0.01
+        self.camera.update_pos(self.player)
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)
-
-        frames = [
-            "|",
-            "\\",
-            "-",
-            "/",
-        ]
-
-
-        self.terminal.write(
-            frames[int(self.time * 10) % len(frames)] * self.terminal.size.x,
-            (0, self.terminal.size.y - 1),
-            "black",
-        )
+        self.update_ground()
 
         self.time += dt
 
@@ -104,9 +92,19 @@ class Game(State):
 
         for pos in positions:
             pos = (1 + vec2(pos)) * self.app.size / 2
-            pos = vec3(*pos, self.camera.position.z + 0.1)
+            pos = vec3(*pos, self.camera.position.z - 2)
             butt = Butterfly(
                 self.app, self.scene, pos, random_color(), randrange(2, 6), 0
             )
 
             self.scene.add(butt)
+
+    def update_ground(self):
+        frames = r"|\-/"
+        frame = frames[int(self.time * 10) % len(frames)]
+
+        self.terminal.write(
+            frame * self.terminal.size.x,
+            (0, self.terminal.size.y - 1),
+            "black",
+        )

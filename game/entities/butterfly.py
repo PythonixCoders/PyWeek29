@@ -60,23 +60,21 @@ class Butterfly(Entity):
         self.time += dt * 10
 
     def render(self, camera):
-        pos = self.position - camera.position  # * self.z ** camera.depth
+        pos, size = camera.world_to_screen(self.position, self.frames[0].get_size())
+        size *= 2
 
         max_fade_dist = 1  # Basically the render distance
-        fade = surf_fader(max_fade_dist, pos.z)
+        fade = surf_fader(max_fade_dist, 2 - camera.position.z + self.position.z)
 
-        if pos.z > 0:
-            frame = pygame.transform.scale(
+        if size.x > 0:
+            self.surf = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
-                ivec2(self.width * pos.z, self.height * pos.z) * 10,
+                ivec2(size)
             )
-            frame_size = frame.get_size()
-            self.surf = pygame.Surface((frame_size[0], frame_size[1]))
 
-            self.surf.blit(frame, (0, 0))
             self.surf.set_alpha(fade)
             self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
 
-        if pos.z > 2:
+        if size.x > 150:
             self.scene.remove(self)
