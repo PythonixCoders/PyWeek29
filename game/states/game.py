@@ -30,7 +30,7 @@ class Game(State):
         # self.camera.slots.append(
         #     self.app.on_event.connect(self.camera.event, weak=True)
         # )
-        # self.app.add_event_listener(self.camera)
+        self.app.add_event_listener(self.player)
 
         self.level = BaseLevelBuilder().uniform(10, 8)
 
@@ -61,8 +61,7 @@ class Game(State):
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
 
-        # Move the camera along the z axis
-        self.player.position.z -= 0.6 * dt
+        # TODO: @flipcoder: isn't there a way with your signals to bind this
         self.camera.update_pos(self.player)
 
         self.spawn(self.level.update(dt))
@@ -91,7 +90,7 @@ class Game(State):
         """
 
         for pos in positions:
-            pos = (1 + vec2(pos)) * self.app.size / 2
+            pos = (1 + vec2(pos)) * self.app.size / 2 + self.camera.position.xy
             pos = vec3(*pos, self.camera.position.z - 2)
             butt = Butterfly(
                 self.app, self.scene, pos, random_color(), randrange(2, 6), 0

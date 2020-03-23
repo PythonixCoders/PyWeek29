@@ -35,24 +35,6 @@ class Entity:
         # self.dirty = True
         self.on_pend()
 
-    def update(self, dt):
-        if self._velocity:
-            self.position += self._velocity * dt  # triggers position setter
-            self.pend()
-
-        if self._life is not None:
-            self._life -= dt
-            if self._life < 0:
-                self.remove()
-
-    def render(self, camera):
-        if not self._surface:
-            return
-        pos, size = camera.world_to_screen(self.position, self._surface.get_size())
-        surf = pygame.transform.scale(self._surface, ivec2(size))
-        size *= 2
-        self.app.screen.blit(surf, ivec2(pos))
-
     @property
     def position(self):
         return self._position
@@ -76,7 +58,7 @@ class Entity:
 
     @property
     def velocity(self):
-        return self.velocity
+        return self._velocity
 
     @velocity.setter
     def velocity(self, v):
@@ -108,6 +90,26 @@ class Entity:
     #     """
 
     #     return False
+
+    def update(self, dt):
+        if self._velocity:
+            self.position += self._velocity * dt  # triggers position setter
+            self.pend()
+
+        if self._life is not None:
+            self._life -= dt
+            if self._life < 0:
+                self.remove()
+
+    def render(self, camera):
+
+        if not self._surface:
+            return
+
+        pos, size = camera.world_to_screen(self.position, self._surface.get_size())
+        size *= 2
+        surf = pygame.transform.scale(self._surface, ivec2(size))
+        self.app.screen.blit(surf, ivec2(pos))
 
     def __del__(self):
         for slot in self.slots:

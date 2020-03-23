@@ -28,7 +28,7 @@ class Butterfly(Entity):
         self.position = pos
 
         self.time = 0
-        self.frame = 0  # @flipcoder, had to change from 0.0 to just 0
+        self.frame = 0
 
     def get_animation(self, color):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -57,6 +57,7 @@ class Butterfly(Entity):
         return frames
 
     def update(self, dt):
+        super().update(dt)
         self.time += dt * 10
 
     def render(self, camera):

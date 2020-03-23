@@ -19,8 +19,6 @@ class Player(Entity):
             pygame.K_RIGHT,
             pygame.K_UP,
             pygame.K_DOWN,
-            pygame.K_SPACE,
-            pygame.K_LSHIFT,
         ]
         self.actionkeys = [pygame.K_RETURN]
         self.dir = [False] * len(self.dirkeys)
@@ -35,7 +33,7 @@ class Player(Entity):
                     self.scene,
                     "butterfly-orange.png",
                     position=self.position,
-                    velocity=-Z,
+                    velocity=-Z*10,
                     life=0.5,
                 )
             )
@@ -55,7 +53,7 @@ class Player(Entity):
             vec3(
                 -self.dir[0] + self.dir[1],
                 -self.dir[2] + self.dir[3],
-                -self.dir[4] + self.dir[5],
+                -1,  # always going forwards
             )
             * self.speed
         )
