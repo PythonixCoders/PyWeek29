@@ -1,7 +1,6 @@
 #!/usr/bin/python
-from glm import vec2
-from .entity import Entity
-from .terminal import Terminal
+
+from game.abstract.entity import Entity
 
 
 class Player(Entity):
@@ -11,12 +10,12 @@ class Player(Entity):
         # self.position = (self.terminal.size.x / 2 - 2, self.terminal.size.y - 2)
         self.score = 0
 
-    def event(self, ev):
-        print(ev)
+    def event(self, event):
+        print(event)
 
-    def update(self, t):
+    def update(self, dt):
         pass
 
-    def render(self, t):
+    def render(self, camera):
         # self.terminal.write("(◕ᴥ◕)", ivec2(self.position), "yellow")
         pass

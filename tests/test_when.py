@@ -4,7 +4,7 @@ import math
 
 sys.path.append("..")
 
-from game.when import When
+from game.abstract.when import When
 
 
 class Counter:
@@ -28,7 +28,7 @@ def test_when():
     assert math.isclose(slot.t, 1)
     assert c.x == 0
     s.update(1)
-    # assert math.isclose(slot.t, 0) # wrap
+    # assert math.isclose(slot.dt, 0) # wrap
     # assert c.x == 1
     # s.update(1)
     # assert c.x == 1

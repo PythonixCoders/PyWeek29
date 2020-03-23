@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 import random
+from random import randrange
 
-import pygame
+from glm import vec2, ivec2, vec3
 
-from .level import BaseLevelBuilder
-from .signal import Signal, Slot
-from .terminal import Terminal
-from .camera import Camera
-from .state import State
-from .player import Player
-from .butterfly import Butterfly, random_color, randrange
-from .constants import *
-from .scene import Scene
-from glm import vec2, ivec2
+from game.entities.butterfly import Butterfly, random_color
+from game.entities.camera import Camera
+from game.level import BaseLevelBuilder
+from game.entities.player import Player
+from game.abstract.scene import Scene
+from game.abstract.state import State
+from game.entities.terminal import Terminal
 
 
 class Game(State):
@@ -51,10 +49,10 @@ class Game(State):
         # self.dirty = True
         self.app.pend()  # tell app we need to update
 
-    def update(self, t):
+    def update(self, dt):
         """
         Called every frame by App as long as Game is the current app.state
-        :param t: time since last frame in seconds
+        :param dt: time since last frame in seconds
         """
 
         if self.level.is_over():
@@ -63,11 +61,11 @@ class Game(State):
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
 
-        self.camera.z -= 0.01
+        # Move the camera along the z axis
+        self.camera.position.z -= 0.01
 
-        self.scene.update(t)
-        self.spawn(self.level.update(t))
-        # self.camera.position = self.camera.position + vec2(t) * 1.0
+        self.spawn(self.level.update(dt))
+        self.scene.update(dt)
 
         frames = [
             "|",
@@ -76,7 +74,6 @@ class Game(State):
             "/",
         ]
 
-        # self.terminal.write('(◕ᴥ◕)', (0,self.terminal.size.y-2), 'yellow')
 
         self.terminal.write(
             frames[int(self.time * 10) % len(frames)] * self.terminal.size.x,
@@ -84,7 +81,7 @@ class Game(State):
             "black",
         )
 
-        self.time += t
+        self.time += dt
 
     def render(self):
         """
@@ -107,11 +104,9 @@ class Game(State):
 
         for pos in positions:
             pos = (1 + vec2(pos)) * self.app.size / 2
+            pos = vec3(*pos, self.camera.position.z + 0.1)
             butt = Butterfly(
-                self.app, self.scene, ivec2(pos), random_color(), randrange(2, 6), 0
+                self.app, self.scene, pos, random_color(), randrange(2, 6), 0
             )
 
-            # scale initial butterfly positions to fill screen
-            butt.z = self.camera.z + 0.1
-            # butt.position *= 1 / butt.z
             self.scene.add(butt)

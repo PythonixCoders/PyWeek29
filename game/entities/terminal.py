@@ -1,10 +1,11 @@
 #!/usr/bin/python
-import pygame
 
-# from pygame.locals import *
 import random
-from .entity import Entity
-from glm import ivec2, vec2, ivec4
+
+import pygame
+from glm import ivec2, ivec4
+
+from game.abstract.entity import Entity
 
 
 class Terminal(Entity):
@@ -104,7 +105,7 @@ class Terminal(Entity):
                 )
                 self.write(chr(random.randint(32, 126)), (x, y), col)
 
-    def update(self, t):
+    def update(self, dt):
 
         pass
 
@@ -135,4 +136,4 @@ class Terminal(Entity):
 
             self.dirty = False
 
-        self.app.screen.blit(self.surface, -ivec2(*camera.position))
+        self.app.screen.blit(self.surface, -ivec2(*camera.position.xy))

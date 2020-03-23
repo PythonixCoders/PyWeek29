@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from glm import ivec2
 
 
 class State:
@@ -7,7 +6,7 @@ class State:
         self.app = app
         self.state = state  # parent state
 
-    def update(self, t):
+    def update(self, dt):
         pass
 
     def render(self):

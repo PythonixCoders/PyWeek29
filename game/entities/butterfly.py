@@ -1,36 +1,11 @@
-from random import random, randrange
-from colorsys import rgb_to_hsv, hsv_to_rgb
 from os import path
 
 import pygame
 from glm import ivec2
 
-from game.constants import SPRITES_DIR, ORANGE, BACKGROUND
-from .entity import Entity
-from .util import *
-
-
-def rgb2hsv(r, g, b):
-    """Conversion between rgb in range 0-255 to hsv"""
-    return rgb_to_hsv(r / 255, g / 255, b / 255)
-
-
-def hsv2rgb(h, s, v):
-    """Conversion between hsv to rgb in range 0-255"""
-    s = clamp(s)
-    v = clamp(v)
-
-    r, g, b = hsv_to_rgb(h % 1, s, v)
-    return (
-        int(r * 255),
-        int(g * 255),
-        int(b * 255),
-    )
-
-
-def random_color():
-    """Random RGB color of the rainbow"""
-    return hsv2rgb(random(), 1, 1)
+from game.constants import SPRITES_DIR, ORANGE
+from game.abstract.entity import Entity
+from game.util import *
 
 
 class Butterfly(Entity):
@@ -44,13 +19,8 @@ class Butterfly(Entity):
         :param color: RGB tuple
         :param scale:
         """
-        print(scene)
-        if scene is None:
-            raise ValueError
-        super().__init__(app, scene)
-        self.scale = scale
 
-        self.z = self.scale / self.DEFAULT_SCALE
+        super().__init__(app, scene)
 
         self.num = num
 
@@ -83,32 +53,22 @@ class Butterfly(Entity):
             image.subsurface((self.width * i, 0, self.width, self.height))
             for i in range(self.NB_FRAMES)
         ]
-        # frames = [
-        #     pygame.transform.scale(fra, (self.width * self.scale, self.height * self.scale))
-        #     for fra in frames
-        # ]
 
         return frames
 
-    def update(self, t):
-
-        # move right
-        # self.position.x += t * 20
-        self.time += t * 10
+    def update(self, dt):
+        self.time += dt * 10
 
     def render(self, camera):
-        # print(self.z)
         pos = self.position - camera.position  # * self.z ** camera.depth
-        # pos = self.position
 
-        dz = self.z - camera.z
         max_fade_dist = 1  # Basically the render distance
-        fade = surf_fader(max_fade_dist, dz)
+        fade = surf_fader(max_fade_dist, pos.z)
 
-        if dz > 0:
+        if pos.z > 0:
             frame = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES],
-                ivec2(self.width * dz, self.height * dz) * 10,
+                ivec2(self.width * pos.z, self.height * pos.z) * 10,
             )
             frame_size = frame.get_size()
             self.surf = pygame.Surface((frame_size[0], frame_size[1]))
@@ -118,5 +78,5 @@ class Butterfly(Entity):
             self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
 
-        if dz > 2:
+        if pos.z > 2:
             self.scene.remove(self)
