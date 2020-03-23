@@ -1,14 +1,11 @@
-from random import random, randrange
-from colorsys import rgb_to_hsv, hsv_to_rgb
 from os import path
 
 import pygame
 from glm import ivec2
 
-from game.constants import SPRITES_DIR, ORANGE, BACKGROUND
+from game.constants import SPRITES_DIR, ORANGE
 from .entity import Entity
 from .util import *
-
 
 
 class Butterfly(Entity):
