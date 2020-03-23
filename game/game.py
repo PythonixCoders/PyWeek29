@@ -90,5 +90,11 @@ class Game(State):
         Called every frame by App as long as Game is the current app.state
         """
 
-        self.scene.render(self.camera)
-    
+        # if not self.dirty:
+        #     return
+        # self.dirty = False
+
+        self.app.screen.fill(BACKGROUND)
+
+        # call render(camera) on all scene entities
+        self.scene.do(lambda x, cam: x.render(cam), self.camera)
