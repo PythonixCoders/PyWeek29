@@ -4,8 +4,8 @@ import sys
 sys.path.append("..")
 
 import math
-from game.abstract.entity import Entity
-from game.abstract.signal import Signal
+from game.base.entity import Entity
+from game.util.signal import Signal
 import glm
 
 
@@ -28,5 +28,4 @@ def test_entity():
 
     assert math.isclose(e.position.x, 1)
     assert math.isclose(e.position.y, 2)
-    assert isinstance(e.position, glm.vec2)
-    assert math.isclose(e.z, 3)
+    assert isinstance(e.position, glm.vec3)

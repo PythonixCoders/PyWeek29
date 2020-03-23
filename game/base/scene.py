@@ -2,8 +2,8 @@
 
 import pygame
 import functools
-from game.abstract.signal import Signal
-from game.abstract.when import When
+from game.util.signal import Signal
+from game.util.when import When
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -18,7 +18,7 @@ class Scene(Signal):
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slots.append(slot)
-        if hasattr(entity,'event'):
+        if hasattr(entity, "event"):
             entity.slots.append(self.app.add_event_listener(entity))
         return entity
 

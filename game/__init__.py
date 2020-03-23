@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from game.abstract.app import App
+from game.app import App
 from game.states.game import Game
 
 

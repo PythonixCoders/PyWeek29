@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 from glm import vec3, vec2
 
-from game.abstract.entity import Entity
+from game.base.entity import Entity
 
 
 class Camera(Entity):
     """
     A camera whose position is the center of the screen
     """
+
+    def __init__(self, app, scene):
+        super().__init__(app, scene)
 
     def update_pos(self, player):
         """Set the camera position to have the player in center"""

@@ -4,7 +4,7 @@ import math
 
 sys.path.append("..")
 
-from game.abstract.when import When
+from game.util.when import When
 
 
 class Counter:

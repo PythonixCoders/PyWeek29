@@ -4,8 +4,8 @@ import pygame
 from glm import ivec2
 
 from game.constants import SPRITES_DIR, ORANGE
-from game.abstract.entity import Entity
-from game.util import *
+from game.base.entity import Entity
+from game.util.util import *
 
 
 class Butterfly(Entity):
@@ -68,8 +68,7 @@ class Butterfly(Entity):
 
         if size.x > 0:
             self.surf = pygame.transform.scale(
-                self.frames[int(self.time + self.num) % self.NB_FRAMES],
-                ivec2(size)
+                self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(size)
             )
 
             self.surf.set_alpha(fade)
