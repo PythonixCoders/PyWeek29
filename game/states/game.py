@@ -4,13 +4,13 @@ from random import randrange
 
 from glm import vec2, ivec2
 
-from game.butterfly import Butterfly, random_color
-from game.camera import Camera
+from game.entities.butterfly import Butterfly, random_color
+from game.entities.camera import Camera
 from game.level import BaseLevelBuilder
-from game.player import Player
+from game.entities.player import Player
 from game.abstract.scene import Scene
 from game.abstract.state import State
-from game.terminal import Terminal
+from game.entities.terminal import Terminal
 
 
 class Game(State):
