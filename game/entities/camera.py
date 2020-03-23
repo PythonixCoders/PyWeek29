@@ -73,5 +73,4 @@ class Camera(Entity):
             absolute_y / dist * self.screen_dist,
         ) + self.screen_size / 2
 
-        print(world_pos, pos)
         return pos

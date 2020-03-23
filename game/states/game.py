@@ -60,7 +60,6 @@ class Game(State):
                 self.level = BaseLevelBuilder().uniform(10, 5)
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
-        print(len(self.level.spawn))
 
         # TODO: @flipcoder: isn't there a way with your signals to bind this
         self.camera.update_pos(self.player)
