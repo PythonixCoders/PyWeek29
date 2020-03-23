@@ -8,6 +8,7 @@ class Slot:
         self.func = func
         self.sig = weakref.ref(sig)
         self.once = False
+        self.count = 0
 
     def __call__(self, *args):
         func = self.func
@@ -17,8 +18,9 @@ class Slot:
                 self.disconnect()
                 return None
         r = func(*args)
+        self.count += 1
         if self.once:
-            self.disconnect(self)
+            self.disconnect()
         return r
 
     def with_item(self, action, *args):
@@ -100,14 +102,18 @@ class Signal:
                     continue
             s.with_slot(func, *args)
 
-    def once(self, func):
+    def once(self, func, weak=True):
         if self.blocked:
-            self.queued.append(lambda func=func: self.once(func))
+            self.queued.append(lambda func=func: self.once(func, weak))
             return None
 
         slot = Slot(func, self)
         slot.once = True
-        self.slots.append(slot)
+        if weak:
+            wslot = weakref.ref(slot) if weak else slot
+        else:
+            wslot = slot
+        self.slots.append(wslot)
         return slot
 
     def connect(self, func, weak=True):

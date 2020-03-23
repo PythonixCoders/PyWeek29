@@ -28,10 +28,8 @@ class When(Signal):
                 self.sig.disconnect(sig)
                 return
         
-        print(slot.t)
         slot.t -= t
         while slot.t <= EPSILON:
-            print('boom')
             slot()
             if slot.once:
                 slot.disconnect() # queued
@@ -58,7 +56,7 @@ class When(Signal):
         """
         Every t amount of time, call func
         """
-        slot = self.once(func, weak=weak)
+        slot = super().once(func, weak)
         slot.start_t = t
         slot.t = slot.start_t
         return slot
