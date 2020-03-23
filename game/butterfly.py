@@ -105,7 +105,7 @@ class Butterfly(Entity):
 
     def render(self, camera):
 
-        pos = (self.position - camera.position) * self.z
+        pos = (self.position - camera.position) * (self.z ** camera.depth)
         
         self.app.screen.blit(
             self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(pos)
