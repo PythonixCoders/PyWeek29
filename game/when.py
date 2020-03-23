@@ -30,23 +30,23 @@ class When(Signal):
                 return
 
         slot.t -= t
-        
+
         if slot.fade:
-            print(t)
-            print((self.start_t - slot.t) / slot.start_t)
-            slot(min(1,(self.start_t - slot.t) / slot.start_t))
+            # print((self.start_t - slot.t) / slot.start_t)
+            # slot(min(1,(self.start_t - slot.t) / slot.start_t))
+            slot(0)  # TODO: not yet impl
             if slot.t < EPSILON:
-                slot.disconnect() # queued
+                slot.disconnect()  # queued
                 return
         else:
             # not a fade
             while slot.t < EPSILON:
                 slot()
                 if slot.once:
-                    slot.disconnect() # queued
+                    slot.disconnect()  # queued
                     break
-                slot.t += slot.start_t # wrap
-    
+                slot.t += slot.start_t  # wrap
+
     def update(self, t, *args):
         """
         Advance time by t
@@ -73,7 +73,7 @@ class When(Signal):
         slot.t = slot.start_t
         slot.fade = False
         return slot
- 
+
     def fade(self, t, func, weak=True):
         """
         Every t amount of time, call func with fade value [0,1] fade value
