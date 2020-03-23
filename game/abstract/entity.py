@@ -14,19 +14,20 @@ class Entity:
         self._position = vec3(0)
         self._velocity = vec3(0)
         self.on_pend = Signal()
-        self.dirty = True
+        # self.dirty = True
         self.slots = []
 
     def pending(self):
         return self.dirty
 
     def pend(self):
-        self.dirty = True
+        # self.dirty = True
         self.on_pend()
 
     def update(self, dt):
         if self._velocity:
             self.position += self._velocity * dt  # triggers position setter
+            self.pend()
 
     def render(self, camera):
         pass
@@ -50,6 +51,7 @@ class Entity:
             raise ValueError
 
         self._position = vec3(*v)
+        self.pend()
 
     @property
     def velocity(self):

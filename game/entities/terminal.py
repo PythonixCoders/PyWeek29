@@ -69,7 +69,7 @@ class Terminal(Entity):
         # we use indices instead of .x .y since pos could be tuple/list
         self.terminal[pos[1]][pos[0]] = None
         self.dirty_line[pos[1]] = True
-        self.pend()
+        self.dirty = True
 
     def write(self, text, pos, color=(255,255,255,0)):
 
@@ -93,7 +93,7 @@ class Terminal(Entity):
             self.font.render(text, True, self.shadow_color)
         )
         self.dirty_line[pos[1]] = True
-        self.pend()
+        self.dirty = True
 
     def scramble(self):
         """

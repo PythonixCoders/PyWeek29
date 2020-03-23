@@ -62,7 +62,7 @@ class Game(State):
                 self.level = BaseLevelBuilder().circle(30, 4)
 
         # Move the camera along the z axis
-        self.player.position.z -= 0.01
+        self.player.position.z -= 0.6 * dt
         self.camera.update_pos(self.player)
 
         self.spawn(self.level.update(dt))
