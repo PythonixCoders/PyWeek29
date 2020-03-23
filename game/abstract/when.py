@@ -10,7 +10,7 @@ class When(Signal):
         super().__init__()
         self.time = 0
 
-    def update_slot(self, slot, t):
+    def update_slot(self, slot, dt):
         """
         Does timer checking on a specific slot
         """
@@ -26,11 +26,11 @@ class When(Signal):
                 self.sig.disconnect(sig)
                 return
 
-        slot.t -= t
+        slot.t -= dt
 
         if slot.fade:
-            # print((self.start_t - slot.t) / slot.start_t)
-            # slot(min(1,(self.start_t - slot.t) / slot.start_t))
+            # print((self.start_t - slot.dt) / slot.start_t)
+            # slot(min(1,(self.start_t - slot.dt) / slot.start_t))
             slot(0)  # TODO: not yet impl
             if slot.t < EPSILON:
                 slot.disconnect()  # queued
@@ -44,16 +44,17 @@ class When(Signal):
                     break
                 slot.t += slot.start_t  # wrap
 
-    def update(self, t, *args):
+    def update(self, dt, *args):
         """
-        Advance time by t
+        Advance time by dt
         """
-        self.time += t
-        super().each_slot(lambda slot: self.update_slot(slot, t))
+        self.time += dt
+        super().each_slot(lambda slot: self.update_slot(slot, dt))
 
     def every(self, t, func, weak=True):
         """
-        Every t amount of time, call func
+        Every t seconds, call func.
+        The first call is in t seconds.
         """
         slot = self.connect(func, weak=weak)
         slot.start_t = t
@@ -63,7 +64,7 @@ class When(Signal):
 
     def once(self, t, func, weak=True):
         """
-        Every t amount of time, call func
+        Once after t seconds of time, call func
         """
         slot = super().once(func, weak)
         slot.start_t = t
@@ -73,7 +74,7 @@ class When(Signal):
 
     def fade(self, t, func, weak=True):
         """
-        Every t amount of time, call func with fade value [0,1] fade value
+        Every t seconds, call func with fade value [0,1] fade value
         """
         slot = super().once(func, weak)
         slot.start_t = t

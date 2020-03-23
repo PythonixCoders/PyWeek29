@@ -6,7 +6,7 @@ class State:
         self.app = app
         self.state = state  # parent state
 
-    def update(self, t):
+    def update(self, dt):
         pass
 
     def render(self):

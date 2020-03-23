@@ -28,10 +28,10 @@ class Entity:
         self.dirty = True
         self.on_pend()
 
-    def update(self, t):
+    def update(self, dt):
         if self._velocity or self._velocity_z:
-            self.position += self._velocity * t  # triggers position setter
-            self.z += self._velocity_z * t
+            self.position += self._velocity * dt  # triggers position setter
+            self.z += self._velocity_z * dt
 
     def render(self, camera):
         pass
@@ -74,7 +74,7 @@ class Entity:
     def remove(self):
         self.scene.disconnect(self)
 
-    def event(self, ev):
+    def event(self, event):
         # return True if the event was handled
         return False
 

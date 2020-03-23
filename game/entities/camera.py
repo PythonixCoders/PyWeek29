@@ -25,11 +25,11 @@ class Camera(Entity):
 
         self.speed = 1000
 
-    def event(self, ev):
-        if ev.type == pygame.KEYUP or ev.type == pygame.KEYDOWN:
+    def event(self, event):
+        if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
             for i in range(len(self.keys)):
-                if self.keys[i] == ev.key:
-                    self.dir[i] = True if ev.type == pygame.KEYDOWN else False
+                if self.keys[i] == event.key:
+                    self.dir[i] = True if event.type == pygame.KEYDOWN else False
 
         self.velocity = (
             vec3(
@@ -41,6 +41,6 @@ class Camera(Entity):
         )
         self._velocity_z = self._velocity_z / 1000.0
 
-    def update(self, t):
-        super().update(t)
+    def update(self, dt):
+        super().update(dt)
         # print(self.position)
