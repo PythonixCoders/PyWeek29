@@ -15,7 +15,6 @@ class Level:
         :param dt: time of the frame
         :return: list of y positions between -1 and 1
         """
-        print(self.time)
         self.time += dt
 
         spawns = []
@@ -54,7 +53,6 @@ class BaseLevelBuilder:
 
     def build(self):
         level =  Level(self._spawns)
-        print(self._spawns)
         # So that we can use the same builder multiple times
         self.__init__()
         return level
