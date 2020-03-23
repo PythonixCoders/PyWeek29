@@ -1,5 +1,6 @@
 import random
 from collections import namedtuple, deque
+from math import cos, sin, pi
 
 Spawn = namedtuple("Spawn", ["x", "y", "time"])
 
@@ -43,14 +44,14 @@ class BaseLevelBuilder:
 
         self._spawns.append(Spawn(x, y, self._t))
 
-    def pause(self, milliseconds):
+    def pause(self, duration):
         """
-        Spawn nothing for the given time.
+        Spawn nothing for the given duration.
 
-        Next spawn will be exactly after `milliseconds` milliseconds.
+        Next spawn will be exactly after `duration` seconds.
         """
 
-        self._t += milliseconds / 1000
+        self._t += duration
 
     def build(self):
         level = Level(self._spawns)
@@ -63,7 +64,7 @@ class BaseLevelBuilder:
 
         for i in range(n):
             self.spawn(random.uniform(-1, 1), random.uniform(-1, 1))
-            self.pause(1000 * duration / n)
+            self.pause(duration / n)
 
         return self.build()
 
@@ -71,5 +72,13 @@ class BaseLevelBuilder:
         """Spawn n butterflies in an horizontal line"""
         for i in range(n):
             self.spawn(-1 + 2 * i / n, 0)
+
+        return self.build()
+
+    def circle(self, n, duration) -> Level:
+        for i in range(n):
+            angle = i / n * pi * 2
+            self.spawn(cos(angle), sin(angle))
+            self.pause(duration / n)
 
         return self.build()

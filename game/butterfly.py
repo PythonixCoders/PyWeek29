@@ -44,6 +44,9 @@ class Butterfly(Entity):
         :param color: RGB tuple
         :param scale:
         """
+        print(scene)
+        if scene is None:
+            raise ValueError
         super().__init__(app, scene)
         self.scale = scale
 
@@ -114,3 +117,6 @@ class Butterfly(Entity):
             self.surf.set_alpha(fade)
             self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
+
+        if dz > 2:
+            self.scene.remove(self)

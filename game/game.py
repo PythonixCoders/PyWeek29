@@ -58,10 +58,12 @@ class Game(State):
         """
 
         if self.level.is_over():
-            if random.random() < 0.9:
+            if random.random() < 0.5:
                 self.level = BaseLevelBuilder().uniform(10, 5)
             else:
-                self.level = BaseLevelBuilder().wall(10)
+                self.level = BaseLevelBuilder().circle(30, 4)
+
+        self.camera.z -= 0.01
 
         self.scene.update(t)
         self.spawn(self.level.update(t))
@@ -101,7 +103,7 @@ class Game(State):
         for pos in positions:
             pos = (1 + vec2(pos)) * self.app.size / 2
             butt = Butterfly(
-                self.app, self.state, ivec2(pos), random_color(), randrange(2, 6), 0
+                self.app, self.scene, ivec2(pos), random_color(), randrange(2, 6), 0
             )
 
             # scale initial butterfly positions to fill screen
