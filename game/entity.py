@@ -41,8 +41,13 @@ class Entity:
         """
         Sets position of our entity, which controls where it appears in
             our scene.
-        :param v: unpackable type (vec2, tuple, list)
+        :param v: unpackable type (vec2, tuple, list), or 3D vec w/ z for scale
         """
+        # 3d vec sets scale
+        if len(v) == 3:
+            self._position = vec2(v[0], v[1])
+            self.z = v[2]
+            return
 
         self._position = vec2(*v)
 

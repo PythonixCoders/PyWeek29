@@ -45,7 +45,7 @@ def random_color():
 
 class Butterfly(Entity):
     NB_FRAMES = 4
-    DEFAULT_SCALE=5
+    DEFAULT_SCALE = 5
 
     def __init__(self, app, scene, color=ORANGE, scale=DEFAULT_SCALE, num=0):
         """
@@ -56,7 +56,7 @@ class Butterfly(Entity):
         """
         super().__init__(app, scene)
         self.scale = scale
-        
+
         self.z = self.scale / self.DEFAULT_SCALE
 
         self.num = num
@@ -109,7 +109,7 @@ class Butterfly(Entity):
     def render(self, camera):
 
         pos = (self.position - camera.position) * (self.z ** camera.depth)
-        
+
         self.app.screen.blit(
             self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(pos)
         )

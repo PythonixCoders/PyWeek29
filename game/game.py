@@ -35,7 +35,7 @@ class Game(State):
         ]
         for butterfly in butterflies:
             # scale initial butterfly positions to fill screen
-            butterfly.position *= 1/butterfly.z
+            butterfly.position *= 1 / butterfly.z
             self.scene.connect(butterfly)
 
         # connect object to scene

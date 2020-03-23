@@ -48,6 +48,9 @@ class Signal:
         self.blocked = 0
         self.queued = []
 
+    def __len__(self):
+        return len(self.slots)
+
     def __call__(self, *args):
 
         self.blocked += 1
@@ -137,39 +140,3 @@ class Signal:
 
         self.slots = sorted(self.slots, key=lambda x: key(x))
         return self
-
-
-if __name__ == "__main__":
-    s = Signal()
-    hello = s.connect(lambda: print("hello ", end=""))
-    s.connect(lambda: print("world"))
-    assert len(s.slots) == 2
-    s()  # 'hello world'
-    assert s.disconnect(hello)
-    s()  # 'world'
-    assert len(s.slots) == 1
-    s.clear()
-    assert len(s.slots) == 0
-
-    # queued connection
-    s.blocked += 1
-    a = s.connect(lambda: print("queued"))
-    assert len(s.queued) == 1
-    s()  # nothing
-    s.blocked -= 1
-    for slot in s.queued:
-        slot()
-    s.queued = []
-    s()  # "queued"
-
-    # queued disconnection
-    s.blocked += 1
-    a.disconnect()
-    assert len(s.slots) == 1  # still attached
-    assert len(s.queued) == 1
-    s.blocked -= 1
-    assert len(s.slots) == 1
-    for q in s.queued:
-        q()
-    s.queued = []
-    assert len(s.slots) == 0

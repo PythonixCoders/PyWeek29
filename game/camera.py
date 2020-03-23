@@ -7,4 +7,3 @@ class Camera(Entity):
     def __init__(self, app, scene):
         super().__init__(app, scene)
         self.depth = 1.5
-
