@@ -66,6 +66,7 @@ class Butterfly(Entity):
             randrange(10, self.app.size.x - 13 * scale),
             randrange(10, self.app.size.y - 13 * scale),
         )
+        # print(self.position)
 
         self.time = 0
         self.frame = 0.0
@@ -86,30 +87,39 @@ class Butterfly(Entity):
         image.set_palette(palette)
         image.set_colorkey((1, 0, 1))  # index 0
 
-        width = image.get_width() // self.NB_FRAMES
-        height = image.get_height()
+        self.width = image.get_width() // self.NB_FRAMES
+        self.height = image.get_height()
 
         frames = [
-            image.subsurface((width * i, 0, width, height))
+            image.subsurface((self.width * i, 0, self.width, self.height))
             for i in range(self.NB_FRAMES)
         ]
-        frames = [
-            pygame.transform.scale(fra, (width * self.scale, height * self.scale))
-            for fra in frames
-        ]
+        # frames = [
+        #     pygame.transform.scale(fra, (self.width * self.scale, self.height * self.scale))
+        #     for fra in frames
+        # ]
 
         return frames
 
     def update(self, t):
 
-        # move left
-        self.position.x -= t * 20
+        # move right
+        # self.position.x += t * 20
         self.time += t * 10
 
     def render(self, camera):
+        
+        # print(self.z)
+        # pos = (self.position - camera.position) * self.z ** camera.depth
+        pos = self.position
 
-        pos = (self.position - camera.position) * (self.z ** camera.depth)
+        dz = self.z - camera.z
 
-        self.app.screen.blit(
-            self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(pos)
-        )
+        if dz > 0:
+            frame = pygame.transform.scale(
+                self.frames[int(self.time + self.num) % self.NB_FRAMES],
+                ivec2(self.width * dz , self.height * dz) * 10
+            )
+            self.app.screen.blit(
+                frame, ivec2(pos)
+            )

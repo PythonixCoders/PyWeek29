@@ -6,6 +6,7 @@ from .camera import Camera
 from .state import State
 from .player import Player
 from .butterfly import Butterfly, random_color, randrange
+from .constants import *
 from glm import vec2
 import functools
 
@@ -25,6 +26,7 @@ class Game(State):
         # self.terminal.scramble()
 
         self.camera = Camera(app, self.scene)
+        self.camera.position = -self.app.size/2
         self.player = Player(app, self.scene)
 
         # spawn some Butterflies
@@ -46,8 +48,12 @@ class Game(State):
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
 
+        # self.camera.position = app.size/2
+
         self.time = 0
         # self.dirty = True
+        self.camera.position = Z
+        self.camera.velocity = -Z / 10
 
     def pend(self):
 
