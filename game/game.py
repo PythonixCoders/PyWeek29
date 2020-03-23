@@ -7,27 +7,23 @@ from .state import State
 from .player import Player
 from .butterfly import Butterfly, random_color, randrange
 from .constants import *
+from .scene import Scene
 from glm import vec2
-import functools
-
-# key function to do depth sort
-z_compare = functools.cmp_to_key(lambda a, b: a.get().z - b.get().z)
-
-
+    
 class Game(State):
     def __init__(self, app, state=None):
 
         super().__init__(app, state)
 
-        self.scene = Signal()
+        self.scene = Scene(self.app)
 
-        self.terminal = Terminal(self.app, self.scene)
+        self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # self.terminal.write(u'|ф|', (10,10), 'white')
         # self.terminal.scramble()
 
-        self.camera = Camera(app, self.scene)
+        self.camera = self.scene.add(Camera(app, self.scene))
         # self.camera.position = -self.app.size / 2
-        self.player = Player(app, self.scene)
+        self.player = self.scene.add(Player(app, self.scene))
 
         # control the camera
         # self.camera.slots.append(
@@ -44,12 +40,7 @@ class Game(State):
         for butterfly in butterflies:
             # scale initial butterfly positions to fill screen
             butterfly.position *= 1 / butterfly.z
-            self.scene.connect(butterfly)
-
-        # connect object to scene
-        self.scene.connect(self.terminal)
-        self.scene.connect(self.camera)
-        self.scene.connect(self.player)
+            self.scene.add(butterfly)
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
@@ -72,11 +63,7 @@ class Game(State):
         :param t: time since last frame in seconds
         """
 
-        # self.scene.sort(lambda a, b: a.z < b.z)
-        self.scene.slots = sorted(self.scene.slots, key=z_compare)
-
-        # call update(t) on all scene entities
-        self.scene.do(lambda x, t: x.update(t), t)
+        self.scene.update(t)
 
         # self.camera.position = self.camera.position + vec2(t) * 1.0
 

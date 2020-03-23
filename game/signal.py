@@ -8,6 +8,7 @@ class Slot:
         self.func = func
         self.sig = weakref.ref(sig)
         self.once = False
+        self.count = 0
 
     def __call__(self, *args):
         func = self.func
@@ -17,17 +18,26 @@ class Slot:
                 self.disconnect()
                 return None
         r = func(*args)
+        self.count += 1
         if self.once:
-            self.disconnect(self)
+            self.disconnect()
         return r
 
-    def do(self, action, *args):
+    def with_item(self, action, *args):
         func = self.func
         if isinstance(func, weakref.ref):
             func = func()
             if not func:
                 return None
         return action(func, *args)
+
+    def with_slot(self, action, *args):
+        func = self.func
+        if isinstance(func, weakref.ref):
+            func = func()
+            if not func:
+                return None
+        return action(self, *args)
 
     def disconnect(self):
         sig = self.sig()
@@ -72,25 +82,41 @@ class Signal:
                 func()
             self.queued = []
 
-    def do(self, func, *args):
+    def each(self, func, *args):
         if self.blocked:
             self.queued.append(lambda func=func, args=args: self.do(func, *args))
             return None
 
-        for slot in self.slots:
-            slot.do(func, *args)
+        for s in self.slots:
+            s.with_item(func, *args)
 
-    def once(self, func):
+    def each_slot(self, func, *args):
         if self.blocked:
-            self.queued.append(lambda func=func: self.once(func))
+            self.queued.append(lambda func=func, args=args: self.do(func, *args))
+            return None
+
+        for s in self.slots:
+            if isinstance(s, weakref.ref):
+                s = s()
+                if not s:
+                    continue
+            s.with_slot(func, *args)
+
+    def once(self, func, weak=True):
+        if self.blocked:
+            self.queued.append(lambda func=func: self.once(func, weak))
             return None
 
         slot = Slot(func, self)
         slot.once = True
-        self.slots.append(slot)
+        if weak:
+            wslot = weakref.ref(slot) if weak else slot
+        else:
+            wslot = slot
+        self.slots.append(wslot)
         return slot
 
-    def connect(self, func, weak=False):
+    def connect(self, func, weak=True):
 
         if self.blocked:
             # if we're blocked, then queue the call
@@ -131,7 +157,6 @@ class Signal:
                 if self.slots[i] is wref:
                     del self.slots[i]
                     return True
-
         elif isinstance(slot, Slot):
             # remove slot
             for i in range(len(self.slots)):
@@ -139,12 +164,26 @@ class Signal:
                     del self.slots[i]
                     return True
         else:
-            # remove slot with slot==func
+            # delete by slot value
+            value = slot
             for i in range(len(self.slots)):
-                if self.slots[i].func is slot:
+                func = self.slots[i].func
+                # if isinstance(value, weakref.ref):
+                #     wref = slot
+                #     = value()
+                #     if not slot:
+                #         return self.disconnect(wref)
+                # func = slot.func
+                # if isinstance(func, weakref.ref):
+                #     wref = func
+                #     func_unpacked = func()
+                #     if not func:
+                #         return self.disconnect(wref)
+                if func is value:
                     del self.slots[i]
                     return True
-            return False
+                
+        return False
 
     def clear(self):
         if self.blocked:

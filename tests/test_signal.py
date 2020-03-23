@@ -9,9 +9,8 @@ from game.signal import Signal
 def test_signal():
 
     s = Signal()
-    hello = s.connect(lambda: print("hello ", end=""))
-
-    s.connect(lambda: print("world"))
+    hello = s.connect(lambda: print("hello ", end=""), weak=False)
+    s.connect(lambda: print("world"), weak=False)
     assert len(s) == 2
     s()  # 'hello world'
 
@@ -28,7 +27,7 @@ def test_signal_queue():
     # queued connection
     s = Signal()
     s.blocked += 1
-    a = s.connect(lambda: print("queued"))
+    a = s.connect(lambda: print("queued"), weak=False)
     assert len(s.queued) == 1
     s()  # nothing
     s.blocked -= 1
@@ -52,7 +51,7 @@ def test_signal_queue():
 def test_signal_weak():
 
     s = Signal()
-    w = s.connect(lambda: print("test"), weak=True)
+    w = s.connect(lambda: print("test"))
     del w
     assert len(s) == 1
     s()
@@ -64,3 +63,4 @@ def test_signal_weak():
     del s  # slot outlives signal?
     assert w.sig() == None  # it works
     del w
+ 

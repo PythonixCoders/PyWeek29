@@ -4,7 +4,7 @@ import pygame
 # from pygame.locals import *
 import random
 from .entity import Entity
-from glm import ivec2, vec2
+from glm import ivec2, vec2, ivec4
 
 
 class Terminal(Entity):
@@ -40,6 +40,8 @@ class Terminal(Entity):
         self.surface = pygame.Surface(
             self.app.size, pygame.SRCALPHA, 32
         ).convert_alpha()
+        
+        self.bg_color = ivec4(255,255,255,0)
 
     def clear(self, pos=None):
         """
@@ -119,7 +121,7 @@ class Terminal(Entity):
 
                 # clear line
                 self.surface.fill(
-                    (255, 255, 255, 0),
+                    self.bg_color,
                     (0, y * self.font_size.y, self.app.size.x, self.font_size.y),
                 )
 
