@@ -20,6 +20,6 @@ class Ship(Player):
         rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
 
         dir = sign(self.velocity.xy)
-        rect.center += dir * (10, 10)
+        rect.center += dir * (10, -10)
 
         self.app.screen.blit(transformed, rect)
