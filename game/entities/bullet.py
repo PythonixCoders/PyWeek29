@@ -15,4 +15,4 @@ class Bullet(Entity):
 
     def update(self, t):
         super().update(t)
-        print(self.position)
+        # print(self.position)
