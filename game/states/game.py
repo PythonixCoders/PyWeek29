@@ -4,6 +4,7 @@ from random import randrange
 
 from glm import vec2, vec3
 
+from game.constants import GROUND_HEIGHT
 from game.entities.ground import Ground
 from game.scene import Scene
 from game.base.state import State
@@ -22,7 +23,7 @@ class Game(State):
         self.scene = Scene(self.app)
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.scene.add(Ground(app, self.scene, -300))
+        self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Ship(app, self.scene))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # control the camera
@@ -36,8 +37,6 @@ class Game(State):
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
-
-        # self.camera.position = app.size/2
 
         self.time = 0
 
@@ -71,7 +70,7 @@ class Game(State):
         """
 
         # Render Player's Score
-        score_display = "Score: {}".format(self.camera.position)
+        score_display = "Score: {}".format(self.player.position - self.camera.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
 
