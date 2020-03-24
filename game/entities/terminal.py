@@ -129,7 +129,7 @@ class Terminal(Entity):
                 # clear line
                 self.surface.fill(
                     self.bg_color,
-                    (0, y * self.font_size.y, self.app.size.x, self.font_size.y),
+                    (0, y * self.font_size.y-3, self.app.size.x+6, self.font_size.y+6),
                 )
 
                 for x in range(len(self.terminal[y])):

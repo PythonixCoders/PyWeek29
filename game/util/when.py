@@ -84,4 +84,3 @@ class When(Signal):
         slot.fade = True
         # slot.ease = ease
         return slot
-

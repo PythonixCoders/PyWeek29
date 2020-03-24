@@ -74,6 +74,9 @@ class App:
         obj.slots.append(slot)
         return slot
 
+    def keys(self):
+        return pygame.key.get_pressed()
+        
     def update(self, dt):
         """
         Called every frame to update our game logic

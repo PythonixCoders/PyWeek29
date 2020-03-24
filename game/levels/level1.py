@@ -7,15 +7,14 @@
 # This is a generator.  Using a busy loop will halt the game.
 
 
-def script(app, scene, resume):
+def script(app, scene):
     when = scene.when
-    
-    yield when.once(1.0, resume)
+    resume = scene.resume
 
-    msg = 'Welcome to Butterfly Destroyers!'
-    for i in range(len(msg)):
-        app.state.terminal.write(msg[i], (i,0), 'red')
-        yield scene.sleep(0.1)
+    # msg = "Welcome to Butterfly Destroyers!"
+    # for i in range(len(msg)):
+    #     app.state.terminal.write(msg[i], (i, 0), "red")
+    #     yield scene.sleep(0.1)
 
     # print("level")
     # yield when.once(0.3, resume)
@@ -34,4 +33,3 @@ def script(app, scene, resume):
 
     # print("3")
     # yield when.once(0.3, resume)
-
