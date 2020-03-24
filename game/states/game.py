@@ -23,8 +23,8 @@ class Game(State):
 
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.player = self.scene.add(Ship(app, self.scene))
         self.scene.add(Ground(app, self.scene, -300))
+        self.player = self.scene.add(Ship(app, self.scene))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # control the camera
         self.app.add_event_listener(self.player)
@@ -41,9 +41,6 @@ class Game(State):
         # self.camera.position = app.size/2
 
         self.time = 0
-        # self.dirty = True
-        # self.camera.position = Z
-        # self.camera.velocity = -Z / 10
 
     def pend(self):
 
@@ -64,7 +61,6 @@ class Game(State):
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)
-        self.update_ground()
 
         # Camera Movement
         edge = vec3(250, 100, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
@@ -116,14 +112,3 @@ class Game(State):
             )
 
             self.scene.add(butt)
-
-    def update_ground(self):
-        pass
-        # frames = r"|\-/"
-        # frame = frames[int(self.time * 10) % len(frames)]
-
-        # self.terminal.write(
-        #     frame * self.terminal.size.x,
-        #     (0, self.terminal.size.y - 1),
-        #     "black",
-        # )

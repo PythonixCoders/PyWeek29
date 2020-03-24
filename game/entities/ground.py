@@ -11,7 +11,7 @@ from game.util.util import plane_intersection, line_segment_intersection
 class Ground(Entity):
     def __init__(self, app, scene, height):
         super().__init__(app, scene)
-        self.position = vec3(0, height, 0)
+        self.position = vec3(0, height, float('-inf'))
 
     def render(self, camera: Camera):
         super().render(camera)
