@@ -9,7 +9,6 @@ class When(Signal):
     def __init__(self):
         super().__init__()
         self.time = 0
-        self.conditions = Signal()
 
     def update_slot(self, slot, dt):
         """
@@ -85,3 +84,4 @@ class When(Signal):
         slot.fade = True
         # slot.ease = ease
         return slot
+
