@@ -31,9 +31,9 @@ class Game(State):
 
         self.level = BaseLevelBuilder().uniform(10, 8)
 
-        self.camera.slots.append(
-            self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
-        )
+        # self.camera.slots.append(
+        #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
+        # )
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
@@ -65,6 +65,26 @@ class Game(State):
         self.spawn(self.level.update(dt))
         self.scene.update(dt)
         self.update_ground()
+
+        # Camera Movement
+        edge = vec3(350, 200, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
+        cam_speed = vec3(0, 0, 0)
+
+        if self.player.position.x < edge.x:
+            cam_speed += vec3(-10, 0, 0)
+            self.player.position.x = edge.x
+        elif self.player.position.x > self.app.size.x - edge.x:
+            cam_speed += vec3(10, 0, 0)
+            self.player.position.x = self.app.size.x - edge.x
+
+        if self.player.position.y < edge.y:
+            cam_speed += vec3(0, -10, 0)
+            self.player.position.y = edge.y
+        elif self.player.position.y > self.app.size.y - edge.y:
+            cam_speed += vec3(0, 10, 0)
+            self.player.position.y = self.app.size.y - edge.y
+
+        self.camera.move(cam_speed)
 
         self.time += dt
 
