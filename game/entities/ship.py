@@ -6,12 +6,13 @@ import pygame
 
 
 class Ship(Player):
-    def __init__(self, app, scene, speed=vec3(250, 250, 100)):
+    def __init__(self, app, scene, speed=vec3(300, 300, 2)):
         super().__init__(app, scene, speed)
         path = os.path.join(SPRITES_DIR, "ship.png")
         self.img = self.app.load(path, lambda: pygame.image.load(path))
 
         self.position = vec3(self.app.size.x / 2, self.app.size.y - 100, 0)
+        self.rect = pygame.Rect(0, 0, 0, 0)
 
     def render(self, camera):
         scale = (100, 100)

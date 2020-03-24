@@ -67,21 +67,22 @@ class Game(State):
         self.update_ground()
 
         # Camera Movement
-        edge = vec3(350, 200, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
-        cam_speed = vec3(0, 0, 0)
+        edge = vec3(250, 100, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
+        cam_speed = vec3(0, 0, -self.player.speed.z)
+        spd = 5
 
         if self.player.position.x < edge.x:
-            cam_speed += vec3(-10, 0, 0)
+            cam_speed += vec3(-spd, 0, 0)
             self.player.position.x = edge.x
         elif self.player.position.x > self.app.size.x - edge.x:
-            cam_speed += vec3(10, 0, 0)
+            cam_speed += vec3(spd, 0, 0)
             self.player.position.x = self.app.size.x - edge.x
 
         if self.player.position.y < edge.y:
-            cam_speed += vec3(0, -10, 0)
+            cam_speed += vec3(0, -spd, 0)
             self.player.position.y = edge.y
         elif self.player.position.y > self.app.size.y - edge.y:
-            cam_speed += vec3(0, 10, 0)
+            cam_speed += vec3(0, spd, 0)
             self.player.position.y = self.app.size.y - edge.y
 
         self.camera.move(cam_speed)
