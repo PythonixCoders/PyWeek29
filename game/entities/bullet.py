@@ -8,13 +8,13 @@ from glm import vec3
 
 
 class Bullet(Entity):
-    def __init__(self, app, scene, parent, position=vec3(0)):
+    def __init__(self, app, scene, position=vec3(0), velocity=None):
         super().__init__(
             app,
             scene,
             "bullet.png",
             position = position,
-            velocity = parent.velocity + (-Z * 4000),
+            velocity = (velocity or (-Z * 4000)),
             life=1
         )
 

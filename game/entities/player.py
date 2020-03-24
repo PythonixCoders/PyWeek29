@@ -30,7 +30,6 @@ class Player(Entity):
         self.scene.add(Bullet(
             self.app,
             self.scene,
-            self,
             self.position + self.fire_offset
         ))
 
