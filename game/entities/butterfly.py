@@ -64,7 +64,7 @@ class Butterfly(Entity):
 
     def render(self, camera: Camera):
         pos = camera.world_to_screen(self.position)
-        bottomleft = self.position + vec3(self.width, self.height, 0)
+        bottomleft = self.position + vec3(self.width, -self.height, 0)
         pos_bl = camera.world_to_screen(bottomleft)
 
         if None in (pos, pos_bl):

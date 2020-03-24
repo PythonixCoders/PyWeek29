@@ -51,7 +51,5 @@ class Ground(Entity):
                 poly.append(a)
 
         if len(poly) > 2:
-            print(poly)
             poly = [tuple(camera.world_to_screen(p)) for p in poly]
-            print(poly)
             pygame.draw.polygon(self.app.screen, GREEN, poly)

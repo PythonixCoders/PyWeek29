@@ -50,7 +50,7 @@ class Player(Entity):
         self.velocity = (
             vec3(
                 -self.dir[0] + self.dir[1],
-                -self.dir[2] + self.dir[3],
+                -self.dir[3] + self.dir[2],
                 -1,  # always going forwards
             )
             * self.speed

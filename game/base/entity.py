@@ -110,7 +110,7 @@ class Entity:
         #         pos_bl = camera.world_to_screen(bottomleft)
         #         size = pos_bl.xy - pos.xy
         #         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
-        bottomleft = self.position + vec3(*self._surface.get_size(), 0)
+        bottomleft = self.position + vec3(self._surface.get_width(), self._surface.get_height(), 0)
         pos_bl = camera.world_to_screen(bottomleft)
 
         if None in (pos, pos_bl):

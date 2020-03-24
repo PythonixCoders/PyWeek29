@@ -24,7 +24,7 @@ class Game(State):
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.player = self.scene.add(Ship(app, self.scene))
-        self.scene.add(Ground(app, self.scene, -100))
+        self.scene.add(Ground(app, self.scene, -300))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # control the camera
         self.app.add_event_listener(self.player)
@@ -68,25 +68,24 @@ class Game(State):
 
         # Camera Movement
         edge = vec3(250, 100, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
-        cam_speed = vec3(0, 0, -self.player.speed.z)
-        spd = 5
+        cam_speed = vec3(0, 0, self.player.velocity.z)
+        spd = self.player.velocity
 
         if self.player.position.x < edge.x:
-            cam_speed += vec3(-spd, 0, 0)
+            cam_speed += vec3(spd.x, 0, 0)
             self.player.position.x = edge.x
         elif self.player.position.x > self.app.size.x - edge.x:
-            cam_speed += vec3(spd, 0, 0)
+            cam_speed += vec3(spd.x, 0, 0)
             self.player.position.x = self.app.size.x - edge.x
 
         if self.player.position.y < edge.y:
-            cam_speed += vec3(0, -spd, 0)
+            cam_speed += vec3(0, spd.y, 0)
             self.player.position.y = edge.y
         elif self.player.position.y > self.app.size.y - edge.y:
-            cam_speed += vec3(0, spd, 0)
+            cam_speed += vec3(0, spd.y, 0)
             self.player.position.y = self.app.size.y - edge.y
 
-        self.camera.move(cam_speed)
-
+        self.camera.velocity = cam_speed
         self.time += dt
 
     def render(self):

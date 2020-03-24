@@ -6,7 +6,7 @@ import pygame
 
 
 class Ship(Player):
-    def __init__(self, app, scene, speed=vec3(300, 300, 2)):
+    def __init__(self, app, scene, speed=vec3(300, 300, 200)):
         super().__init__(app, scene, speed)
         path = os.path.join(SPRITES_DIR, "ship.png")
         self.img = self.app.load(path, lambda: pygame.image.load(path))

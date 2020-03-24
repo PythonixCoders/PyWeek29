@@ -43,16 +43,6 @@ class Camera(Entity):
     def horizontal(self):
         return cross(self.direction, self.up)
 
-    def move(self, speed):
-        """
-        Move the camera
-        
-        Arguments:
-            speed {vec3} -- How much to move the camera by.
-        """
-        
-        self.position += speed
-
     def update_pos(self, player):
         """Set the camera position to have the player in center"""
 
@@ -85,6 +75,8 @@ class Camera(Entity):
             )
             + self.screen_size / 2
         )
+
+        pos.y = self.screen_size.y - pos.y
 
         return pos
 
