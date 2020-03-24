@@ -133,8 +133,8 @@ class Entity:
             surf.set_colorkey(0)
             self.app.screen.blit(surf, ivec2(pos))
 
-        if size.x > 150:
-            self.scene.remove(self)
+        # if size.x > 150:
+        #     self.scene.remove(self)
 
     def __del__(self):
         for slot in self.slots:
