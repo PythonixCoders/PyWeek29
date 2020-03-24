@@ -23,7 +23,10 @@ Y = glm.vec2(1, 0)
 Z = glm.vec3(0, 0, 1)
 
 EPSILON = 0.0001  # for floating point comparisons
-FULL_FOG_DISTANCE = 1.3
+GROUND_HEIGHT = -300
+PLAYER_SPEED = glm.vec3(300, 300, 200)
+SCREEN_DIST = 3000
+FULL_FOG_DISTANCE = 3.3
 """
 Distance at which we see nothing behing the screen camera.
 If the screen is 1000px from the camera, everything at 1300px will

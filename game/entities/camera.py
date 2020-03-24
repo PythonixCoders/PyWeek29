@@ -5,7 +5,7 @@ from typing import Union
 from glm import dot, cross, vec3, vec2, normalize, rotate
 
 from game.base.entity import Entity
-from game.constants import EPSILON
+from game.constants import EPSILON, SCREEN_DIST
 
 
 class Camera(Entity):
@@ -23,7 +23,7 @@ class Camera(Entity):
         position: vec3 = None,
         direction: vec3 = None,
         up: vec3 = None,
-        screen_dist: float = 1000,
+        screen_dist: float = SCREEN_DIST,
     ):
         if up is None:
             up = vec3(0, 1, 0)
