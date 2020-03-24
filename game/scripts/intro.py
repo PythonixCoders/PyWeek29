@@ -2,6 +2,7 @@
 import pygame.mixer
 
 def script(app, scene):
+    terminal = app.state.terminal
 
     scene.sky_color = "black"
     typ = pygame.mixer.Sound('data/sounds/type.wav')
@@ -14,9 +15,9 @@ def script(app, scene):
 
 
     while True:
-        app.state.terminal.write('Press any key to continue', (0,2), "white")
+        terminal.write('Press any key to continue', (0,2), "white")
         yield scene.sleep(0.2)
-        app.state.terminal.clear(2)
+        terminal.clear(2)
         yield scene.sleep(0.2)
         
         keys = app.keys()
@@ -24,4 +25,5 @@ def script(app, scene):
             break
     
     scene.sky_color = "white"
+    terminal.clear()
 

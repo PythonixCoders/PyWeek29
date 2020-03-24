@@ -19,7 +19,7 @@ class Scene(Signal):
         self.paused = False
         self.script_slots = []
         local = {}
-        exec(open(path.join("game/levels/", script + ".py")).read(), globals(), local)
+        exec(open(path.join("game/scripts/", script + ".py")).read(), globals(), local)
         self.script = local["script"](self.app, self)
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
