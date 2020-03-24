@@ -9,12 +9,9 @@ from game.states.intro import Intro
 
 
 class App:
-    
-    STATES = {
-        'intro': Intro,
-        'game': Game
-    }
-    
+
+    STATES = {"intro": Intro, "game": Game}
+
     def __init__(self, initial_state):
         """
         The main beginning of our application.
@@ -85,7 +82,7 @@ class App:
 
     def keys(self):
         return pygame.key.get_pressed()
-        
+
     def update(self, dt):
         """
         Called every frame to update our game logic
@@ -125,4 +122,3 @@ class App:
             self.state = self.STATES[s.lower()](self)
             return
         self._state = s
-
