@@ -19,7 +19,7 @@ class Scene(Signal):
         self.paused = False
         self.script_slots = []
         self.script = level1.script(self.app, self, lambda: self.resume())
-        self._sky_color = pygame.Color('lightblue')
+        self._sky_color = pygame.Color("lightblue")
 
     def add(self, entity):
         slot = self.connect(entity, weak=False)
@@ -31,11 +31,11 @@ class Scene(Signal):
     def sky_color(self, c):
         if isinstance(c, float):
             c = int(c * 255)
-            self._sky_color = Color(c,c,c,0)
+            self._sky_color = Color(c, c, c, 0)
             return
-        
+
         self._sky_color = Color(*c)
-    
+
     def remove(self, entity):
         return self.disconnect(entity)
 
@@ -46,14 +46,14 @@ class Scene(Signal):
 
         # do time-based events
         self.when.update(dt)
-        
+
         # run script
         if not self.paused:
             try:
                 a = next(self.script)
                 self.script_slots.append(a)
             except StopIteration:
-                print('Level Finished')
+                print("Level Finished")
             self.paused = True
             # self.app.state = None # 'menu'
 
@@ -69,4 +69,3 @@ class Scene(Signal):
 
         # call render on each entity
         self.each(lambda x: x.render(camera))
-

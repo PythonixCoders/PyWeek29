@@ -14,4 +14,3 @@ class Bullet(Entity):
 
     def render(self, camera):
         pass
-

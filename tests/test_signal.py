@@ -64,11 +64,11 @@ def test_signal_weak():
     assert w.sig() == None  # it works
     del w
 
+
 def test_signal_once():
-    
+
     s = Signal()
     w = s.once(lambda: print("test"))
     assert len(s.slots) == 1
     s()
     # assert len(s.slots) == 0
-

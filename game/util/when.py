@@ -4,6 +4,7 @@ import weakref
 from game.util.signal import Signal
 from game.constants import EPSILON
 
+
 class When(Signal):
     def __init__(self):
         super().__init__()
@@ -30,15 +31,15 @@ class When(Signal):
 
         if slot.fade:
             # (slot.start_t - slot.t) / slot.start_ht
-            print('............')
+            print("............")
             slot.t = max(0, slot.t)
-            print('dt ', dt)
-            print('slot.t', slot.t)
+            print("dt ", dt)
+            print("slot.t", slot.t)
             # print('slot.start.t =', slot.start_t)
             # print('slot.t =', slot.t)
             # print('=', 1 - (slot.t / slot.start_t))
             p = 1 - (slot.t / slot.start_t)
-            print('p ', p)
+            print("p ", p)
             slot(p)
             if slot.t < EPSILON:
                 slot.disconnect()  # queued
@@ -85,4 +86,3 @@ class When(Signal):
         slot.fade = True
         slot.ease = ease
         return slot
-

@@ -84,7 +84,7 @@ class Signal:
             for func in self.queued:
                 func()
             self.queued = []
-    
+
     def each(self, func, *args):
         if self.blocked:
             self.queued.append(lambda func=func, args=args: self.do(func, *args))
@@ -94,7 +94,7 @@ class Signal:
         for s in self.slots:
             s.with_item(func, *args)
         self.blocked -= 1
-        
+
         self.refresh()
 
     def each_slot(self, func, *args):
@@ -110,7 +110,7 @@ class Signal:
                     continue
             s.with_slot(func, *args)
         self.blocked -= 1
-        
+
         self.refresh()
 
     def connect(self, func, weak=True, once=False):
@@ -139,7 +139,7 @@ class Signal:
         wslot = weakref.ref(slot) if weak else slot
         self.slots.append(wslot)
         return slot
-    
+
     def once(self, func, weak=True):
         return self.connect(func, weak, True)
 
@@ -148,7 +148,6 @@ class Signal:
             self.queued.append(lambda: self.disconnect(slot))
             return None
 
-            
         if isinstance(slot, weakref.ref):
             # try to remove weak reference
             wref = slot
@@ -221,4 +220,3 @@ class Signal:
 
     def __del__(self):
         self.clear()
-

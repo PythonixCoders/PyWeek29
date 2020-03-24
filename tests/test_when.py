@@ -18,6 +18,7 @@ class Counter:
             return
         self.x += 1
 
+
 def test_when():
 
     c = Counter()
@@ -51,6 +52,7 @@ def test_once():
     assert len(s) == 0
     assert slot.count == 1
 
+
 def test_when_fade():
 
     c = Counter()
@@ -60,24 +62,24 @@ def test_when_fade():
 
     s.update(0.2)
 
-    assert math.isclose(c.x, .2)
-    
+    assert math.isclose(c.x, 0.2)
+
+
 def test_when_fade2():
-    
+
     c = Counter()
     s = When()
-    
+
     s.fade(1, lambda t: c.increment(t), None, weak=False)
-    
+
     s.update(0.1)
-    
+
     assert abs(c.x - 0.1) < EPSILON
-    
+
     s.update(0.1)
-    
+
     assert abs(c.x - 0.2) < EPSILON
-    
+
     # s.update(0.8)
 
     # assert math.isclose(c.x, .5)
-
