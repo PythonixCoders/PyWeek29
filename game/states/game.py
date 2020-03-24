@@ -61,9 +61,9 @@ class Game(State):
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
 
-        self.camera.slots.append(self.player.on_move.connect(lambda:
-            self.camera.update_pos(self.player)
-        ))
+        self.camera.slots.append(
+            self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
+        )
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)

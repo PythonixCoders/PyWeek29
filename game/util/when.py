@@ -4,6 +4,7 @@ import weakref
 from game.util.signal import Signal
 from game.constants import EPSILON
 
+
 class When(Signal):
     def __init__(self):
         super().__init__()
@@ -26,19 +27,12 @@ class When(Signal):
                 self.sig.disconnect(sig)
                 return
 
-        slot.t -= dt
+        if slot.start_t != 0:  # not infinite timer
+            slot.t -= dt
 
         if slot.fade:
-            # (slot.start_t - slot.t) / slot.start_ht
-            print('............')
-            slot.t = max(0, slot.t)
-            print('dt ', dt)
-            print('slot.t', slot.t)
-            # print('slot.start.t =', slot.start_t)
-            # print('slot.t =', slot.t)
-            # print('=', 1 - (slot.t / slot.start_t))
-            p = 1 - (slot.t / slot.start_t)
-            print('p ', p)
+            slot.t = max(0.0, slot.t)
+            p = 1.0 - (slot.t / slot.start_t)
             slot(p)
             if slot.t < EPSILON:
                 slot.disconnect()  # queued
@@ -51,21 +45,26 @@ class When(Signal):
                 if slot.once:
                     slot.disconnect()  # queued
                     return
+                if slot.start_t == 0:
+                    break
                 slot.t += slot.start_t  # wrap
 
-    def update(self, dt, *args):
+    def update(self, dt):
         """
         Advance time by dt
         """
         self.time += dt
         super().each_slot(lambda slot: self.update_slot(slot, dt))
 
+    def __call__(self, dt):
+        return self.update(self, dt)
+
     def every(self, t, func, weak=True, once=False):
         """
         Every t seconds, call func.
         The first call is in t seconds.
         """
-        slot = self.connect(func, weak=weak)
+        slot = self.connect(func, weak)
         slot.t = slot.start_t = float(t)
         slot.fade = False
         slot.ease = None
@@ -75,14 +74,15 @@ class When(Signal):
     def once(self, t, func, weak=True):
         return self.every(t, func, weak, True)
 
-    def fade(self, t, func, ease=None, weak=True):
+    def fade(self, length, func, ease=None, weak=True):
         """
         Every frame, call function with fade value [0,1] fade value
         End will be 0
         """
-        slot = super().once(func, weak)
-        slot.t = slot.start_t = float(t)
+        # slot = super().once(func, weak)
+        # slot = super().connect(func, weak)
+        slot = self.every(0, func, weak)
+        slot.start_t = slot.t = float(length)
         slot.fade = True
-        slot.ease = ease
+        # slot.ease = ease
         return slot
-

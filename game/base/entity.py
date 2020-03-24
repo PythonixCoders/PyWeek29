@@ -108,10 +108,10 @@ class Entity:
             return
 
         pos = camera.world_to_screen(self.position)
-#         bottomleft = self.position.xy + vec3(self.position.xy, 0)
-#         pos_bl = camera.world_to_screen(bottomleft)
-#         size = pos_bl.xy - pos.xy
-#         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
+        #         bottomleft = self.position.xy + vec3(self.position.xy, 0)
+        #         pos_bl = camera.world_to_screen(bottomleft)
+        #         size = pos_bl.xy - pos.xy
+        #         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
         bottomleft = self.position + vec3(*self._surface.get_size(), 0)
         pos_bl = camera.world_to_screen(bottomleft)
 
