@@ -24,5 +24,10 @@ def script(app, scene):
         if any(keys):
             break
 
-    scene.sky_color = "white"
-    terminal.clear()
+    # scene.sky_color = "white"
+    # terminal.clear()
+
+    # yield scene.sleep(1)
+
+    app.state = "game"
+    
