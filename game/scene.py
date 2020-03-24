@@ -20,7 +20,8 @@ class Scene(Signal):
         self.script_slots = []
         self.script = level1.script(self.app, self, lambda: self.resume())
         self._sky_color = pygame.Color("lightblue")
-
+        self.dt = 0
+    
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slots.append(slot)
@@ -46,6 +47,9 @@ class Scene(Signal):
 
         # do time-based events
         self.when.update(dt)
+        
+        # scripts needs this
+        self.dt = dt
 
         # run script
         if not self.paused:
