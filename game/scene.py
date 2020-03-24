@@ -22,6 +22,9 @@ class Scene(Signal):
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
     
+    def sleep(self, t):
+        return self.when.once(t, self.resume)
+        
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slots.append(slot)

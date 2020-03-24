@@ -15,7 +15,7 @@ def script(app, scene, resume):
     msg = 'Welcome to Butterfly Destroyers!'
     for i in range(len(msg)):
         app.state.terminal.write(msg[i], (i,0), 'red')
-        yield when.once(0.05, resume)
+        yield scene.sleep(0.1)
 
     # print("level")
     # yield when.once(0.3, resume)
