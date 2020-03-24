@@ -131,7 +131,7 @@ class Entity:
 
             surf.set_alpha(fade)
             surf.set_colorkey(0)
-            self.app.screen.blit(surf, ivec2(pos))
+            self.app.screen.blit(surf, ivec2(pos - size/2))
 
         # if size.x > 150:
         #     self.scene.remove(self)
