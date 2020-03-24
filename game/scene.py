@@ -16,7 +16,7 @@ class Scene(Signal):
         super().__init__()
         self.app = app
         self.when = When()
-        self.paused = False
+        self.script_paused = False
         self.script_slots = []
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
@@ -31,6 +31,7 @@ class Scene(Signal):
 
         self.script_key_down = [False] * self.app.MAX_KEYS # keys pressed since last script yield
         self.script_key_up = [False] * self.app.MAX_KEYS # keys released since last script yield
+        self.script_resume_condition = None
 
         # The below wrapper is just to keep the interface the same with signal
         # on_collision.connect -> on_collision_connect
@@ -66,6 +67,8 @@ class Scene(Signal):
         return entity
 
     def key(self, k):
+        if isinstance(k, str):
+            return self.script_key_down[ord(k)]
         return self.script_key_down[k]
     
     def key_up(self, k):
@@ -104,7 +107,7 @@ class Scene(Signal):
         return self.disconnect(entity)
 
     def resume(self):
-        self.paused = False
+        self.script_paused = False
 
     def event(self, ev):
         if ev.type == pygame.KEYDOWN:
@@ -120,17 +123,29 @@ class Scene(Signal):
         # scripts needs this
         self.dt = dt
 
-        # run script
-        if not self.paused:
+        if self.script_resume_condition:
+            if self.script_resume_condition():
+                self.script_paused = False
+                
+        # continue running script (until yield or end)
+        if self._script and not self.script_paused:
             try:
+                
                 self.inside_script = True
                 slot = next(self._script)
                 self.inside_script = False
                 
-                self.script_slots.append(slot)
+                if isinstance(slot, Slot):
+                    self.script_slots.append(slot)
+                else:
+                    self.script_resume_condition = slot
+                    if self.script_resume_condition:
+                        if not self.script_resume_condition():
+                            self.script_paused = True
+                
             except StopIteration:
                 print("Level Finished")
-            self.paused = True
+            self.script_paused = True
             # self.app.state = None # 'menu'
             self.script_key_down = [False] * self.app.MAX_KEYS
 
