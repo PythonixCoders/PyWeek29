@@ -4,9 +4,18 @@ from glm import ivec2
 
 from game.util.signal import Signal
 
+from game.states.game import Game
+from game.states.intro import Intro
+
 
 class App:
-    def __init__(self, initial_state_class):
+    
+    STATES = {
+        'intro': Intro,
+        'game': Game
+    }
+    
+    def __init__(self, initial_state):
         """
         The main beginning of our application.
         Initializes pygame and the initial state.
@@ -25,7 +34,7 @@ class App:
         self.time = 0
         self.dirty = True
 
-        self.state = initial_state_class(self)
+        self.state = initial_state
 
     def load(self, filename, resource_func):
         """
@@ -105,3 +114,15 @@ class App:
         self.state.render()
 
         pygame.display.update()
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, s):
+        if isinstance(s, str):
+            self.state = self.STATES[s.lower()](self)
+            return
+        self._state = s
+

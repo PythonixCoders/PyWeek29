@@ -57,7 +57,7 @@ class Terminal(Entity):
 
         if pos is None:  # clear whole screen
             for x in range(self.size[1]):
-                self.clear(pos[1])
+                self.clear(x)
             return
 
         # if pos is int, clear that terminal row
@@ -129,7 +129,12 @@ class Terminal(Entity):
                 # clear line
                 self.surface.fill(
                     self.bg_color,
-                    (0, y * self.font_size.y-3, self.app.size.x+6, self.font_size.y+6),
+                    (
+                        0,
+                        y * self.font_size.y - 3,
+                        self.app.size.x + 6,
+                        self.font_size.y + 6,
+                    ),
                 )
 
                 for x in range(len(self.terminal[y])):

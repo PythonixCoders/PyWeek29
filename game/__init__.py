@@ -6,9 +6,8 @@ from game.states.intro import Intro
 
 
 def main():
-    if sys.argv and sys.argv[-1] == "intro":
-        return App(Intro).run()
-    return App(Game).run()
+    state = sys.argv[-1] if len(sys.argv)>=2 else 'game'
+    return App(state).run()
 
 
 if __name__ == "__main__":
