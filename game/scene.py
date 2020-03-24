@@ -21,8 +21,16 @@ class Scene(Signal):
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
         self.script_fn = script
+        self.event_slot = self.app.on_event.connect(self.event, weak=True)
+
+        # Is True while the script is not yielding
+        # Useful for checking assert for script-only functions
+        self.inside_script = False
 
         self.script = script  # (this calls script() property)
+
+        self.script_key_down = [False] * self.app.MAX_KEYS # keys pressed since last script yield
+        self.script_key_up = [False] * self.app.MAX_KEYS # keys released since last script yield
 
     @property
     def script(self):
@@ -42,6 +50,24 @@ class Scene(Signal):
         if hasattr(entity, "event"):
             entity.slots.append(self.app.add_event_listener(entity))
         return entity
+
+    def key(self, k):
+        return self.script_key_down[k]
+    
+    def key_up(self, k):
+        return self.script_key_up[k]
+        
+    def keys(self):
+        # if we're in a script: return keys since last script yield
+        assert self.inside_script
+        
+        return self.script_key_down
+
+    def keys_up(self):
+        # if we're in a script: return released keys since last script yield
+        assert self.inside_script
+        
+        return self.script_key_up
 
     @property
     def sky_color(self):
@@ -66,6 +92,12 @@ class Scene(Signal):
     def resume(self):
         self.paused = False
 
+    def event(self, ev):
+        if ev.type == pygame.KEYDOWN:
+            self.script_key_down[ev.key] = True
+        elif ev.type == pygame.KEYUP:
+            self.script_key_up[ev.key] = True # don't fix -- correct
+        
     def update(self, dt):
 
         # do time-based events
@@ -77,19 +109,23 @@ class Scene(Signal):
         # run script
         if not self.paused:
             try:
-                a = next(self._script)
-                self.script_slots.append(a)
+                self.inside_script = True
+                slot = next(self._script)
+                self.inside_script = False
+                
+                self.script_slots.append(slot)
             except StopIteration:
                 print("Level Finished")
             self.paused = True
             # self.app.state = None # 'menu'
+            self.script_key_down = [False] * self.app.MAX_KEYS
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)
-
+        
     def render(self, camera):
         # call render(camera) on all scene entities
         self.app.screen.fill(self._sky_color)

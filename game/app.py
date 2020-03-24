@@ -11,6 +11,7 @@ from game.states.intro import Intro
 class App:
 
     STATES = {"intro": Intro, "game": Game}
+    MAX_KEYS = 512
 
     def __init__(self, initial_state):
         """
@@ -30,6 +31,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.time = 0
         self.dirty = True
+        self.keys = [False] * self.MAX_KEYS
 
         self.state = initial_state
 
@@ -64,6 +66,10 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
+                elif event.type == pygame.KEYDOWN:
+                    self.keys[event.key] = True
+                elif event.type == pygame.KEYDOWN:
+                    self.keys[event.key] = False
                 self.on_event(event)
 
             if self.state is None:
@@ -79,9 +85,6 @@ class App:
         slot = self.on_event.connect(obj.event, weak=True)
         obj.slots.append(slot)
         return slot
-
-    def keys(self):
-        return pygame.key.get_pressed()
 
     def update(self, dt):
         """
