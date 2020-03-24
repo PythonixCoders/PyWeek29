@@ -48,10 +48,8 @@ class Entity:
             print("Entity:", self)
             raise ValueError
 
-        old_pos = v
         self._position = vec3(*v)
-        if v != old_pos:
-            self.on_move()
+        self.on_move()
 
     @property
     def velocity(self):

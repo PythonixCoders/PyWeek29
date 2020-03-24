@@ -18,18 +18,27 @@ class Scene(Signal):
         self.when = When()
         self.paused = False
         self.script_slots = []
-        local = {}
-        exec(open(path.join("game/scripts/", script + ".py")).read(), globals(), local)
-        self.script = local["script"](self.app, self)
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
+        self.script_fn = script
+        
+        self.script = script # (this calls script() property)
 
+    @property
+    def script(self):
+        return self.script_fn
+
+    @script.setter
+    def script(self, script):
+        local = {}
+        exec(open(path.join("game/scripts/", script + ".py")).read(), globals(), local)
+        self._script = local["script"](self.app, self)
+    
     def sleep(self, t):
         return self.when.once(t, self.resume)
 
     def add(self, entity):
-        slot = self.connect(entity, weak=False)
-        entity.slots.append(slot)
+        self.slots.append(self.connect(entity, weak=False))
         if hasattr(entity, "event"):
             entity.slots.append(self.app.add_event_listener(entity))
         return entity
@@ -68,7 +77,7 @@ class Scene(Signal):
         # run script
         if not self.paused:
             try:
-                a = next(self.script)
+                a = next(self._script)
                 self.script_slots.append(a)
             except StopIteration:
                 print("Level Finished")

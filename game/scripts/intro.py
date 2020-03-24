@@ -26,4 +26,3 @@ def script(app, scene):
 
     scene.sky_color = "white"
     terminal.clear()
-    app.state = "game"

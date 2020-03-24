@@ -27,12 +27,13 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
 
         # control the camera
-        # self.camera.slots.append(
-        #     self.app.on_event.connect(self.camera.event, weak=True)
-        # )
         self.app.add_event_listener(self.player)
 
         self.level = BaseLevelBuilder().uniform(10, 8)
+
+        self.camera.slots.append(
+            self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
+        )
 
         # when camera moves, set our dirty flag to redraw
         # self.camera.on_pend.connect(self.pend)
@@ -60,10 +61,6 @@ class Game(State):
                 self.level = BaseLevelBuilder().uniform(10, 5)
             else:
                 self.level = BaseLevelBuilder().circle(30, 4)
-
-        self.camera.slots.append(
-            self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
-        )
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)
