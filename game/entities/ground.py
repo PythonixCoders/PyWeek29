@@ -1,6 +1,7 @@
+import pygame
 from glm import vec3, normalize
 
-from game.constants import FULL_FOG_DISTANCE
+from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.camera import Camera
 
 from game.base.entity import Entity
@@ -8,7 +9,6 @@ from game.util.util import plane_intersection, line_segment_intersection
 
 
 class Ground(Entity):
-
     def __init__(self, app, scene, height):
         super().__init__(app, scene)
         self.position = vec3(0, height, 0)
@@ -16,34 +16,42 @@ class Ground(Entity):
     def render(self, camera: Camera):
         super().render(camera)
 
-        # we try to find the intersection between the ground plane (y=height)
-        # and the cutscreen (parallel to the screen but at max view distance
-        # this intersection is a line and we will paint everything bellow in green
-        cutscreen_center = camera.direction * camera.screen_size * FULL_FOG_DISTANCE
-        p, d = plane_intersection(cutscreen_center, camera.direction, self.position, vec3(0, 1, 0))
+        # We check whether each corner of the screen is behind the ground
+        world_center = camera.direction * camera.screen_dist * FULL_FOG_DISTANCE + camera.position
+        world_width = camera.screen_size.x * camera.horizontal * FULL_FOG_DISTANCE
+        world_height = camera.screen_size.y * camera.up * FULL_FOG_DISTANCE
 
-        # a and b are two points where the horizon passe in the screen
-        a = camera.world_to_screen(p)
-        b = camera.world_to_screen(p + 1000*d)
-        assert a != b
-        u = b - a
+        # World points corresponding to screen corners
+        wtl = world_center - world_width / 2 - world_height / 2
+        wtr = wtl + world_width
+        wbl = wtl + world_height
+        wbr = wtr + world_height
+        points = [wtl, wtr, wbr, wbl]
 
-        # We find the intersection of the horizon and the border of the screen
-        w, h = camera.screen_size
-        tl = (0, 0)
-        tr = (w, 0)
-        bl = (0, h)
-        br = (w, h)
-        # Some of them will be None
-        left = line_segment_intersection(tl, bl, a, u)
-        right = line_segment_intersection(tr, br, a, u)
-        top = line_segment_intersection(tl, tr, a, u)
-        bottom = line_segment_intersection(bl, br, a, u)
+        upsidedown = camera.position.y < self.position.y
+        bellow_ground = [
+            (p.y < self.position.y) != (upsidedown)
+            # and camera.distance(p) < camera.screen_dist * FULL_FOG_DISTANCE
+            for p in points
+        ]
 
-        intersections = left, top, right, bottom
+        poly = []
+        for i in range(4):
+            a, ag = points[i], bellow_ground[i]
+            b, bg = points[i - 1], bellow_ground[i - 1]
+            if ag != bg:
+                # the intersection is somewhere between a and b
+                if bg:
+                    a, b = b, a
+                v = b - a
+                inter = a + v * (self.position.y - a.y) / v.y
+                poly.append(inter)
 
-        # The ground is not visible.
-        if len([i for i in intersections if i is not None]) != 2:
-            return
+            if ag:
+                poly.append(a)
 
-        upsidedown = camera.position.y < self.position.y and camera.up.y > 0
+        if len(poly) > 2:
+            print(poly)
+            poly = [tuple(camera.world_to_screen(p)) for p in poly]
+            print(poly)
+            pygame.draw.polygon(self.app.screen, GREEN, poly)

@@ -13,6 +13,7 @@ ASSETS_DIR = os.path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "sprites")
 
 ORANGE = (255, 165, 0)
+GREEN = (141, 178, 85)
 BACKGROUND = pygame.Color("lightblue")
 
 # we're in "2d" so X and Y basis vectors should be 2d

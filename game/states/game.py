@@ -4,6 +4,7 @@ from random import randrange
 
 from glm import vec2, vec3
 
+from game.entities.ground import Ground
 from game.scene import Scene
 from game.base.state import State
 from game.entities.butterfly import Butterfly, random_color
@@ -20,12 +21,11 @@ class Game(State):
 
         self.scene = Scene(self.app)
 
-        self.terminal = self.scene.add(Terminal(self.app, self.scene))
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        # self.camera.position = -self.app.size / 2
         self.player = self.scene.add(Ship(app, self.scene))
-
+        self.scene.add(Ground(app, self.scene, -100))
+        self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # control the camera
         self.app.add_event_listener(self.player)
 
@@ -96,7 +96,7 @@ class Game(State):
         """
 
         # Render Player's Score
-        score_display = "Score: {}".format(self.player.score)
+        score_display = "Score: {}".format(self.camera.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
 
