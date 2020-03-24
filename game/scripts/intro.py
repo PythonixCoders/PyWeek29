@@ -9,7 +9,7 @@ def script(app, scene):
 
     msg = "Welcome to Butterfly Destroyers!"
     for i in range(len(msg)):
-        app.state.terminal.write(msg[i], (i, 0), "red")
+        terminal.write(msg[i], (i, 0), "red")
         typ.play()
         yield scene.sleep(0.1)
 

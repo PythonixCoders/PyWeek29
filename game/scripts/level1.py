@@ -10,6 +10,7 @@
 def script(app, scene):
     when = scene.when
     resume = scene.resume
+    yield
 
     # msg = "Welcome to Butterfly Destroyers!"
     # for i in range(len(msg)):
