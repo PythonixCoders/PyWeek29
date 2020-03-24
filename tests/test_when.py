@@ -87,4 +87,3 @@ def test_when_fade2():
     # because of interpolation
     assert c.x == pytest.approx(0.3, EPSILON)
     assert len(s) == 1
-

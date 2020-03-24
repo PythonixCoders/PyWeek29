@@ -11,13 +11,15 @@ from game.util.util import plane_intersection, line_segment_intersection
 class Ground(Entity):
     def __init__(self, app, scene, height):
         super().__init__(app, scene)
-        self.position = vec3(0, height, float('-inf'))
+        self.position = vec3(0, height, float("-inf"))
 
     def render(self, camera: Camera):
         super().render(camera)
 
         # We check whether each corner of the screen is behind the ground
-        world_center = camera.direction * camera.screen_dist * FULL_FOG_DISTANCE + camera.position
+        world_center = (
+            camera.direction * camera.screen_dist * FULL_FOG_DISTANCE + camera.position
+        )
         world_width = camera.screen_size.x * camera.horizontal * FULL_FOG_DISTANCE
         world_height = camera.screen_size.y * camera.up * FULL_FOG_DISTANCE
 

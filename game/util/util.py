@@ -107,6 +107,7 @@ def line_intersection(p, u, q, v) -> Optional[vec2]:
     s = cross2d(u, w) / cross
     return p + s * u
 
+
 def line_segment_intersection(a, b, p, u) -> Optional[vec2]:
     """
     Compute the intersection between a 2d line and a segment.

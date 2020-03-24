@@ -21,8 +21,8 @@ class Scene(Signal):
         self._sky_color = pygame.Color("lightblue")
         self.dt = 0
         self.script_fn = script
-        
-        self.script = script # (this calls script() property)
+
+        self.script = script  # (this calls script() property)
 
     @property
     def script(self):
@@ -33,7 +33,7 @@ class Scene(Signal):
         local = {}
         exec(open(path.join("game/scripts/", script + ".py")).read(), globals(), local)
         self._script = local["script"](self.app, self)
-    
+
     def sleep(self, t):
         return self.when.once(t, self.resume)
 

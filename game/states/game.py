@@ -21,7 +21,6 @@ class Game(State):
 
         self.scene = Scene(self.app)
 
-
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.scene.add(Ground(app, self.scene, -300))
         self.player = self.scene.add(Ship(app, self.scene))
@@ -63,7 +62,9 @@ class Game(State):
         self.scene.update(dt)
 
         # Camera Movement
-        edge = vec3(250, 100, 0) # Maximum distance at which the ship can be from the edge of the screen until the camera moves
+        edge = vec3(
+            250, 100, 0
+        )  # Maximum distance at which the ship can be from the edge of the screen until the camera moves
         cam_speed = vec3(0, 0, self.player.velocity.z)
         spd = self.player.velocity
 

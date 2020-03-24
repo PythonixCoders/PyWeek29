@@ -27,13 +27,7 @@ class Player(Entity):
 
     def action(self, btn):
         # print('shoot')
-        self.scene.add(
-            Bullet(
-                self.app,
-                self.scene,
-                position=self.position,
-            )
-        )
+        self.scene.add(Bullet(self.app, self.scene, position=self.position,))
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
@@ -46,7 +40,7 @@ class Player(Entity):
                         self.action(0)
 
     def update(self, dt):
-        
+
         self.velocity = (
             vec3(
                 -self.dir[0] + self.dir[1],
