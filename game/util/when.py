@@ -77,7 +77,6 @@ class When(Signal):
     def fade(self, length, func, ease=None, weak=True):
         """
         Every frame, call function with fade value [0,1] fade value
-        End will be 0
         """
         # slot = super().once(func, weak)
         # slot = super().connect(func, weak)
