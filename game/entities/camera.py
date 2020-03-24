@@ -23,7 +23,7 @@ class Camera(Entity):
         position: vec3 = None,
         direction: vec3 = None,
         up: vec3 = None,
-        screen_dist: float = 600,
+        screen_dist: float = 1000,
     ):
         if up is None:
             up = vec3(0, 1, 0)

@@ -5,7 +5,7 @@ from glm import ivec2, vec3
 
 from game.base.entity import Entity
 
-from game.constants import SPRITES_DIR, ORANGE
+from game.constants import SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
 from game.entities.camera import Camera
 from game.util.util import *
 
@@ -74,7 +74,7 @@ class Butterfly(Entity):
 
         size = pos_bl.xy - pos.xy
 
-        max_fade_dist = camera.screen_dist * 2  # Basically the render distance
+        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
         fade = surf_fader(max_fade_dist, camera.distance(self.position))
 
         if size.x > 0:
