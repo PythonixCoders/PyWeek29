@@ -15,8 +15,8 @@ class Terminal(Entity):
         self.app = app
         self.scene = scene
 
-        self.font_size = ivec2(14, 24)
-        font_fn = "data/Inconsolata-g.ttf"
+        self.font_size = ivec2(24, 24)
+        font_fn = "data/PressStart2P-Regular.ttf"
 
         # load the font if its not already loaded (cacheble)
         # we're appending :16 to cache name since we may need to cache
@@ -44,6 +44,7 @@ class Terminal(Entity):
 
         self.bg_color = ivec4(255, 255, 255, 0)  # transparent by default
         self.shadow_color = ivec4(120, 120, 120, 0)
+        self.shadow2_color = ivec4(0, 0, 0, 0)
 
     def clear(self, pos=None):
         """
@@ -91,6 +92,7 @@ class Terminal(Entity):
         self.terminal[pos[1]][pos[0]] = (
             self.font.render(text, True, color),
             self.font.render(text, True, self.shadow_color),
+            self.font.render(text, True, self.shadow2_color),
         )
         self.dirty_line[pos[1]] = True
         self.dirty = True
@@ -136,11 +138,11 @@ class Terminal(Entity):
                         # shadow
                         self.surface.blit(
                             text[1],
-                            ivec2(x, y) * self.font_size + ivec2(1, -1),  # offset
+                            ivec2(x, y) * self.font_size + ivec2(2, -2),  # offset
                         )
                         self.surface.blit(
-                            text[1],
-                            ivec2(x, y) * self.font_size + ivec2(-1, 1),  # offset
+                            text[2],
+                            ivec2(x, y) * self.font_size + ivec2(-3, 3),  # offset
                         )
                         # text
                         self.surface.blit(

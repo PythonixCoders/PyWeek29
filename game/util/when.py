@@ -30,21 +30,22 @@ class When(Signal):
 
         if slot.fade:
             # (slot.start_t - slot.t) / slot.start_ht
+            print('............')
             slot.t = max(0, slot.t)
             print('dt ', dt)
             print('slot.t', slot.t)
             # print('slot.start.t =', slot.start_t)
             # print('slot.t =', slot.t)
             # print('=', 1 - (slot.t / slot.start_t))
-            p = slot.t / slot.start_t
+            p = 1 - (slot.t / slot.start_t)
             print('p ', p)
             slot(p)
-            if slot.t <= 0.0:
+            if slot.t < EPSILON:
                 slot.disconnect()  # queued
                 return
         else:
             # not a fade
-            while slot.t <= 0.0:
+            while slot.t < EPSILON:
                 if not slot.once or slot.count == 0:
                     slot()
                 if slot.once:

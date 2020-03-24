@@ -221,5 +221,4 @@ class Signal:
 
     def __del__(self):
         self.clear()
-        self.clear()
 
