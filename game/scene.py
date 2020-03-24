@@ -6,6 +6,7 @@ from game.util.signal import Signal, Slot
 from game.util.when import When
 from os import path
 from pygame import Color
+from game.constants import *
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -35,16 +36,22 @@ class Scene(Signal):
 
         # The below wrapper is just to keep the interface the same with signal
         # on_collision.connect -> on_collision_connect
-        class ProxySignal:
+        class CollisionSignal:
             pass
-        self.on_collision = ProxySignal()
+        self.on_collision = CollisionSignal()
         self.on_collision.connect = self.on_collision_connect
+        self.on_collision.once = lambda *args: self.on_collision_once(*args, once=True)
         
-    def on_collision_connect(self, A, B, func):
-        """
-        Don't use this directly, call on_collision.connect() instead
-        The proxy is just to maintain the signal interface.
-        """
+    def on_collision_connect(self, A, B, func, once=True):
+        pass
+    
+    def on_collision_connect(self, A, B, func, once=True):
+        pass
+    
+    def on_collision_enter(self, A, B, func, once=True):
+        pass
+    
+    def on_collision_exit(self, A, B, func, once=True):
         pass
 
     @property
@@ -54,7 +61,7 @@ class Scene(Signal):
     @script.setter
     def script(self, script):
         local = {}
-        exec(open(path.join("game/scripts/", script + ".py")).read(), globals(), local)
+        exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), local)
         self._script = local["script"](self.app, self)
 
     def sleep(self, t):

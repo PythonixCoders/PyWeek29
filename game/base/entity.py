@@ -15,15 +15,16 @@ class Entity:
     def __init__(self, app, scene, fn=None, **kwargs):
         self.app = app
         self.scene = scene
-        self._position = kwargs.get("position") or vec3(0)
-        self._velocity = kwargs.get("velocity") or vec3(0)
+        self.slots = []
         self._life = kwargs.get("life")
         self.on_move = Signal()
         self.on_remove = Signal()
         # self.dirty = True
-        self.slots = []
         self._surface = None
         self.removed = False
+        
+        self.position = kwargs.get("position") or vec3(0)
+        self.velocity = kwargs.get("velocity") or vec3(0)
 
         self.fn = fn
         if fn:
@@ -48,6 +49,9 @@ class Entity:
             print("Vector:", v)
             print("Entity:", self)
             raise ValueError
+        
+        if v is None:
+            v = vec3(0)
 
         self._position = vec3(*v)
         self.on_move()
