@@ -27,7 +27,7 @@ class Player(Entity):
 
     def action(self, btn):
         # print('shoot')
-        self.scene.add(Bullet(self.app, self.scene, self.position,))
+        self.scene.add(Bullet(self.app, self.scene, self.position + Z * 50,))
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:

@@ -18,8 +18,8 @@ BACKGROUND = pygame.Color("lightblue")
 
 # we're in "2d" so X and Y basis vectors should be 2d
 # 3d is optional in positions and velocities
-X = glm.vec2(1, 0)
-Y = glm.vec2(1, 0)
+X = glm.vec3(1, 0, 0)
+Y = glm.vec3(1, 0, 0)
 Z = glm.vec3(0, 0, 1)
 
 EPSILON = 0.0001  # for floating point comparisons
