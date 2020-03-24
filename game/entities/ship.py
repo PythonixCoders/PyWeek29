@@ -12,12 +12,13 @@ class Ship(Player):
         self.img = self.app.load(path, lambda: pygame.image.load(path))
 
         self.position = vec3(self.app.size.x / 2, self.app.size.y - 100, 0)
-        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.rect = self.img.get_rect
 
     def render(self, camera):
         scale = (100, 100)
         transformed = pygame.transform.scale(self.img, scale)
         size = transformed.get_size()
+        self.rect = transformed.get_rect()
         self.app.screen.blit(
             transformed, (self.position.x - size[0] / 2, self.position.y - size[1] / 2)
         )

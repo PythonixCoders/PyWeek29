@@ -4,6 +4,7 @@ from glm import vec3
 
 from game.base.entity import Entity
 from game.constants import *
+from game.entities.bullet import Bullet
 
 # from game.entities.bullet import Bullet
 
@@ -20,23 +21,19 @@ class Player(Entity):
             pygame.K_UP,
             pygame.K_DOWN,
         ]
-        self.actionkeys = [pygame.K_RETURN]
+        self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
         self.dir = [False] * len(self.dirkeys)
         self.speed = speed
 
     def action(self, btn):
         # print('shoot')
-        if btn == 0:
-            self.scene.add(
-                Entity(
-                    self.app,
-                    self.scene,
-                    "butterfly-orange.png",
-                    position=self.position,
-                    velocity=-Z * 1000,
-                    life=2,
-                )
+        self.scene.add(
+            Bullet(
+                self.app,
+                self.scene,
+                position=self.position,
             )
+        )
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
@@ -46,9 +43,10 @@ class Player(Entity):
             for i, key in enumerate(self.actionkeys):
                 if key == event.key:
                     if event.type == pygame.KEYDOWN:
-                        self.action(i)
+                        self.action(0)
 
     def update(self, dt):
+        
         self.velocity = (
             vec3(
                 -self.dir[0] + self.dir[1],
