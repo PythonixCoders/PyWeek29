@@ -26,8 +26,8 @@ class Player(Entity):
         self.speed = speed
 
     def action(self, btn):
-        # print('shoot')
-        self.scene.add(Bullet(self.app, self.scene, self.position + Z * 50,))
+        pos = self.position - Y * 10 - Z * 200,
+        self.scene.add(Bullet(self.app, self.scene, pos))
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:

@@ -32,6 +32,20 @@ class Scene(Signal):
         self.script_key_down = [False] * self.app.MAX_KEYS # keys pressed since last script yield
         self.script_key_up = [False] * self.app.MAX_KEYS # keys released since last script yield
 
+        # The below wrapper is just to keep the interface the same with signal
+        # on_collision.connect -> on_collision_connect
+        class ProxySignal:
+            pass
+        self.on_collision = ProxySignal()
+        self.on_collision.connect = self.on_collision_connect
+        
+    def on_collision_connect(self, A, B, func):
+        """
+        Don't use this directly, call on_collision.connect() instead
+        The proxy is just to maintain the signal interface.
+        """
+        pass
+
     @property
     def script(self):
         return self.script_fn
