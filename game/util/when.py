@@ -4,7 +4,6 @@ import weakref
 from game.util.signal import Signal
 from game.constants import EPSILON
 
-
 class When(Signal):
     def __init__(self):
         super().__init__()
@@ -38,10 +37,11 @@ class When(Signal):
         else:
             # not a fade
             while slot.t < EPSILON:
-                slot()
+                if not slot.once or slot.count == 0:
+                    slot()
                 if slot.once:
                     slot.disconnect()  # queued
-                    break
+                    return
                 slot.t += slot.start_t  # wrap
 
     def update(self, dt, *args):
@@ -74,10 +74,12 @@ class When(Signal):
 
     def fade(self, t, func, weak=True):
         """
-        Every t seconds, call func with fade value [0,1] fade value
+        Every frame, call function with fade value [0,1] fade value
+        End will be 0
         """
         slot = super().once(func, weak)
         slot.start_t = t
         slot.t = slot.start_t
         slot.fade = True
         return slot
+

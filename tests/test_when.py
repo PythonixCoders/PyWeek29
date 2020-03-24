@@ -16,7 +16,6 @@ class Counter:
             self.x += v
         self.x += 1
 
-
 def test_when():
 
     c = Counter()
@@ -28,13 +27,27 @@ def test_when():
     assert math.isclose(slot.t, 1)
     assert c.x == 0
     s.update(1)
-    # assert math.isclose(slot.dt, 0) # wrap
-    # assert c.x == 1
-    # s.update(1)
-    # assert c.x == 1
-    # s.update(1)
-    # assert c.x == 2
+    print(slot.t)
+    assert math.isclose(slot.t, 2)
+    assert c.x == 1
+    s.update(1)
+    assert c.x == 1
+    s.update(1)
+    assert c.x == 2
 
+
+def test_once():
+    c = Counter()
+    s = When()
+    slot = s.once(2, lambda: c.increment())
+    s.update(1)
+    assert c.x == 0
+    s.update(1)
+    assert c.x == 1
+    s.update(10)
+    assert c.x == 1
+    assert len(s) == 0
+    assert slot.count == 1
 
 def test_when_fade():
 

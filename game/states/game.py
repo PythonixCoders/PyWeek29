@@ -91,11 +91,8 @@ class Game(State):
         """
 
         for pos in positions:
-            pos = (vec2(pos)) * self.app.size / 2
-            pos = pos.x * self.camera.horizontal \
-                  + pos.y * self.camera.up \
-                  + self.camera.direction * self.camera.screen_dist \
-                  + self.camera.position
+            pos = vec2(pos) * self.app.size / 2
+            pos = self.camera.rel_to_world(vec3(*pos, -self.camera.screen_dist))
 
             butt = Butterfly(
                 self.app, self.scene, pos, random_color(), randrange(2, 6), 0

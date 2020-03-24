@@ -2,8 +2,10 @@
 
 import pygame
 import functools
-from game.util.signal import Signal
+from game.util.signal import Signal, Slot
 from game.util.when import When
+
+from game.levels import level1
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -14,6 +16,9 @@ class Scene(Signal):
         super().__init__()
         self.app = app
         self.when = When()
+        self.paused = False
+        self.script_slots = []
+        self.script = level1.script(self.app, self, lambda: self.resume())
 
     def add(self, entity):
         slot = self.connect(entity, weak=False)
@@ -25,15 +30,29 @@ class Scene(Signal):
     def remove(self, entity):
         return self.disconnect(entity)
 
+    def resume(self):
+        self.paused = False
+
     def update(self, dt):
 
         # do time-based events
         self.when.update(dt)
+        
+        # run script
+        if not self.paused:
+            try:
+                a = next(self.script)
+                self.script_slots.append(a)
+                self.paused = True
+            except StopIteration:
+                print('Level Finished')
+                self.paused = True
+                # self.app.state = None # 'menu'
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)
 
-        # call update(dt) on each entitiy
+        # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)
 
     def render(self, camera):
@@ -42,3 +61,4 @@ class Scene(Signal):
 
         # call render on each entity
         self.each(lambda x: x.render(camera))
+

@@ -53,7 +53,7 @@ def test_signal_weak():
     s = Signal()
     w = s.connect(lambda: print("test"))
     del w
-    assert len(s) == 1
+    assert len(s) == 0
     s()
     assert len(s) == 0
 
@@ -63,3 +63,12 @@ def test_signal_weak():
     del s  # slot outlives signal?
     assert w.sig() == None  # it works
     del w
+
+def test_signal_once():
+    
+    s = Signal()
+    w = s.once(lambda: print("test"))
+    assert len(s.slots) == 1
+    s()
+    # assert len(s.slots) == 0
+

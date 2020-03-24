@@ -108,19 +108,20 @@ class Entity:
             return
 
         pos = camera.world_to_screen(self.position)
-        bottomleft = self.position.xy + vec3(self.position.xy, 0)
+#         bottomleft = self.position.xy + vec3(self.position.xy, 0)
+#         pos_bl = camera.world_to_screen(bottomleft)
+#         size = pos_bl.xy - pos.xy
+#         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
+        bottomleft = self.position + vec3(*self._surface.get_size(), 0)
         pos_bl = camera.world_to_screen(bottomleft)
-        size = pos_bl.xy - pos.xy
-        max_fade_dist = camera.screen_dist * 2  # Basically the render distance
 
-        pos, size = camera.world_to_screen(bottomleft)
         if None in (pos, pos_bl):
-            # behind the camera
             self.scene.remove(self)
             return
-        size *= 2
-        if size > 100:
-            return
+
+        size = pos_bl.xy - pos.xy
+        # print(size)
+
         surf = pygame.transform.scale(self._surface, ivec2(size))
         self.app.screen.blit(surf, ivec2(pos))
 
@@ -128,4 +129,3 @@ class Entity:
         for slot in self.slots:
             slot.disconnect()
         self.slots = []
-
