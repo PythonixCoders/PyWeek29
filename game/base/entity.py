@@ -3,6 +3,7 @@ from glm import vec2, vec3, ivec2
 from game.util.signal import Signal
 from game.constants import *
 from os import path
+from game.util.util import *
 
 
 class Entity:
@@ -101,29 +102,39 @@ class Entity:
             if self._life < 0:
                 self.remove()
 
-    def render(self, camera):
-        if not self._surface:
-            return
+    def render(self, camera, surf=None):
+        """
+        Tries to renders surface `surf` from camera perspective
+        If `surf` is not provided, render self._surface (loaded from filename)
+        """
+        if not surf:
+            surf = self._surface
+            if not surf:
+                return
 
         pos = camera.world_to_screen(self.position)
-        #         bottomleft = self.position.xy + vec3(self.position.xy, 0)
-        #         pos_bl = camera.world_to_screen(bottomleft)
-        #         size = pos_bl.xy - pos.xy
-        #         max_fade_dist = camera.screen_dist * 2  # Basically the render distance
-        bottomleft = self.position + vec3(
-            self._surface.get_width(), self._surface.get_height(), 0
-        )
+        bottomleft = self.position + vec3(surf.get_width(), -surf.get_height(), 0)
         pos_bl = camera.world_to_screen(bottomleft)
 
         if None in (pos, pos_bl):
+            # behind the camera
             self.scene.remove(self)
             return
 
         size = pos_bl.xy - pos.xy
-        # print(size)
 
-        surf = pygame.transform.scale(self._surface, ivec2(size))
-        self.app.screen.blit(surf, ivec2(pos))
+        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
+        fade = surf_fader(max_fade_dist, camera.distance(self.position))
+
+        if size.x > 0:
+            surf = pygame.transform.scale(surf, ivec2(size))
+
+            surf.set_alpha(fade)
+            surf.set_colorkey(0)
+            self.app.screen.blit(surf, ivec2(pos))
+
+        if size.x > 150:
+            self.scene.remove(self)
 
     def __del__(self):
         for slot in self.slots:
