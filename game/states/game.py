@@ -8,7 +8,7 @@ from game.scene import Scene
 from game.base.state import State
 from game.entities.butterfly import Butterfly, random_color
 from game.entities.camera import Camera
-from game.entities.player import Player
+from game.entities.ship import Ship
 from game.entities.terminal import Terminal
 from game.level import BaseLevelBuilder
 
@@ -24,7 +24,7 @@ class Game(State):
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         # self.camera.position = -self.app.size / 2
-        self.player = self.scene.add(Player(app, self.scene))
+        self.player = self.scene.add(Ship(app, self.scene))
 
         # control the camera
         self.app.add_event_listener(self.player)
