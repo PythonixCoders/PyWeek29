@@ -14,6 +14,7 @@ class Counter:
     def increment(self, v=None):
         if v is not None:
             self.x += v
+            return
         self.x += 1
 
 def test_when():
@@ -54,8 +55,25 @@ def test_when_fade():
     c = Counter()
     s = When()
 
-    s.fade(1, lambda t: c.increment())
+    s.fade(1, lambda t: c.increment(t), None, weak=False)
 
-    s.update(0.5)
+    s.update(0.2)
 
-    # assert math.isclose(c.x, .5)
+    assert math.isclose(c.x, .2)
+    
+def test_when_fade2():
+    
+    c = Counter()
+    s = When()
+    
+    s.fade(2, lambda t: c.increment(t), None, weak=False)
+    
+    s.update(0.1)
+    
+    # assert math.isclose(c.x, .1)
+    
+    # s.update(0.1)
+    
+    # assert math.isclose(c.x, .2)
+    # # assert math.isclose(c.x, 1)
+

@@ -2,6 +2,7 @@
 
 def script(app, scene, resume):
     when = scene.when
+    
     print('level')
     yield when.once(.3, resume)
     print('script')
