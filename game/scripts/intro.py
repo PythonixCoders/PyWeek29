@@ -16,8 +16,6 @@ def script(app, scene):
         yield scene.sleep(0.1)
 
     while True:
-        class Wrapper:
-            pass
         
         terminal.write("Press any key to continue", (0, 2), "white")
         
