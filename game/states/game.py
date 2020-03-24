@@ -60,29 +60,8 @@ class Game(State):
 
         self.spawn(self.level.update(dt))
         self.scene.update(dt)
-
-        # Camera Movement
-        edge = vec3(
-            250, 100, 0
-        )  # Maximum distance at which the ship can be from the edge of the screen until the camera moves
-        cam_speed = vec3(0, 0, self.player.velocity.z)
-        spd = self.player.velocity
-
-        if self.player.position.x < edge.x:
-            cam_speed += vec3(spd.x, 0, 0)
-            self.player.position.x = edge.x
-        elif self.player.position.x > self.app.size.x - edge.x:
-            cam_speed += vec3(spd.x, 0, 0)
-            self.player.position.x = self.app.size.x - edge.x
-
-        if self.player.position.y < edge.y:
-            cam_speed += vec3(0, spd.y, 0)
-            self.player.position.y = edge.y
-        elif self.player.position.y > self.app.size.y - edge.y:
-            cam_speed += vec3(0, spd.y, 0)
-            self.player.position.y = self.app.size.y - edge.y
-
-        self.camera.velocity = cam_speed
+        # self.update_camera()
+        self.camera.position = self.player.position
         self.time += dt
 
     def render(self):
@@ -113,3 +92,27 @@ class Game(State):
             )
 
             self.scene.add(butt)
+
+    def update_camera(self):
+
+        edge = vec3(
+            250, 100, 0
+        )  # Maximum distance at which the ship can be from the edge of the screen until the camera moves
+        cam_speed = vec3(0, 0, self.player.velocity.z)
+        spd = self.player.velocity
+
+        if self.player.position.x < edge.x:
+            cam_speed += vec3(spd.x, 0, 0)
+            self.player.position.x = edge.x
+        elif self.player.position.x > self.app.size.x - edge.x:
+            cam_speed += vec3(spd.x, 0, 0)
+            self.player.position.x = self.app.size.x - edge.x
+
+        if self.player.position.y < edge.y:
+            cam_speed += vec3(0, spd.y, 0)
+            self.player.position.y = edge.y
+        elif self.player.position.y > self.app.size.y - edge.y:
+            cam_speed += vec3(0, spd.y, 0)
+            self.player.position.y = self.app.size.y - edge.y
+
+        self.camera.velocity = cam_speed
