@@ -1,16 +1,9 @@
 #!/usr/bin/env python
-import random
-from random import randrange
 
-from glm import vec2, vec3
-
-from game.scene import Scene
 from game.base.state import State
-from game.entities.butterfly import Butterfly, random_color
 from game.entities.camera import Camera
-from game.entities.player import Player
 from game.entities.terminal import Terminal
-from game.level import BaseLevelBuilder
+from game.scene import Scene
 
 
 class Intro(State):
