@@ -38,8 +38,8 @@ class When(Signal):
                 map_range(
                     # apply easing functin
                     (slot.ease(p) if slot.ease else p),
-                    (0.0, 1.0), # from range
-                    slot.range_ # to range
+                    (0.0, 1.0),  # from range
+                    slot.range_,  # to range
                 )
             )
             if slot.t < EPSILON:

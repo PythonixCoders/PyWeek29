@@ -22,7 +22,7 @@ class Entity:
         # self.dirty = True
         self._surface = None
         self.removed = False
-        
+
         self.position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
 
@@ -49,7 +49,7 @@ class Entity:
             print("Vector:", v)
             print("Entity:", self)
             raise ValueError
-        
+
         if v is None:
             v = vec3(0)
 
@@ -135,7 +135,7 @@ class Entity:
 
             surf.set_alpha(fade)
             surf.set_colorkey(0)
-            self.app.screen.blit(surf, ivec2(pos - size/2))
+            self.app.screen.blit(surf, ivec2(pos - size / 2))
 
         # if size.x > 150:
         #     self.scene.remove(self)

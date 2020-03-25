@@ -7,7 +7,7 @@ def script(app, scene):
     when = scene.when
 
     # yield lambda: scene.key(' ')
-    
+
     terminal = app.state.terminal
     keys = scene.keys
 
@@ -23,19 +23,17 @@ def script(app, scene):
         yield scene.sleep(0.1)
 
     while True:
-        
+
         terminal.write("Press any key to continue", (0, 2), "white")
-        
-        yield scene.sleep(0.2)
-        if any(keys()):
-            break
-        
-        terminal.clear(2)
-        
+
         yield scene.sleep(0.2)
         if any(keys()):
             break
 
+        terminal.clear(2)
+
+        yield scene.sleep(0.2)
+        if any(keys()):
+            break
 
     app.state = "game"
-    

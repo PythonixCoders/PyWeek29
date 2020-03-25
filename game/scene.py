@@ -31,20 +31,25 @@ class Scene(Signal):
 
         self.script = script  # (this calls script() property)
 
-        self.script_key_down = [False] * self.app.MAX_KEYS # keys pressed since last script yield
-        self.script_key_up = [False] * self.app.MAX_KEYS # keys released since last script yield
+        self.script_key_down = [
+            False
+        ] * self.app.MAX_KEYS  # keys pressed since last script yield
+        self.script_key_up = [
+            False
+        ] * self.app.MAX_KEYS  # keys released since last script yield
         self.script_resume_condition = None
 
         # The below wrapper is just to keep the interface the same with signal
         # on_collision.connect -> on_collision_connect
         class CollisionSignal:
             pass
+
         self.on_collision = CollisionSignal()
         self.on_collision.connect = self.on_collision_connect
         self.on_collision.once = self.on_collision_once
         self.on_collision.enter = self.on_collision_enter
         self.on_collision.exit = self.on_collision_leave
-        
+
     def on_collision_connect(self, A, B, func, once=True):
         """
         during collision (touching)
@@ -56,14 +61,14 @@ class Scene(Signal):
         trigger only once
         """
         pass
-    
+
     def on_collision_enter(self, A, B, func, once=True):
         """
         trigger upon enter collision
         """
 
         pass
-    
+
     def on_collision_leave(self, A, B, func, once=True):
         """
         trigger upon leave collision
@@ -93,20 +98,20 @@ class Scene(Signal):
         if isinstance(k, str):
             return self.script_key_down[ord(k)]
         return self.script_key_down[k]
-    
+
     def key_up(self, k):
         return self.script_key_up[k]
-        
+
     def keys(self):
         # if we're in a script: return keys since last script yield
         assert self.inside_script
-        
+
         return self.script_key_down
 
     def keys_up(self):
         # if we're in a script: return released keys since last script yield
         assert self.inside_script
-        
+
         return self.script_key_up
 
     @property
@@ -125,7 +130,7 @@ class Scene(Signal):
             self._sky_color = Color(c)
             return
         elif isinstance(c, (vec3, vec4)):
-            self._sky_color = Color(*(c*255))
+            self._sky_color = Color(*(c * 255))
             return
 
         self._sky_color = Color(*c)
@@ -140,8 +145,8 @@ class Scene(Signal):
         if ev.type == pygame.KEYDOWN:
             self.script_key_down[ev.key] = True
         elif ev.type == pygame.KEYUP:
-            self.script_key_up[ev.key] = True # don't fix -- correct
-        
+            self.script_key_up[ev.key] = True  # don't fix -- correct
+
     def update(self, dt):
 
         # do time-based events
@@ -153,15 +158,15 @@ class Scene(Signal):
         if self.script_resume_condition:
             if self.script_resume_condition():
                 self.script_paused = False
-                
+
         # continue running script (until yield or end)
         if self._script and not self.script_paused:
             try:
-                
+
                 self.inside_script = True
                 slot = next(self._script)
                 self.inside_script = False
-                
+
                 if isinstance(slot, Slot):
                     self.script_slots.append(slot)
                 else:
@@ -169,7 +174,7 @@ class Scene(Signal):
                     if self.script_resume_condition:
                         if not self.script_resume_condition():
                             self.script_paused = True
-                
+
             except StopIteration:
                 print("Level Finished")
             self.script_paused = True
@@ -181,7 +186,7 @@ class Scene(Signal):
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)
-        
+
     def render(self, camera):
         # call render(camera) on all scene entities
         self.app.screen.fill(self._sky_color)

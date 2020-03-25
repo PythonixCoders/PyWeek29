@@ -24,14 +24,10 @@ class Player(Entity):
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
         self.dir = [False] * len(self.dirkeys)
         self.speed = speed
-        self.fire_offset = - Y * 10 - Z * 200
+        self.fire_offset = -Y * 10 - Z * 200
 
     def action(self, btn):
-        self.scene.add(Bullet(
-            self.app,
-            self.scene,
-            self.position + self.fire_offset
-        ))
+        self.scene.add(Bullet(self.app, self.scene, self.position + self.fire_offset))
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:

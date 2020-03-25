@@ -13,8 +13,7 @@ class Bullet(Entity):
             app,
             scene,
             "bullet.png",
-            position = position,
-            velocity = (velocity or (-Z * 4000)),
-            life=1
+            position=position,
+            velocity=(velocity or (-Z * 4000)),
+            life=1,
         )
-
