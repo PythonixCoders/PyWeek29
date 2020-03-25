@@ -104,10 +104,10 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
-                elif event.type == pygame.KEYDOWN:
-                    self.keys[event.key] = True
-                elif event.type == pygame.KEYDOWN:
-                    self.keys[event.key] = False
+                # elif event.type == pygame.KEYDOWN:
+                #     self.keys[event.key] = True
+                # elif event.type == pygame.KEYDOWN:
+                #     self.keys[event.key] = False
                 self.on_event(event)
 
             if self.state is None:
