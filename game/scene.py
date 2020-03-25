@@ -200,6 +200,10 @@ class Scene(Signal):
         elif ev.type == pygame.KEYUP:
             self.script_key_up[ev.key] = True  # don't fix -- correct
 
+    def invalid_size(self, size):
+        """Checks component for 0 or NaNs"""
+        return any(c != c or abs(c) < EPSILON for c in size)
+
     def update_collisions(self, dt):
 
         # cause all scene operations to be queueed
@@ -212,18 +216,8 @@ class Scene(Signal):
             if not a or not a.solid:
                 continue
 
-            # check size components for 0 or nan
-            cont_outer = False
-            for c in range(3):
-                if a.size[c] != a.size[c]:  # nan
-                    cont_outer = True
-                    break
-                if math.isclose(a.size[c], 0.0):
-                    cont_outer = True
-                    break
-            if cont_outer:
+            if self.invalid_size(a.size):
                 continue
-            del cont_outer
 
             # for each slot, loop through each slot
             for slot2 in self.slots:
@@ -235,18 +229,8 @@ class Scene(Signal):
                     if not a.has_collision and not b.has_collision:
                         continue
 
-                    # check size componetns for 0 and nan
-                    cont_outer = False
-                    for c in range(3):
-                        if b.size[c] != b.size[c]:  # nan
-                            cont_outer = True
-                            break
-                        if math.isclose(b.size[c], 0.0):
-                            cont_outer = True
-                            break
-                    if cont_outer:
+                    if self.invalid_size(b.size):
                         continue
-                    del cont_outer
 
                     a_min = a.position - a.size / 2
                     a_max = a.position + a.size / 2
@@ -261,6 +245,7 @@ class Scene(Signal):
                         or b_max.z < a_min.z
                     )
                     if col:
+                        print("COLLISION")
                         if a.has_collision:
                             a.collision(b, dt)
                         if b.has_collision:
