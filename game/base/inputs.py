@@ -4,14 +4,14 @@ from game.util import clamp
 
 
 class Button:
-    def __init__(self, keys):
+    def __init__(self, *keys):
         """
         A boolean input.
 
         Callbacks are set and removed with += and -=
-        :param keys: keycode or list of keycodes
+        :param keys: keycodes of the button
         """
-        self._keys = {keys} if isinstance(keys, int) else set(keys)
+        self._keys = set(keys)
         self._pressed = 0
         self._callbacks = set()
 

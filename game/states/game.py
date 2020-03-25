@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
+import pygame
 from glm import vec3
 
+from game.base.inputs import Inputs, Axis, Button
 from game.base.state import State
 from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
@@ -19,22 +20,19 @@ class Game(State):
 
         self.scene = Scene(self.app)
 
+        self.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
+
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
-        # control the camera
-        # self.app.add_event_listener(self.player) # don't need this anymore
 
         self.scene.script = Level1
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
         # )
-
-        # when camera moves, set our dirty flag to redraw
-        # self.camera.on_pend.connect(self.pend)
 
         self.time = 0
 
@@ -91,26 +89,9 @@ class Game(State):
 
         assert self.scene.blocked == 0
 
-    def update_camera(self):
-
-        edge = vec3(
-            250, 100, 0
-        )  # Maximum distance at which the ship can be from the edge of the screen until the camera moves
-        cam_speed = vec3(0, 0, self.player.velocity.z)
-        spd = self.player.velocity
-
-        if self.player.position.x < edge.x:
-            cam_speed += vec3(spd.x, 0, 0)
-            self.player.position.x = edge.x
-        elif self.player.position.x > self.app.size.x - edge.x:
-            cam_speed += vec3(spd.x, 0, 0)
-            self.player.position.x = self.app.size.x - edge.x
-
-        if self.player.position.y < edge.y:
-            cam_speed += vec3(0, spd.y, 0)
-            self.player.position.y = edge.y
-        elif self.player.position.y > self.app.size.y - edge.y:
-            cam_speed += vec3(0, spd.y, 0)
-            self.player.position.y = self.app.size.y - edge.y
-
-        self.camera.velocity = cam_speed
+    def build_inputs(self):
+        inputs = Inputs()
+        inputs["hmove"] = Axis(pygame.K_LEFT, pygame.K_RIGHT)
+        inputs["vmove"] = Axis(pygame.K_UP, pygame.K_DOWN)
+        inputs["fire"] = Button(pygame.K_SPACE)
+        return inputs
