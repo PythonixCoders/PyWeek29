@@ -101,18 +101,18 @@ class Entity:
     def update(self, dt):
         if self.velocity:
             self.position += self.velocity * dt  # triggers position setter
-        
+
         v = None
-        
+
         if self.acceleration != vec3(0):
             v = self.velocity
             self._vel += self.acceleration / 2.0 * dt
             v += self.acceleration * dt
-        
+
         if self.velocity != vec3(0):
             self.position += self.velocity * dt
-        
-        if v is not None: # accelerated?
+
+        if v is not None:  # accelerated?
             self.velocity = v
 
         if self._life is not None:
