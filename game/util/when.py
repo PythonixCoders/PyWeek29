@@ -77,16 +77,18 @@ class When(Signal):
         slot.fade = False
         slot.ease = None
         slot.once = once
+        # slot.fade_end = None
+        # slot.range_ = None
         return slot
 
     def once(self, t, func, weak=True):
-        return self.every(t, func, weak, True)
+        return self.every(t, func, weak, once=True)
 
-    def fade(self, length, func, range_=(0.0, 1.0), end_func=None, ease=None):
+    def fade(self, length, range_, func, end_func=None, ease=None):
         """
         Every frame, call function with fade value [0,1] fade value
         """
-        slot = self.every(0, func, weak=False)
+        slot = self.every(0, func)
         slot.start_t = slot.t = float(length)
         slot.fade = True
         slot.fade_end = end_func

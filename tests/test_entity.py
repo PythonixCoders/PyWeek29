@@ -14,7 +14,7 @@ def test_entity_scene():
     scene = Signal()
     e = Entity(None, scene)
 
-    scene.connect(e, weak=False)
+    a = scene.connect(e)
     assert len(scene) == 1
 
     e.remove()

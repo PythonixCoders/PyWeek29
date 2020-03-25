@@ -179,12 +179,13 @@ class Signal:
             # delete by slot value
             value = slot
             for i in range(len(self.slots)):
-                func = self.slots[i].func
-                # if isinstance(value, weakref.ref):
-                #     wref = slot
-                #     = value()
-                #     if not slot:
-                #         return self.disconnect(wref)
+                slot = self.slots[i]
+                if isinstance(slot, weakref.ref):
+                    wref = slot
+                    slot = slot()
+                    if not slot:
+                        return self.disconnect(wref)
+                func = slot.func
                 # func = slot.func
                 # if isinstance(func, weakref.ref):
                 #     wref = func

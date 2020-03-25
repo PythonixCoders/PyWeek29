@@ -23,8 +23,9 @@ class Entity:
         self._surface = None
         self.removed = False
 
-        self.position = kwargs.get("position") or vec3(0)
+        self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
+        self.acceleration = kwargs.get("acceleration") or vec3(0)
 
         self.fn = fn
         if fn:
@@ -56,25 +57,25 @@ class Entity:
         self._position = vec3(*v)
         self.on_move()
 
-    @property
-    def velocity(self):
-        return self._velocity
+    # @property
+    # def velocity(self):
+    #     return self._velocity
 
-    @velocity.setter
-    def velocity(self, v):
-        """
-        Sets position of our entity, which controls where it appears in
-            our scene.
-        :param v: 3 coordinates (list, tuple, vec3)
-        """
+    # @velocity.setter
+    # def velocity(self, v):
+    #     """
+    #     Sets position of our entity, which controls where it appears in
+    #         our scene.
+    #     :param v: 3 coordinates (list, tuple, vec3)
+    #     """
 
-        if len(v) == 2:
-            print("Warning: Setting Entity velocity with a 2d vector.")
-            print("Vector:", v)
-            print("Entity:", self)
-            raise ValueError
+    #     if len(v) == 2:
+    #         print("Warning: Setting Entity velocity with a 2d vector.")
+    #         print("Vector:", v)
+    #         print("Entity:", self)
+    #         raise ValueError
 
-        self._velocity = vec3(*v)
+    #     self._velocity = vec3(*v)
 
     def remove(self):
         if not self.removed:
@@ -98,8 +99,21 @@ class Entity:
     #     return False
 
     def update(self, dt):
-        if self._velocity:
-            self.position += self._velocity * dt  # triggers position setter
+        if self.velocity:
+            self.position += self.velocity * dt  # triggers position setter
+        
+        v = None
+        
+        if self.acceleration != vec3(0):
+            v = self.velocity
+            self._vel += self.acceleration / 2.0 * dt
+            v += self.acceleration * dt
+        
+        if self.velocity != vec3(0):
+            self.position += self.velocity * dt
+        
+        if v is not None: # accelerated?
+            self.velocity = v
 
         if self._life is not None:
             self._life -= dt

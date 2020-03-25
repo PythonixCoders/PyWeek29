@@ -48,7 +48,7 @@ class Scene(Signal):
         self.on_collision.connect = self.on_collision_connect
         self.on_collision.once = self.on_collision_once
         self.on_collision.enter = self.on_collision_enter
-        self.on_collision.exit = self.on_collision_leave
+        self.on_collision.leave = self.on_collision_leave
 
     def on_collision_connect(self, A, B, func, once=True):
         """

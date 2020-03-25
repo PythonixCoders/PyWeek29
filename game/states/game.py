@@ -27,7 +27,7 @@ class Game(State):
         self.player = self.scene.add(Ship(app, self.scene))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # control the camera
-        self.app.add_event_listener(self.player)
+        # self.app.add_event_listener(self.player) # don't need this anymore
 
         self.level = BaseLevelBuilder().uniform(10, 8)
 
