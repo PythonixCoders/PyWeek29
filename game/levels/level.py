@@ -26,17 +26,12 @@ class Level:
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
         pos = camera.rel_to_world(
-            vec3(x, y, -camera.screen_dist)
-            * vec3(*camera.screen_size / 2, 1)
+            vec3(x, y, -camera.screen_dist) * vec3(*camera.screen_size / 2, 1)
         )
 
-        self.scene.add(Butterfly(
-            self.app,
-            self.scene,
-            pos,
-            random_color(),
-            num=self.spawned,
-        ))
+        self.scene.add(
+            Butterfly(self.app, self.scene, pos, random_color(), num=self.spawned,)
+        )
 
         self.spawned += 1
 
@@ -55,10 +50,7 @@ class Level:
             terminal = self.app.state.terminal
             typ = pygame.mixer.Sound("data/sounds/type.wav")
 
-            left = ivec2(
-                (terminal.size.x - len(self.name)) / 2,
-                5
-            )
+            left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
             for i, letter in enumerate(self.name):
                 terminal.write(letter, left + (i, 0), "red")
                 typ.play()

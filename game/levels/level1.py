@@ -32,4 +32,3 @@ class Level1(Level):
             self.spawn(i / 10, 0)
             self.spawn(-i / 10, 0)
             yield self.pause(1)
-
