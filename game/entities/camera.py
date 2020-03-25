@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-
+from math import pi
 from typing import Union
 
-from glm import dot, cross, vec3, vec2, normalize, rotate
+import glm
+from glm import dot, cross, vec3, vec2, normalize, rotate, identity, quat
+from pygame import Vector3
 
 from game.base.entity import Entity
 from game.constants import EPSILON, SCREEN_DIST
@@ -107,7 +109,7 @@ class Camera(Entity):
         :param angle: (counterclockwise) rotation in radians
         """
 
-        self.up = rotate(self.up, angle, self.direction)
+        self.up = self._rotate(self.up, angle, self.direction)
 
     def rotate_around_horizontal(self, angle):
         """
@@ -118,8 +120,8 @@ class Camera(Entity):
         """
 
         horiz = self.horizontal
-        self.up = rotate(self.up, angle, horiz)
-        self.direction = rotate(self.direction, angle, horiz)
+        self.up = self._rotate(self.up, angle, horiz)
+        self.direction = self._rotate(self.direction, angle, horiz)
 
     def rotate_around_up(self, angle):
         """
@@ -129,4 +131,18 @@ class Camera(Entity):
         :param angle: (counterclockwise) rotation in radians
         """
 
-        self.direction = rotate(self.direction, angle, self.up)
+        self.direction = self._rotate(self.direction, angle, self.up)
+
+    @staticmethod
+    def _rotate(vec, angle, axis):
+        """Rotate vec around axis by the given angle in radians."""
+
+        # We are using the Pygame's vectors here
+        # because pyglm documentation is SHIT and
+        # I can't find a way do do the same SIMPLE thing.
+
+        vec = Vector3(vec)
+        axis = Vector3(axis)
+        vec.rotate_ip(angle * 180 / pi, axis)
+
+        return vec3(vec)

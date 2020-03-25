@@ -50,7 +50,14 @@ class Game(State):
         """
 
         self.scene.update(dt)
+
+        # Update the camera according to the player position
+        # And movement
         self.camera.position = self.player.position
+        self.camera.up = vec3(0, 1, 0)
+        d = self.player.horiz_direction
+        if d:
+            self.camera.rotate_around_direction(-d * 0.05)
         self.time += dt
 
         assert self.scene.blocked == 0

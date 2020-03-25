@@ -53,11 +53,16 @@ class Player(Entity):
                     if event.type == pygame.KEYDOWN:
                         self.action(0)
 
+    @property
+    def horiz_direction(self):
+        """Return which direction the player is moving along the X axis"""
+        return -self.dir[0] + self.dir[1]
+
     def update(self, dt):
 
         self.velocity = (
             vec3(
-                -self.dir[0] + self.dir[1],
+                self.horiz_direction,
                 -self.dir[3] + self.dir[2],
                 -1,  # always going forwards
             )
