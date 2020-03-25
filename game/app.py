@@ -61,7 +61,6 @@ class App:
         while (not self.quit) and self.state:
 
             dt = self.clock.tick(60) / 1000
-            self.time += dt
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

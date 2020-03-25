@@ -3,6 +3,7 @@ import weakref
 
 from game.util.signal import Signal
 from game.constants import EPSILON
+from game.util.util import map_range
 
 
 class When(Signal):
@@ -29,10 +30,18 @@ class When(Signal):
         if slot.start_t != 0:  # not infinite timer
             slot.t -= dt
 
+        print(slot.t)
         if slot.fade:
             slot.t = max(0.0, slot.t)
             p = 1.0 - (slot.t / slot.start_t)
-            slot(p)
+            slot(
+                map_range(
+                    # apply easing functin
+                    (slot.ease(p) if slot.ease else p),
+                    (0.0, 1.0), # from range
+                    slot.range_ # to range
+                )
+            )
             if slot.t < EPSILON:
                 slot.disconnect()  # queued
                 return
@@ -73,14 +82,14 @@ class When(Signal):
     def once(self, t, func, weak=True):
         return self.every(t, func, weak, True)
 
-    def fade(self, length, func, ease=None, weak=True):
+    def fade(self, length, func, range_=(0.0, 1.0), end_func=None, ease=None):
         """
         Every frame, call function with fade value [0,1] fade value
         """
-        # slot = super().once(func, weak)
-        # slot = super().connect(func, weak)
-        slot = self.every(0, func, weak)
+        slot = self.every(0, func, weak=False)
         slot.start_t = slot.t = float(length)
         slot.fade = True
-        # slot.ease = ease
+        slot.fade_end = end_func
+        slot.range_ = range_
+        slot.ease = ease
         return slot

@@ -7,6 +7,9 @@ from glm import vec3, normalize, cross, dot, vec2
 from game.constants import EPSILON
 
 
+def map_range(val, r1, r2):
+    return (val-r1[0])/(r1[1]-r1[0])*(r2[1]-r2[0])+r2[0]
+
 def clamp(x, mini=0, maxi=1):
     if mini > maxi:
         return x

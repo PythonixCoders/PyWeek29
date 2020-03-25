@@ -7,6 +7,7 @@ from game.util.when import When
 from os import path
 from pygame import Color
 from game.constants import *
+from glm import vec3, vec4
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -40,18 +41,33 @@ class Scene(Signal):
             pass
         self.on_collision = CollisionSignal()
         self.on_collision.connect = self.on_collision_connect
-        self.on_collision.once = lambda *args: self.on_collision_once(*args, once=True)
+        self.on_collision.once = self.on_collision_once
+        self.on_collision.enter = self.on_collision_enter
+        self.on_collision.exit = self.on_collision_leave
         
     def on_collision_connect(self, A, B, func, once=True):
+        """
+        during collision (touching)
+        """
         pass
-    
-    def on_collision_connect(self, A, B, func, once=True):
+
+    def on_collision_once(self, A, B, func, once=True):
+        """
+        trigger only once
+        """
         pass
     
     def on_collision_enter(self, A, B, func, once=True):
+        """
+        trigger upon enter collision
+        """
+
         pass
     
-    def on_collision_exit(self, A, B, func, once=True):
+    def on_collision_leave(self, A, B, func, once=True):
+        """
+        trigger upon leave collision
+        """
         pass
 
     @property
@@ -103,9 +119,13 @@ class Scene(Signal):
         #     c = int(c * 255)
         #     self._sky_color = Color(c, c, c, 0)
         #     return
+        print(c)
 
         if isinstance(c, str):
             self._sky_color = Color(c)
+            return
+        elif isinstance(c, (vec3, vec4)):
+            self._sky_color = Color(*(c*255))
             return
 
         self._sky_color = Color(*c)

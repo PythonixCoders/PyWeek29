@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 import pygame.mixer
+from glm import vec3, vec4
 
 
 def script(app, scene):
+    when = scene.when
 
     # yield lambda: scene.key(' ')
     
     terminal = app.state.terminal
     keys = scene.keys
 
-    scene.sky_color = "black"
+    # when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
+
+    # scene.sky_color = "black"
     typ = pygame.mixer.Sound("data/sounds/type.wav")
 
     msg = "Welcome to Butterfly Destroyers!"
