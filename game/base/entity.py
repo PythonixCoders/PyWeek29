@@ -15,7 +15,7 @@ class Entity:
     An Entity represents something that will be draw on the screen.
     """
 
-    def __init__(self, app, scene, fn=None, **kwargs):
+    def __init__(self, app, scene, filename=None, **kwargs):
         # print(type(self))
         self.app = app
         self.scene = scene
@@ -53,13 +53,13 @@ class Entity:
         # if self.solid:
         #     print(self, 'is solid')
 
-        self.fn = fn
-        if fn:
+        self.filename = filename
+        if filename:
             self._surface = self.app.load(
-                fn, lambda: pygame.image.load(path.join(SPRITES_DIR, fn))
+                filename, lambda: pygame.image.load(path.join(SPRITES_DIR, filename))
             )
 
-            self.size = vec3(*self._surface.get_size(), min(*self._surface.get_size()))
+            self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.size = vec3(0)
 

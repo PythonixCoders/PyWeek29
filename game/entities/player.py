@@ -1,18 +1,16 @@
 #!/usr/bin/python
-import pygame
-from glm import vec3
+from glm import vec3, sign
 
 from game.base.entity import Entity
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
 
-# from game.entities.bullet import Bullet
-
 
 class Player(Entity):
-    def __init__(self, app, scene, speed):
-        super().__init__(app, scene)
+    def __init__(self, app, scene, speed=PLAYER_SPEED):
+        super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
+
         self.score = 0
 
         self.dirkeys = [
@@ -22,10 +20,12 @@ class Player(Entity):
             pygame.K_UP,
             pygame.K_DOWN,
         ]
+
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
         self.dir = [False] * len(self.dirkeys)
-        self.speed = speed
-        self.fire_offset = -15*Y - Z * 200
+
+        self.position = vec3(0, 0, 0)
+        self.speed = vec3(speed)
 
         self.solid = True
 
@@ -39,11 +39,9 @@ class Player(Entity):
         # Assuming state is Game
         camera = self.app.state.camera
         aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
-        start = self.position + self.fire_offset
+        start = camera.rel_to_world(BULLET_OFFSET)
         direction = aim - start
-        self.scene.add(
-            Bullet(self.app, self.scene, self, start, direction)
-        )
+        self.scene.add(Bullet(self.app, self.scene, self, start, direction))
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
@@ -67,3 +65,16 @@ class Player(Entity):
         )
 
         super().update(dt)
+
+    def render(self, camera):
+        scale = (100, 100)
+        transformed = pygame.transform.scale(self._surface, scale)
+        rect = transformed.get_rect()
+        rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
+
+        self.size = vec3(rect[2], rect[3], min(rect[2], rect[3]))
+
+        dir = sign(self.velocity.xy)
+        rect.center += dir * (10, -10)
+
+        self.app.screen.blit(transformed, rect)

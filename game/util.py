@@ -133,3 +133,12 @@ def line_segment_intersection(a, b, p, u) -> Optional[vec2]:
     if 0 <= s <= 1:
         return a + s * v
     return None
+
+
+def estimate_3d_size(size_2d):
+    """
+    Return a 3D size given a sprite size.
+    Last coordinate is set to the minimum dimension of the two first.
+    """
+
+    return vec3(*size_2d, min(size_2d))

@@ -13,6 +13,7 @@ ASSETS_DIR = os.path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "sprites")
 SCRIPTS_DIR = os.path.join(TOP_LEVEL_DIR, "game", "scripts")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
+SHIP_IMAGE_PATH = os.path.join(SPRITES_DIR, "ship.png")
 
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)
@@ -28,6 +29,7 @@ EPSILON = 0.0001  # for floating point comparisons
 GROUND_HEIGHT = -300
 PLAYER_SPEED = glm.vec3(80, 80, 200)
 BULLET_SPEED = 4000
+BULLET_OFFSET = glm.vec3(0, -20, -200)
 SCREEN_DIST = 3000
 FULL_FOG_DISTANCE = 3.3
 """
