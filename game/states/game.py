@@ -1,18 +1,15 @@
 #!/usr/bin/env python
-from random import randrange
 
-from glm import vec2, vec3
+from glm import vec3
 
-from game.constants import GROUND_HEIGHT
-from game.entities.ground import Ground
-from game.scripts.level1 import Level1
-from game.scene import Scene
 from game.base.state import State
-from game.entities.butterfly import Butterfly, random_color
+from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
+from game.entities.ground import Ground
 from game.entities.ship import Ship
 from game.entities.terminal import Terminal
-from game.entities.message import Message
+from game.scene import Scene
+from game.scripts.level1 import Level1
 
 
 class Game(State):
@@ -52,15 +49,7 @@ class Game(State):
         :param dt: time since last frame in seconds
         """
 
-        # if self.level.is_over():
-        #     if random.random() < 0.5:
-        #         self.level = BaseLevelBuilder().uniform(10, 5)
-        #     else:
-        #         self.level = BaseLevelBuilder().circle(30, 4)
-
-        # self.spawn(self.level.update(dt))
         self.scene.update(dt)
-        # self.update_camera()
         self.camera.position = self.player.position
         self.time += dt
 
@@ -83,22 +72,6 @@ class Game(State):
         self.scene.render(self.camera)
 
         assert self.scene.blocked == 0
-
-    def spawn(self, positions):
-        """
-        Spawn butterflies on the right of the screen.
-        :param ys: list of positions between -1 and 1
-        """
-
-        for pos in positions:
-            pos = vec2(pos) * self.app.size / 2
-            pos = self.camera.rel_to_world(vec3(*pos, -self.camera.screen_dist))
-
-            butt = Butterfly(
-                self.app, self.scene, pos, random_color(), randrange(2, 6), 0
-            )
-
-            self.scene.add(butt)
 
     def update_camera(self):
 

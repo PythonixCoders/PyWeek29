@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from glm import ivec2
+from pygame.surface import SurfaceType
 
 from game.base.script import Script
 from game.base.signal import Signal
@@ -141,21 +142,23 @@ class Entity:
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
         """
+
+        surf: SurfaceType = surf or self._surface
         if not surf:
-            surf = self._surface
-            if not surf:
-                return
+            return
 
-        pos = camera.world_to_screen(self.position)
-        bottomleft = self.position + vec3(surf.get_width(), -surf.get_height(), 0)
-        pos_bl = camera.world_to_screen(bottomleft)
+        half_diag = vec3(-surf.get_width(), surf.get_height(), 0) / 2
+        world_half_diag = camera.rel_to_world(half_diag) - camera.position
 
-        if None in (pos, pos_bl):
+        pos_tl = camera.world_to_screen(self.position + world_half_diag)
+        pos_bl = camera.world_to_screen(self.position - world_half_diag)
+
+        if None in (pos_tl, pos_bl):
             # behind the camera
             self.scene.remove(self)
             return
 
-        size = pos_bl.xy - pos.xy
+        size = ivec2(pos_bl.xy - pos_tl.xy)
 
         max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
         fade = surf_fader(max_fade_dist, camera.distance(self.position))
@@ -165,7 +168,7 @@ class Entity:
 
             surf.set_alpha(fade)
             surf.set_colorkey(0)
-            self.app.screen.blit(surf, ivec2(pos - size / 2))
+            self.app.screen.blit(surf, ivec2(pos_tl))
 
         # if size.x > 150:
         #     self.scene.remove(self)

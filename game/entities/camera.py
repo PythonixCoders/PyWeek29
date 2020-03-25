@@ -62,7 +62,7 @@ class Camera(Entity):
         # distance along the screen's z axis
         dist = dot(rel, self.direction)
 
-        if dist < EPSILON:
+        if dist < 10:
             return None
 
         absolute_y = dot(rel, self.up)

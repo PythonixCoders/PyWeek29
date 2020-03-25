@@ -85,34 +85,16 @@ class Butterfly(Entity):
         self.time += dt * 10
 
     def render(self, camera: Camera):
-        pos = camera.world_to_screen(self.position)
-        bottomleft = self.position + vec3(self.width, -self.height, 0)
-        pos_bl = camera.world_to_screen(bottomleft)
-
-        if None in (pos, pos_bl):
-            # behind the camera
-            self.remove()
-            return
-
-        size = pos_bl.xy - pos.xy
-        self.size = vec3(size, min(*size))  # size for collision
-
-        if size.x > 150 or size.y > 150:
-            return
-
-        if size.x > 0:
-
-            max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
-            fade = surf_fader(max_fade_dist, camera.distance(self.position))
-
-            # print(size)
-            self.surf = pygame.transform.scale(
-                self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(size)
-            )
-
-            self.surf.set_alpha(fade)
-            self.surf.set_colorkey(0)
-            self.app.screen.blit(self.surf, ivec2(pos))
 
         if self.position.z > camera.position.z:
             self.remove()
+            return
+
+        surf = self.frames[int(self.time + self.num) % self.NB_FRAMES]
+
+        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
+        fade = surf_fader(max_fade_dist, camera.distance(self.position))
+        surf.set_alpha(fade)
+        surf.set_colorkey(0)
+
+        super(Butterfly, self).render(camera, surf)
