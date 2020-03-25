@@ -58,4 +58,3 @@ def run(app, scene, script):
             break
 
     app.state = "game"
-    

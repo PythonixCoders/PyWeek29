@@ -22,12 +22,12 @@ class Script:
         self.dt = 0
         self.fn = script
         self.resume_condition = None
-        
+
         # these are accumulated between yields
         # this is different from get_pressed()
         self.key_down = set()
         self.key_up = set()
-        
+
         if use_input:
             self.event_slot = self.app.on_event.connect(self.event)
         else:
@@ -61,9 +61,9 @@ class Script:
     def key(self, k):
         # if we're in a script: return keys since last script yield
         # assert self.script.inside
-        
-        assert self.inside # please only use this in scripts
-        assert self.event_slot # input needs to be enabled (default)
+
+        assert self.inside  # please only use this in scripts
+        assert self.event_slot  # input needs to be enabled (default)
 
         if isinstance(k, str):
             return self.key_down[ord(k)]
@@ -73,27 +73,26 @@ class Script:
         # if we're in a script: return keys since last script yield
         # assert self.script.inside
 
-        assert self.inside # please only use this in scripts
-        assert self.event_slot # input needs to be enabled (default)
+        assert self.inside  # please only use this in scripts
+        assert self.event_slot  # input needs to be enabled (default)
 
         if isinstance(k, str):
             return self.key_up[ord(k)]
         return self.key_up[k]
-
 
     # This makes scripting cleaner than checking script.keys directly
     # We need these so scripts can do "keys = script.keys"
     # and then call keys(), since it changes
     def keys(self):
         # return key downs since last script yield
-        assert self.inside # please only use this in scripts
-        assert self.event_slot # input needs to be enabled (default)
+        assert self.inside  # please only use this in scripts
+        assert self.event_slot  # input needs to be enabled (default)
         return self.key_down
 
     def keys_up(self):
         # return key ups since last script yield
-        assert self.inside # please only use this in scripts
-        assert self.event_slot # input needs to be enabled (default)
+        assert self.inside  # please only use this in scripts
+        assert self.event_slot  # input needs to be enabled (default)
         return self.key_up
 
     @property
@@ -105,15 +104,15 @@ class Script:
         print("Script:", script)
         self.slots = []
         self.paused = False
-        
+
         if isinstance(script, str):
-            run = importlib.import_module('game.scripts.' + script).run
+            run = importlib.import_module("game.scripts." + script).run
             self.inside = True
             self._script = run(self.app, self.ctx, self)
             self.inside = False
             # self.locals = {}
             # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
-            
+
             # if "run" not in self.locals:
             #     assert False
             # self.inside = True
@@ -169,10 +168,10 @@ class Script:
                 self._script = None
 
         self.inside = False
-        
+
         if ran_script:
             # clear accumulated keys
             self.key_down = set()
             self.key_up = set()
-        
+
         return ran_script

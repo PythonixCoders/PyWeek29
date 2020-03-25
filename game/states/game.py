@@ -78,7 +78,10 @@ class Game(State):
 
         # Render Player's Score
         score_display = "Score: {}".format(self.player.score)
-        score_pos = (self.terminal.size.x - len(score_display), self.terminal.size.y - 1)
+        score_pos = (
+            self.terminal.size.x - len(score_display),
+            self.terminal.size.y - 1,
+        )
         self.terminal.write(score_display, score_pos)
 
         self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
