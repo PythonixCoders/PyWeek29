@@ -6,7 +6,7 @@ from glm import vec3
 
 
 class Bullet(Entity):
-    def __init__(self, app, parent, scene, position=vec3(0), velocity=None):
+    def __init__(self, app, scene, parent, position=vec3(0), velocity=None):
         super().__init__(
             app,
             scene,
@@ -17,12 +17,12 @@ class Bullet(Entity):
         )
         self.solid = True
         self.size.z = 1000  # to prevent tunneling
-        self.parent = None
+        self.parent = parent
 
     def collision(self, other, dt):
         # print('bullet collision ->', other)
         # if self.removed:
         #     assert False
-        if self.parent and self.parent is not other:
+        if self.parent is not other:
             self.parent.score += 1
             other.remove()
