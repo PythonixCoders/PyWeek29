@@ -2,18 +2,20 @@
 # from .abstract.entity import Entity
 from game.constants import *
 from game.base.entity import Entity
-from glm import vec3
+from glm import vec3, normalize
 from game.entities.butterfly import Butterfly
 
 
 class Bullet(Entity):
-    def __init__(self, app, scene, parent, position=vec3(0), velocity=None):
+    def __init__(self, app, scene, parent, position, direction):
+
+        velocity = normalize(direction) * BULLET_SPEED
         super().__init__(
             app,
             scene,
             "bullet.png",
             position=position,
-            velocity=(velocity or (-Z * 4000)),
+            velocity=velocity,
             life=1,
         )
         self.solid = True

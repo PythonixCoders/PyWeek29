@@ -25,7 +25,7 @@ class Player(Entity):
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
         self.dir = [False] * len(self.dirkeys)
         self.speed = speed
-        self.fire_offset = -Y * 10 - Z * 200
+        self.fire_offset = -15*Y - Z * 200
 
         self.solid = True
 
@@ -35,8 +35,14 @@ class Player(Entity):
             other.explode()
 
     def action(self, btn):
+
+        # Assuming state is Game
+        camera = self.app.state.camera
+        aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
+        start = self.position + self.fire_offset
+        direction = aim - start
         self.scene.add(
-            Bullet(self.app, self.scene, self, self.position + self.fire_offset)
+            Bullet(self.app, self.scene, self, start, direction)
         )
 
     def event(self, event):
