@@ -11,7 +11,7 @@ class Bullet(Entity):
 
         velocity = normalize(direction) * BULLET_SPEED
         super().__init__(
-            app, scene, "bullet.png", position=position, velocity=velocity, life=1,
+            app, scene, BULLET_IMAGE_PATH, position=position, velocity=velocity, life=1,
         )
         self.solid = True
         self.size.z = 1000  # to prevent tunneling

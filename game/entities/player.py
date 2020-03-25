@@ -12,6 +12,7 @@ class Player(Entity):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
 
         self.score = 0
+        self.crosshair_surf = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
 
         self.dirkeys = [
             # directions
@@ -72,10 +73,16 @@ class Player(Entity):
         super().update(dt)
 
     def render(self, camera):
+
+        # Ship
         rect = self._surface.get_rect()
         rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
-
         direction = sign(self.velocity.xy)
         rect.center += direction * (10, -10)
 
         self.app.screen.blit(self._surface, rect)
+
+        # Crosshair
+        rect = self.crosshair_surf.get_rect()
+        rect.center = self.app.size / 2
+        self.app.screen.blit(self.crosshair_surf, rect)

@@ -13,8 +13,12 @@ ASSETS_DIR = os.path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "sprites")
 SCRIPTS_DIR = os.path.join(TOP_LEVEL_DIR, "game", "scripts")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
-SHIP_IMAGE_PATH = os.path.join(SPRITES_DIR, "ship.png")
-CROSSHAIR_IMAGE_PATH = os.path.join(SPRITES_DIR, "crosshair.png")
+
+# Images should all be in the SPRITES_DIR
+SHIP_IMAGE_PATH = "ship.png"
+CROSSHAIR_IMAGE_PATH = "crosshair.png"
+BULLET_IMAGE_PATH = "bullet.png"
+
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)
 BACKGROUND = pygame.Color("lightblue")

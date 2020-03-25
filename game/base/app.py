@@ -1,8 +1,11 @@
 #!/usr/bin/python
+import os
+
 import pygame
 from glm import ivec2, vec2
 
 from game.base.signal import Signal
+from game.constants import SPRITES_DIR
 
 from game.states.game import Game
 from game.states.intro import Intro
@@ -50,9 +53,23 @@ class App:
             return r
         return self.cache[filename]
 
-    def load_img(self, filename):
-        """Load the image at the given path in a pygame surface. Results are cached"""
-        return self.load(filename, lambda: pygame.image.load(filename))
+    def load_img(self, filename, scale=1):
+        """
+        Load the image at the given path in a pygame surface.
+        The file name is the name of the file without the full path.
+        Files are looked for in the SPRITES_DIR
+        Results are cached.
+        Scale is an optional integer to scale the image by a given factor.
+        """
+
+        def load_fn():
+            img = pygame.image.load(os.path.join(SPRITES_DIR, filename))
+            if scale != 1:
+                w, h = img.get_size()
+                img = pygame.transform.scale(img, (w * scale, h * scale))
+            return img
+
+        return self.load((filename, scale), load_fn)
 
     # def pend(self):
 
