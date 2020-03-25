@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import pygame
 import functools
-from game.util.signal import Signal, Slot
-from game.util.when import When
+from game.base.signal import Signal, Slot
+from game.base.when import When
 from os import path
 from pygame import Color
 from game.constants import *

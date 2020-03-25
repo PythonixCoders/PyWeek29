@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-import random
 from random import randrange
 
 from glm import vec2, vec3
 
 from game.constants import GROUND_HEIGHT
 from game.entities.ground import Ground
-from game.levels.level1 import Level1
+from game.scripts.level1 import Level1
 from game.scene import Scene
 from game.base.state import State
 from game.entities.butterfly import Butterfly, random_color
@@ -70,7 +69,7 @@ class Game(State):
         """
 
         # Render Player's Score
-        score_display = "Score: {}".format(self.player.position - self.camera.position)
+        score_display = "Score: {}".format(self.player.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
 

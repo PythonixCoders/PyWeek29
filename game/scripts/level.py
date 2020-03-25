@@ -4,7 +4,7 @@ from pygame.camera import Camera
 
 from game.entities.butterfly import Butterfly
 from game.entities.camera import Camera
-from game.util.util import random_color
+from game.util import random_color
 
 
 class Level:

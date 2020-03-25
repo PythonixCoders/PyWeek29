@@ -5,7 +5,7 @@
 # Use scene.when to schedule events.
 # Yield when you want to wait until the next event.
 # This is a generator.  Using a busy loop will halt the game.
-from game.levels.level import Level
+from game.scripts.level import Level
 
 
 class Level1(Level):

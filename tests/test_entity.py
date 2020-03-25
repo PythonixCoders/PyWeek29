@@ -5,7 +5,7 @@ sys.path.append("..")
 
 import math
 from game.base.entity import Entity
-from game.util.signal import Signal
+from game.base.signal import Signal
 import glm
 
 

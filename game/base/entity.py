@@ -1,9 +1,9 @@
 #!/usr/bin/python
-from glm import vec2, vec3, ivec2
-from game.util.signal import Signal
+from glm import ivec2
+from game.base.signal import Signal
 from game.constants import *
 from os import path
-from game.util.util import *
+from game.util import *
 
 
 class Entity:

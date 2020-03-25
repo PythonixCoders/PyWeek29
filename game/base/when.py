@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import weakref
 
-from game.util.signal import Signal
+from game.base.signal import Signal
 from game.constants import EPSILON
-from game.util.util import map_range
+from game.util import map_range
 
 
 class When(Signal):

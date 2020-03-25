@@ -2,7 +2,7 @@
 import pygame
 from glm import ivec2
 
-from game.util.signal import Signal
+from game.base.signal import Signal
 
 from game.states.game import Game
 from game.states.intro import Intro

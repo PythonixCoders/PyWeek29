@@ -1,11 +1,10 @@
 import pygame
-from glm import vec3, normalize
+from glm import vec3
 
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.camera import Camera
 
 from game.base.entity import Entity
-from game.util.util import plane_intersection, line_segment_intersection
 
 
 class Ground(Entity):
