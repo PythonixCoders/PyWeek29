@@ -1,3 +1,5 @@
+from typing import Dict, Union
+
 import pygame
 
 from game.util import clamp
@@ -107,14 +109,15 @@ class Button:
     def on_double_press(self, callback):
         self._on_double_press.add(callback)
 
-    def on_press_repeated(self, callback, delay):
+    def on_press_repeated(self, callback, delay_ms):
         """
         Call `callback` when the button is pressed and
         every `delay` milliseconds while it is pressed.
         """
-        self._repeat[callback] = [delay, 0]
+        self._repeat[callback] = [delay_ms, 0]
 
-    def __isub__(self, callback):
+    def remove(self, callback):
+        """Remove a callback from all types if present."""
         if callback in self._always:
             self._always.remove(callback)
         if callback in self._on_press:
@@ -162,23 +165,24 @@ class Axis:
         for c in self._callbacks:
             c(self)
 
-    def event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key in self._left:
-                self._value -= 1
-            if event.key in self._right:
-                self._value += 1
+    def event(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key in self._left:
+                    self._value -= 1
+                if event.key in self._right:
+                    self._value += 1
 
-        if event.type == pygame.KEYUP:
-            if event.key in self._left:
-                self._value -= 1
-            if event.key in self._right:
-                self._value += 1
+            if event.type == pygame.KEYUP:
+                if event.key in self._left:
+                    self._value -= 1
+                if event.key in self._right:
+                    self._value += 1
 
-        # TODO: Implement joystick axis
+            # TODO: Implement joystick axis
 
 
-class Inputs(dict):
+class Inputs(dict, Dict[str, Union[Button, Axis]]):
     def update(self, dt):
         """Trigger all callbacks and updates times"""
         for inp in self.values():

@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 
-import functools
-from game.base.signal import Signal, Slot
-from game.base.when import When
-from os import path
-from pygame import Color
-from game.constants import *
-from glm import vec3, vec4, ivec4
-import math
 import importlib
+
+from game.base.signal import Slot
+from game.base.when import When
+from game.constants import *
 
 
 class Script:

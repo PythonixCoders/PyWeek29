@@ -114,18 +114,6 @@ class Entity:
     # def disconnect(self):
     #     self.remove()
 
-    # NOTE: Implementing the below method automatically registers event listener
-    # So it's commented out.  It still works as before.
-
-    # def event(self, event):
-    #     """
-    #     Handle the event if needed.
-
-    #     :returns: True if the event was handled
-    #     """
-
-    #     return False
-
     def update(self, dt):
         if self.acceleration != vec3(0):
             self.velocity += self.acceleration * dt

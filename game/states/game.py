@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import pygame
-from glm import vec3
+from glm import vec3, sign
 
 from game.base.inputs import Inputs, Axis, Button
 from game.base.state import State
@@ -56,7 +56,7 @@ class Game(State):
         # And movement
         self.camera.position = self.player.position
         self.camera.up = vec3(0, 1, 0)
-        d = self.player.horiz_direction
+        d = self.player.velocity.y / self.player.speed.y
         if d:
             self.camera.rotate_around_direction(-d * 0.05)
         self.time += dt
@@ -93,5 +93,5 @@ class Game(State):
         inputs = Inputs()
         inputs["hmove"] = Axis(pygame.K_LEFT, pygame.K_RIGHT)
         inputs["vmove"] = Axis(pygame.K_UP, pygame.K_DOWN)
-        inputs["fire"] = Button(pygame.K_SPACE)
+        inputs["fire"] = Button(pygame.K_SPACE, pygame.K_RETURN)
         return inputs

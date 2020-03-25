@@ -130,8 +130,6 @@ class Scene(Signal):
         slot = self.connect(entity, weak=False)
         entity.slot = weakref.ref(slot)
         self.slots.append(slot)
-        if hasattr(entity, "event"):
-            entity.slots.append(self.app.add_event_listener(entity))
         return entity
 
     @property

@@ -4,32 +4,28 @@ from glm import vec3, sign, length
 from pygame.surface import SurfaceType
 
 from game.base.entity import Entity
+from game.base.inputs import Inputs, Axis
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
 
 
 class Player(Entity):
-    def __init__(self, app, scene, speed=PLAYER_SPEED):
+    def __init__(self, app, scene, speed=PLAYER_SPEED, inputs: Inputs = None):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
 
         self.score = 0
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
-        self.dirkeys = [
-            # directions
-            pygame.K_LEFT,
-            pygame.K_RIGHT,
-            pygame.K_UP,
-            pygame.K_DOWN,
-        ]
-
-        self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
-        self.dir = [False] * len(self.dirkeys)
+        if inputs is not None:
+            inputs["fire"].on_press_repeated(self.fire, 100)
+            inputs["hmove"] += self.set_vel_x
+            inputs["vmove"] += self.set_vel_y
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)
+        self.velocity = self.speed
 
         self.solid = True
 
@@ -54,8 +50,13 @@ class Player(Entity):
                 ):
                     return entity
 
-    def action(self, btn):
+    def set_vel_x(self, axis: Axis):
+        self.velocity.x = axis.value * self.speed.x
 
+    def set_vel_y(self, axis: Axis):
+        self.velocity.y = axis.value * self.speed.y
+
+    def fire(self, *args):
         # Assuming state is Game
         camera = self.app.state.camera
         butt = self.find_butterfly_in_crosshair()
@@ -68,16 +69,6 @@ class Player(Entity):
         direction = aim - start
 
         self.scene.add(Bullet(self.app, self.scene, self, start, direction))
-
-    def event(self, event):
-        if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
-            for i, key in enumerate(self.dirkeys):
-                if key == event.key:
-                    self.dir[i] = event.type == pygame.KEYDOWN
-            for i, key in enumerate(self.actionkeys):
-                if key == event.key:
-                    if event.type == pygame.KEYDOWN:
-                        self.action(0)
 
     @property
     def horiz_direction(self):
