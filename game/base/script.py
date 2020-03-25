@@ -88,12 +88,14 @@ class Script:
     @script.setter
     def script(self, script=None):
         print("Script:", script)
+        self.slots = []
+        self.paused = False
+        
         if isinstance(script, str):
             run = importlib.import_module('game.scripts.' + script).run
             self.inside = True
             self._script = run(self.app, self.ctx, self)
             self.inside = False
-            self.paused = False
             # self.locals = {}
             # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
             
@@ -103,10 +105,7 @@ class Script:
             # self._script = self.locals["run"](self.app, self.ctx, self)
         elif isinstance(script, type):
             # So we can pass a Level class
-            self.inside = True
             self._script = iter(script(self.app, self.ctx, self))
-            self.inside = False
-            self.paused = False
         elif script is None:
             self._script = None
         else:
