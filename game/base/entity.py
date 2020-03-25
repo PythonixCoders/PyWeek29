@@ -1,5 +1,7 @@
 #!/usr/bin/python
 from glm import ivec2
+
+from game.base.script import Script
 from game.base.signal import Signal
 from game.constants import *
 from os import path
@@ -84,26 +86,6 @@ class Entity:
         self._position = vec3(*v)
         self.on_move()
 
-    # @property
-    # def velocity(self):
-    #     return self._velocity
-
-    # @velocity.setter
-    # def velocity(self, v):
-    #     """
-    #     Sets position of our entity, which controls where it appears in
-    #         our scene.
-    #     :param v: 3 coordinates (list, tuple, vec3)
-    #     """
-
-    #     if len(v) == 2:
-    #         print("Warning: Setting Entity velocity with a 2d vector.")
-    #         print("Vector:", v)
-    #         print("Entity:", self)
-    #         raise ValueError
-
-    #     self._velocity = vec3(*v)
-
     def remove(self):
         if not self.removed:
             # for slot in self.slots:
@@ -140,19 +122,10 @@ class Entity:
     #     return False
 
     def update(self, dt):
-
-        v = None
-
         if self.acceleration != vec3(0):
-            v = self.velocity
-            self.velocity += self.acceleration / 2.0 * dt
-            v += self.acceleration * dt
-
+            self.velocity += self.acceleration * dt
         if self.velocity != vec3(0):
             self.position += self.velocity * dt
-
-        if v is not None:  # accelerated?
-            self.velocity = v
 
         if self._life is not None:
             self._life -= dt
@@ -161,7 +134,7 @@ class Entity:
                 return
 
         if self._script:  # Script object
-            self._script.update(t)
+            self._script.update(dt)
 
     def render(self, camera, surf=None):
         """
