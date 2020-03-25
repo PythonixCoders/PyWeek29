@@ -93,4 +93,3 @@ class Butterfly(Entity):
 
         if self.position.z < camera.position.z:
             self.remove()
-        

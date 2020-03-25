@@ -49,12 +49,12 @@ class Script:
             exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), local)
             if "run" not in local:
                 assert False
-            self.inside= True
+            self.inside = True
             self._script = local["run"](self.app, self.ctx, self)
             self.inside = False
         elif isinstance(script, type):
             # So we can pass a Level class
-            self.inside= True
+            self.inside = True
             self._script = iter(script(self.app, self.ctx, self))
             self.inside = False
         elif script is None:
@@ -75,7 +75,7 @@ class Script:
         if self.resume_condition:
             if self.resume_condition():
                 self.resume()
-        
+
         ran_script = False
         # continue running script (until yield or end)
         if self._script and not self.paused:
@@ -89,7 +89,7 @@ class Script:
                 if isinstance(slot, Slot):
                     self.slots.append(slot)
                     self.pause()
-                elif slot: # func?
+                elif slot:  # func?
                     self.resume_condition = slot
                     if not self.resume_condition():
                         self.pause()
@@ -103,4 +103,3 @@ class Script:
 
         self.inside = False
         return ran_script
-

@@ -22,7 +22,7 @@ class Scene(Signal):
         self.when = When()
         if script:
             self._script = Script(app, self, script)
-            
+
         # self.script_paused = False
         # self.script_slots = []
         self.sky_color = pygame.Color("black")

@@ -76,7 +76,7 @@ class Game(State):
         score_display = "Score: {}".format(self.player.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
-        
+
         self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
         self.terminal.write("FPS: " + str(self.app.fps), 21)
 

@@ -56,7 +56,7 @@ class Level:
                 terminal.write(letter, left + (i, 0), "white")
                 typ.play()
                 yield self.pause(0.1)
-            
+
             terminal.clear(left[1])
 
             # blink
@@ -70,10 +70,10 @@ class Level:
                 yield self.pause(0.1)
 
             terminal.clear(7)
-            
+
             for i in range(len(self.name)):
                 terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
-            
+
     def __iter__(self):
         return self()

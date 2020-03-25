@@ -71,7 +71,7 @@ class App:
             cur_t = time.time_ns()
             dt = (cur_t - last_t) / (1000 * 1000 * 1000)
             last_t = cur_t
-            accum +=  dt
+            accum += dt
             frames += 1
             if accum > 1:
                 self.fps = frames
@@ -94,7 +94,7 @@ class App:
 
             if self.update(dt) is False:
                 break
-            
+
             if self.render() is False:
                 break
 
@@ -115,7 +115,7 @@ class App:
 
         if self.next_state:
             self.process_state_change()
-        
+
         self.state.update(dt)
 
     def render(self):
@@ -153,4 +153,3 @@ class App:
         if self.next_state:
             self._state = self.STATES[self.next_state.lower()](self)
         self.next_state = None
-

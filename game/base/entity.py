@@ -16,7 +16,7 @@ class Entity:
         # print(type(self))
         self.app = app
         self.scene = scene
-        self.slot = None # weakref
+        self.slot = None  # weakref
         self.slots = []
         self._life = kwargs.get("life")
         self.on_move = Signal()
@@ -25,18 +25,18 @@ class Entity:
         self._surface = None
         self.removed = False
         self.parent = kwargs.get("parent")
-        
+
         self._script_func = False
-        
+
         self._script = None
         script = kwargs.get("script")
-        
-        if hasattr(self, '__call__'):
+
+        if hasattr(self, "__call__"):
             self._script = Script(self.app, self, self.__call__)
             assert not isinstance(script, str)
         elif isinstance(script, str):
             self._script = Script(self.app, self, script)
-        
+
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
         self.acceleration = kwargs.get("acceleration") or vec3(0)
@@ -162,7 +162,7 @@ class Entity:
                 self.remove()
                 return
 
-        if self._script: # Script object
+        if self._script:  # Script object
             self._script.update(t)
 
     def render(self, camera, surf=None):

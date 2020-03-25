@@ -21,4 +21,3 @@ def test_scene():
 
     ent.remove()
     assert len(scene) == 0
-    

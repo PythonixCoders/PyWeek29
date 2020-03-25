@@ -43,4 +43,3 @@ def run(app, scene, script):
             break
 
     app.state = "intro"
-
