@@ -11,7 +11,7 @@ def run(app, scene, script):
     # yield lambda: scene.key(' ')
 
     terminal = app.state.terminal
-    keys = scene.keys
+    keys = script.keys
 
     when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
     a = when.fade(

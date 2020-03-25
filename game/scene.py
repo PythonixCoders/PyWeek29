@@ -10,7 +10,6 @@ from glm import vec3, vec4, ivec4
 from game.base.script import Script
 import math
 import weakref
-from collections import defaultdict
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -29,10 +28,8 @@ class Scene(Signal):
         self.sky_color = pygame.Color("black")
         self.dt = 0
         # self.script_fn = script
-        self.event_slot = self.app.on_event.connect(self.event)
+        # self.event_slot = self.app.on_event.connect(self.event)
 
-        self.script_key_down = defaultdict()
-        self.script_key_up = defaultdict()
         # self.script_resume_condition = None
 
         # The below wrapper is just to keep the interface the same with signal
@@ -137,34 +134,6 @@ class Scene(Signal):
             entity.slots.append(self.app.add_event_listener(entity))
         return entity
 
-    def key(self, k):
-        # if we're in a script: return keys since last script yield
-        # assert self.script.inside
-
-        if isinstance(k, str):
-            return self.script_key_down[ord(k)]
-        return self.script_key_down[k]
-
-    def key_up(self, k):
-        # if we're in a script: return keys since last script yield
-        # assert self.script.inside
-
-        if isinstance(k, str):
-            return self.script_key_up[ord(k)]
-        return self.script_key_up[k]
-
-    def keys(self):
-        # if we're in a script: return keys since last script yield
-        # assert self.script.inside
-
-        return self.script_key_down
-
-    def keys_up(self):
-        # if we're in a script: return released keys since last script yield
-        # assert self.script.inside
-
-        return self.script_key_up
-
     @property
     def sky_color(self):
         return self._sky_color
@@ -192,12 +161,6 @@ class Scene(Signal):
 
     # def resume(self):
     #     self.script_paused = False
-
-    def event(self, ev):
-        if ev.type == pygame.KEYDOWN:
-            self.script_key_down[ev.key] = True
-        elif ev.type == pygame.KEYUP:
-            self.script_key_up[ev.key] = True  # don't fix -- correct
 
     def invalid_size(self, size):
         """Checks component for 0 or NaNs"""
@@ -262,10 +225,7 @@ class Scene(Signal):
         self.update_collisions(dt)
         self.refresh()
 
-        if self._script.update(dt):
-            # reset key state
-            self.script_key_down = defaultdict()
-            self.script_key_up = defaultdict()
+        self._script.update(dt)
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)

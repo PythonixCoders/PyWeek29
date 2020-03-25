@@ -12,19 +12,27 @@ import importlib
 
 
 class Script:
-    def __init__(self, app, ctx, script):
+    def __init__(self, app, ctx, script, use_input=True):
         self.app = app
         self.when = When()
         self.ctx = ctx
         self.slots = []
+        self.use_input = use_input
 
         self.paused = False
         self.dt = 0
         self.fn = script
         self.resume_condition = None
-
-        if hasattr(self, "event"):
+        
+        # these are accumulated between yields
+        # this is different from get_pressed()
+        self.key_down = set()
+        self.key_up = set()
+        
+        if use_input:
             self.event_slot = self.app.on_event.connect(self.event)
+        else:
+            self.event_slot = None
 
         # Is True while the script is not yielding
         # Useful for checking assert for script-only functions
@@ -37,6 +45,40 @@ class Script:
 
     def resume(self):
         self.paused = False
+
+    def event(self, ev):
+        if ev.type == pygame.KEYDOWN:
+            self.key_down.add(ev.key)
+        elif ev.type == pygame.KEYUP:
+            self.key_up.add(ev.key)
+
+    def key(self, k):
+        # if we're in a script: return keys since last script yield
+        # assert self.script.inside
+
+        if isinstance(k, str):
+            return self.key_down[ord(k)]
+        return self.key_down[k]
+
+    def key_up(self, k):
+        # if we're in a script: return keys since last script yield
+        # assert self.script.inside
+
+        if isinstance(k, str):
+            return self.key_up[ord(k)]
+        return self.key_up[k]
+
+
+    # This makes scripting cleaner than checking script.keys directly
+    # We need these so scripts can do "keys = script.keys"
+    # and then call keys(), since it changes
+    def keys(self):
+        # return key downs since last script yield
+        return self.key_down
+
+    def keys_up(self):
+        # return key ups since last script yield
+        return self.key_up
 
     @property
     def script(self):
@@ -99,11 +141,18 @@ class Script:
                 else:
                     pass
 
-            except StopIteration:
+            except StopIteration as e:
                 print("Script Finished")
+                print(e)
                 self._script = None
             except Exception as e:
                 print(e)
 
         self.inside = False
+        
+        if ran_script:
+            # clear accumulated keys
+            self.key_down = set()
+            self.key_up = set()
+        
         return ran_script
