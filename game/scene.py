@@ -68,7 +68,7 @@ class Scene(Signal):
         elif isinstance(c, pygame.Color):
             c = vec4(*c) / 255.0
         elif isinstance(c, vec3):
-            c = vec4(a, 0)
+            c = vec4(*c, 0)
         elif isinstance(c, (float, int)):
             c = vec4(c, c, c, 0)
         return c
