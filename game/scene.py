@@ -179,7 +179,7 @@ class Scene(Signal):
         self._sky_color = self.color(c)
 
     def remove(self, entity):
-        super().disconect(entity)
+        super().disconnect(entity)
         # slot = entity.slot
         # if slot:
         #     entity.slot = None
