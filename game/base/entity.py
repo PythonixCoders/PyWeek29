@@ -39,7 +39,7 @@ class Entity:
             self._script = Script(self.app, self, self.__call__)
             assert not isinstance(script, str) # only one script allowed
         elif isinstance(script, str):
-            # load script frmo string
+            # load script from string 'scripts/' folder
             self._script = Script(self.app, self, script, use_input=False)
 
         self._position = kwargs.get("position") or vec3(0)
