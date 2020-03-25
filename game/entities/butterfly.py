@@ -28,6 +28,9 @@ class Butterfly(Entity):
         self.solid = True
 
         self.frames = self.get_animation(color)
+
+        size = self.frames[0].get_size()
+        self.size = vec3(*size, min(size))
         self.position = pos
 
         self.time = 0

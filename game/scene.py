@@ -245,7 +245,6 @@ class Scene(Signal):
                         or b_max.z < a_min.z
                     )
                     if col:
-                        print("COLLISION")
                         if a.has_collision:
                             a.collision(b, dt)
                         if b.has_collision:
