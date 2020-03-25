@@ -17,7 +17,6 @@ class Script:
         self.when = When()
         self.ctx = ctx
         self.slots = []
-        self.use_input = use_input
 
         self.paused = False
         self.dt = 0
@@ -53,9 +52,18 @@ class Script:
         elif ev.type == pygame.KEYUP:
             self.key_up.add(ev.key)
 
+    def running(self):
+        return self._script is not None
+
+    def done(self):
+        return self._script is None
+
     def key(self, k):
         # if we're in a script: return keys since last script yield
         # assert self.script.inside
+        
+        assert self.inside # please only use this in scripts
+        assert self.event_slot # input needs to be enabled (default)
 
         if isinstance(k, str):
             return self.key_down[ord(k)]
@@ -64,6 +72,9 @@ class Script:
     def key_up(self, k):
         # if we're in a script: return keys since last script yield
         # assert self.script.inside
+
+        assert self.inside # please only use this in scripts
+        assert self.event_slot # input needs to be enabled (default)
 
         if isinstance(k, str):
             return self.key_up[ord(k)]
@@ -75,10 +86,14 @@ class Script:
     # and then call keys(), since it changes
     def keys(self):
         # return key downs since last script yield
+        assert self.inside # please only use this in scripts
+        assert self.event_slot # input needs to be enabled (default)
         return self.key_down
 
     def keys_up(self):
         # return key ups since last script yield
+        assert self.inside # please only use this in scripts
+        assert self.event_slot # input needs to be enabled (default)
         return self.key_up
 
     @property

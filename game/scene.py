@@ -45,7 +45,7 @@ class Scene(Signal):
 
     @property
     def script(self):
-        return self.script._script
+        return self._script
 
     @script.setter
     def script(self, fn):

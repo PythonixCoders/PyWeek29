@@ -35,10 +35,12 @@ class Entity:
         script = kwargs.get("script")
 
         if hasattr(self, "__call__"):
+            # use __call__ as script
             self._script = Script(self.app, self, self.__call__)
-            assert not isinstance(script, str)
+            assert not isinstance(script, str) # only one script allowed
         elif isinstance(script, str):
-            self._script = Script(self.app, self, script)
+            # load script frmo string
+            self._script = Script(self.app, self, script, use_input=False)
 
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)

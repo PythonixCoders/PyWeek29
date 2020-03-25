@@ -49,7 +49,7 @@ class Game(State):
         :param dt: time since last frame in seconds
         """
 
-        if self.scene._script is None:
+        if not self.scene.script or self.scene.script.done():
             self.scene.script = Level1  # restart
 
         self.scene.update(dt)
