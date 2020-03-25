@@ -179,9 +179,17 @@ class Scene(Signal):
         self._sky_color = self.color(c)
 
     def remove(self, entity):
-        slot = entity.slot
-        entity.slot = None
-        super().disconnect(entity.slot)
+        super().disconect(entity)
+        # slot = entity.slot
+        # if slot:
+        #     entity.slot = None
+        #     if isinstance(slot, weakref.ref):
+        #         wslot = slot
+        #         slot = wslot()
+        #         if not slot:
+        #             return
+                
+        #     super().disconnect(slot)
 
     # def resume(self):
     #     self.script_paused = False
@@ -269,12 +277,14 @@ class Scene(Signal):
         self.when.update(dt)
 
         self.update_collisions(dt)
+        self.refresh()
 
         if self._script.update(dt):
             self.script_key_down = [False] * self.app.MAX_KEYS
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)
+        self.slots = list(filter(lambda x: not x.get().removed, self.slots))
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)

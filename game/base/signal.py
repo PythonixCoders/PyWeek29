@@ -145,7 +145,7 @@ class Signal:
 
     def disconnect(self, slot):
         if self.blocked:
-            self.queued.append(lambda: self.disconnect(slot))
+            self.queued.append(lambda slot=slot: self.disconnect(slot))
             return None
 
         if isinstance(slot, weakref.ref):

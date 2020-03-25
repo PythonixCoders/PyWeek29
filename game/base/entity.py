@@ -110,7 +110,6 @@ class Entity:
             #     slot.disconnect()
             self.slots = []
             self.on_remove()
-            self.removed = True
             if self.slot:
                 # weird bug (?):
 
@@ -123,9 +122,10 @@ class Entity:
                 s = self.slot()
                 if s:
                     s.disconnect()
+            self.removed = True
 
-    def disconnect(self):
-        self.remove()
+    # def disconnect(self):
+    #     self.remove()
 
     # NOTE: Implementing the below method automatically registers event listener
     # So it's commented out.  It still works as before.

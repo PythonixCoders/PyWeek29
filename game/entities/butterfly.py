@@ -75,11 +75,16 @@ class Butterfly(Entity):
 
         size = pos_bl.xy - pos.xy
         self.size = vec3(size, min(*size))  # size for collision
-
-        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
-        fade = surf_fader(max_fade_dist, camera.distance(self.position))
+        
+        if size.x > 150 or size.y > 150:
+            return
 
         if size.x > 0:
+            
+            max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
+            fade = surf_fader(max_fade_dist, camera.distance(self.position))
+            
+            # print(size)
             self.surf = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(size)
             )
@@ -88,8 +93,5 @@ class Butterfly(Entity):
             self.surf.set_colorkey(0)
             self.app.screen.blit(self.surf, ivec2(pos))
 
-        if size.x > 150:
-            self.remove()
-
-        if self.position.z < camera.position.z:
+        if self.position.z > camera.position.z:
             self.remove()
