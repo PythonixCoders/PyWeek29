@@ -12,8 +12,8 @@ class Level1(Level):
     name = "Level 1"
     sky = "#59ABE3"
 
-    def script(self):
-        yield from super().script()
+    def __call__(self):
+        yield from super().__call__()
 
         for _ in range(10):
             self.spawn(0, 0)

@@ -25,6 +25,7 @@ class Butterfly(Entity):
         super().__init__(app, scene)
 
         self.num = num
+        self.solid = True
 
         self.frames = self.get_animation(color)
         self.position = pos
@@ -69,10 +70,11 @@ class Butterfly(Entity):
 
         if None in (pos, pos_bl):
             # behind the camera
-            self.scene.remove(self)
+            self.remove()
             return
 
         size = pos_bl.xy - pos.xy
+        self.size = vec3(size, min(*size))  # size for collision
 
         max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
         fade = surf_fader(max_fade_dist, camera.distance(self.position))
@@ -87,4 +89,8 @@ class Butterfly(Entity):
             self.app.screen.blit(self.surf, ivec2(pos))
 
         if size.x > 150:
-            self.scene.remove(self)
+            self.remove()
+
+        if self.position.z < camera.position.z:
+            self.remove()
+        

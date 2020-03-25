@@ -72,11 +72,42 @@ class Terminal(Entity):
         self.dirty_line[pos[1]] = True
         self.dirty = True
 
-    def write(self, text, pos, color=(255, 255, 255, 0)):
+    def write(self, text, pos=(0, 0), color=(255, 255, 255, 0), align=-1, length=0):
+
+        if isinstance(pos, (int, float)):
+            pos = ivec2(0, pos)
+        else:
+            # if decimal number, proportional to terminal size
+            # if isinstance(pos[0], float):
+            #     if  0 < pos[0] < 1 or 0 < pos[0] < 1:
+            #         pos = ivec2(pos[0] * self.size[0], pos[1] * self.size[1])
+            #     else:
+            #         pos = ivec2(pos[0], pos[1])
+            # else:
+            pos = ivec2(pos[0], pos[1])
+
+        length = max(length, len(text))
+
+        # Do alignment (-1, 0, 1)
+        if align == 0:  # center
+            return self.write(text, (pos[0] - length / 2, pos[1]), color, align=-1)
+        elif align == 1:  # right
+            return self.write(text, (pos[0] + length, pos[1]), color, align=-1)
+
+        assert align == -1  # left
+
+        if "\n" in text:
+            lines = text.split("\n")
+            for i, line in enumerate(lines):
+                self.write(text, ivec2(pos[0], pos[1] + i), color, align)
+                pos += i
+            return
 
         if len(text) > 1:  # write more than 1 char? write chars 1 by 1
             for i in range(len(text)):
-                self.write(text[i], (pos[0] + i, pos[1]), color)
+                self.write(
+                    text[i], (pos[0] + i, pos[1]), color, align=-1, length=length
+                )
             return
 
         # color string name
@@ -96,6 +127,34 @@ class Terminal(Entity):
         )
         self.dirty_line[pos[1]] = True
         self.dirty = True
+
+    def write_center(self, text, pos=0, color=(255, 255, 255, 0)):
+        """
+        write() to screen center X on row `pos`
+        """
+        if isinstance(pos, (int, float)):
+            # if pos is int, set col number
+            pos = ivec2(0, pos)
+        else:
+            pos = ivec2(pos[0], pos[1])
+
+        # print(pos)
+        pos.x -= self.size.x / 2 + 1
+        return self.write(text, pos, color, align=0)
+
+    def write_right(self, text, pos=0, color=(255, 255, 255, 0)):
+        """
+        write() to screen right side
+        """
+
+        if isinstance(pos, (int, float)):
+            # if pos is int, set col number
+            pos = ivec2(0, pos)
+        else:
+            pos = ivec2(pos[0], pos[1])
+
+        pos.x = self.size.x - 1
+        return self.write(text, pos, color, align=1)
 
     def scramble(self):
         """

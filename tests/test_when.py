@@ -60,7 +60,7 @@ def test_when_fade():
     c = Counter()
     s = When()
 
-    a = s.fade(1, (0,1), lambda t: c.increment(t), None)
+    a = s.fade(1, (0, 1), lambda t: c.increment(t), None)
 
     s.update(0.2)
 
@@ -72,7 +72,7 @@ def test_when_fade2():
     c = Counter()
     s = When()
 
-    a = s.fade(1, (0,1), lambda t: c.increment(t))
+    a = s.fade(1, (0, 1), lambda t: c.increment(t))
     assert len(s) == 1
 
     s.update(0.1)
@@ -88,13 +88,13 @@ def test_when_fade2():
     assert c.x == pytest.approx(0.3, EPSILON)
     assert len(s) == 1
 
+
 def test_when_fade_range():
 
     c = Counter()
     s = When()
 
-    a = s.fade(1, (2,3), lambda t: c.increment(t))
-    
-    s.update(.5)
-    assert math.isclose(c.x, 2.5)
+    a = s.fade(2, (2, 3), lambda t: c.increment(t))
 
+    s.update(1)
+    assert math.isclose(c.x, 2.5)

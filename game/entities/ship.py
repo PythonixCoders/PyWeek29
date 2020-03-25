@@ -1,7 +1,7 @@
 from game.entities.player import Player
 from game.constants import SPRITES_DIR, PLAYER_SPEED
 from glm import vec3, sign
-import os
+import os, sys
 import pygame
 
 
@@ -10,8 +10,10 @@ class Ship(Player):
         super().__init__(app, scene, vec3(speed))
         path = os.path.join(SPRITES_DIR, "ship.png")
         self.img = self.app.load(path, lambda: pygame.image.load(path))
+        self.size = vec3(*self.img.get_size(), min(*self.img.get_size()))
 
         self.position = vec3(self.app.size.x / 2, self.app.size.y - 100, 0)
+        self.solid = True
 
     def render(self, camera):
         scale = (100, 100)
@@ -19,7 +21,12 @@ class Ship(Player):
         rect = transformed.get_rect()
         rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
 
+        self.size = vec3(rect[2], rect[3], min(rect[2], rect[3]))
+
         dir = sign(self.velocity.xy)
         rect.center += dir * (10, -10)
 
         self.app.screen.blit(transformed, rect)
+
+    def collision(self, other, dt):
+        super().collision(other, dt)

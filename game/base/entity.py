@@ -13,8 +13,10 @@ class Entity:
     """
 
     def __init__(self, app, scene, fn=None, **kwargs):
+        # print(type(self))
         self.app = app
         self.scene = scene
+        self.slot = None # weakref
         self.slots = []
         self._life = kwargs.get("life")
         self.on_move = Signal()
@@ -22,16 +24,41 @@ class Entity:
         # self.dirty = True
         self._surface = None
         self.removed = False
-
+        self.parent = kwargs.get("parent")
+        
+        self._script_func = False
+        
+        self._script = None
+        script = kwargs.get("script")
+        
+        if hasattr(self, '__call__'):
+            self._script = Script(self.app, self, self.__call__)
+            assert not isinstance(script, str)
+        elif isinstance(script, str):
+            self._script = Script(self.app, self, script)
+        
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
         self.acceleration = kwargs.get("acceleration") or vec3(0)
+
+        # solid means its collision-checked against other things
+        # has_collision means the entity has a collision() callback
+        self.has_collision = hasattr(self, "collision")
+        self.solid = self.has_collision
+        # if self.has_collision:
+        #     print(self, 'has collision')
+        # if self.solid:
+        #     print(self, 'is solid')
 
         self.fn = fn
         if fn:
             self._surface = self.app.load(
                 fn, lambda: pygame.image.load(path.join(SPRITES_DIR, fn))
             )
+
+            self.size = vec3(*self._surface.get_size(), min(*self._surface.get_size()))
+        else:
+            self.size = vec3(0)
 
     @property
     def position(self):
@@ -79,12 +106,26 @@ class Entity:
 
     def remove(self):
         if not self.removed:
-            for slot in self.slots:
-                slot.disconnect()
+            # for slot in self.slots:
+            #     slot.disconnect()
             self.slots = []
             self.on_remove()
             self.removed = True
-            self.scene.disconnect(self)
+            if self.slot:
+                # weird bug (?):
+
+                # fail (1 pos but 2 given):
+                # self.scene.disconnect(self.slot):
+
+                # fail: missing require pos 'slot'
+                # self.scene.disconnect()
+
+                s = self.slot()
+                if s:
+                    s.disconnect()
+
+    def disconnect(self):
+        self.remove()
 
     # NOTE: Implementing the below method automatically registers event listener
     # So it's commented out.  It still works as before.
@@ -117,8 +158,12 @@ class Entity:
 
         if self._life is not None:
             self._life -= dt
-            if self._life < 0:
+            if self._life <= 0:
                 self.remove()
+                return
+
+        if self._script: # Script object
+            self._script.update(t)
 
     def render(self, camera, surf=None):
         """
@@ -158,3 +203,9 @@ class Entity:
         for slot in self.slots:
             slot.disconnect()
         self.slots = []
+
+    # NOTE: Implementing the below method automatically sets up collisions
+    # So it's commented out.
+
+    # def collision(self, other,  dt):
+    #      pass

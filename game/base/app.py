@@ -1,11 +1,12 @@
 #!/usr/bin/python
 import pygame
-from glm import ivec2
+from glm import ivec2, vec2
 
 from game.base.signal import Signal
 
 from game.states.game import Game
 from game.states.intro import Intro
+import time
 
 
 class App:
@@ -33,7 +34,10 @@ class App:
         self.dirty = True
         self.keys = [False] * self.MAX_KEYS
 
-        self.state = initial_state
+        self._state = None
+        self.last_state = None
+        self.next_state = initial_state
+        self.process_state_change()
 
     def load(self, filename, resource_func):
         """
@@ -58,10 +62,24 @@ class App:
         Runs update(dt) and render() of the current game state (default: Game)
         """
 
+        last_t = time.time_ns()
+        accum = 0
+        self.fps = 0
+        frames = 0
         while (not self.quit) and self.state:
 
-            dt = self.clock.tick(60) / 1000
-
+            cur_t = time.time_ns()
+            dt = (cur_t - last_t) / (1000 * 1000 * 1000)
+            last_t = cur_t
+            accum +=  dt
+            frames += 1
+            if accum > 1:
+                self.fps = frames
+                frames = 0
+                accum -= 1
+            dt = self.clock.tick(0) / 1000
+            # print(t)
+            time.sleep(0.0001)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
@@ -76,7 +94,7 @@ class App:
 
             if self.update(dt) is False:
                 break
-
+            
             if self.render() is False:
                 break
 
@@ -95,6 +113,9 @@ class App:
         if not self.state:
             return False
 
+        if self.next_state:
+            self.process_state_change()
+        
         self.state.update(dt)
 
     def render(self):
@@ -120,7 +141,16 @@ class App:
 
     @state.setter
     def state(self, s):
-        if isinstance(s, str):
-            self.state = self.STATES[s.lower()](self)
-            return
-        self._state = s
+        """
+        Schedule state change on next frame
+        """
+        self.next_state = s
+
+    def process_state_change(self):
+        """
+        Process pending state changes
+        """
+        if self.next_state:
+            self._state = self.STATES[self.next_state.lower()](self)
+        self.next_state = None
+

@@ -5,6 +5,7 @@ from glm import vec3
 from game.base.entity import Entity
 from game.constants import *
 from game.entities.bullet import Bullet
+from game.entities.butterfly import Butterfly
 
 # from game.entities.bullet import Bullet
 
@@ -26,8 +27,17 @@ class Player(Entity):
         self.speed = speed
         self.fire_offset = -Y * 10 - Z * 200
 
+        self.solid = True
+
+    def collision(self, other, dt):
+        if isinstance(other, Butterfly):
+            self.score += 1
+            other.remove()
+
     def action(self, btn):
-        self.scene.add(Bullet(self.app, self.scene, self.position + self.fire_offset))
+        self.scene.add(
+            Bullet(self.app, self.scene, self, self.position + self.fire_offset)
+        )
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:

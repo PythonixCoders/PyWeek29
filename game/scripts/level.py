@@ -11,9 +11,10 @@ class Level:
     sky = "blue"
     name = "A Level"
 
-    def __init__(self, app, scene):
+    def __init__(self, app, scene, script):
         self.app = app
         self.scene = scene
+        self.script = script
         self.spawned = 0
 
     def spawn(self, x: float, y: float):
@@ -42,9 +43,9 @@ class Level:
         Next spawn will be exactly after `duration` seconds.
         """
 
-        return self.scene.sleep(duration)
+        return self.script.sleep(duration)
 
-    def script(self):
+    def __call__(self):
         self.scene.sky_color = self.sky
         if self.name:
             terminal = self.app.state.terminal
@@ -52,13 +53,27 @@ class Level:
 
             left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
             for i, letter in enumerate(self.name):
-                terminal.write(letter, left + (i, 0), "red")
+                terminal.write(letter, left + (i, 0), "white")
                 typ.play()
                 yield self.pause(0.1)
-            yield self.pause(0.5)
+            
+            terminal.clear(left[1])
+
+            # blink
+            for i in range(10):
+                # terminal.write(self.name, left, "green")
+                terminal.write_center(self.name, 5, "green")
+                terminal.write_center("Go!", 7, "white")
+                yield self.pause(0.1)
+
+                terminal.clear(left[1])
+                yield self.pause(0.1)
+
+            terminal.clear(7)
+            
             for i in range(len(self.name)):
                 terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
-
+            
     def __iter__(self):
-        return self.script()
+        return self()

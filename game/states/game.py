@@ -12,6 +12,7 @@ from game.entities.butterfly import Butterfly, random_color
 from game.entities.camera import Camera
 from game.entities.ship import Ship
 from game.entities.terminal import Terminal
+from game.entities.message import Message
 
 
 class Game(State):
@@ -25,6 +26,7 @@ class Game(State):
         self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Ship(app, self.scene))
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
+        # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
         # control the camera
         # self.app.add_event_listener(self.player) # don't need this anymore
 
@@ -62,6 +64,8 @@ class Game(State):
         self.camera.position = self.player.position
         self.time += dt
 
+        assert self.scene.blocked == 0
+
     def render(self):
         """
         Clears screen and draws our scene to the screen
@@ -72,8 +76,13 @@ class Game(State):
         score_display = "Score: {}".format(self.player.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
+        
+        self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
+        self.terminal.write("FPS: " + str(self.app.fps), 21)
 
         self.scene.render(self.camera)
+
+        assert self.scene.blocked == 0
 
     def spawn(self, positions):
         """

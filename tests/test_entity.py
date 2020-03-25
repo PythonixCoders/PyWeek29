@@ -6,26 +6,19 @@ sys.path.append("..")
 import math
 from game.base.entity import Entity
 from game.base.signal import Signal
+import weakref
 import glm
 
 
-def test_entity_scene():
+def test_scene():
 
     scene = Signal()
-    e = Entity(None, scene)
+    ent = Entity(None, scene)
 
-    a = scene.connect(e)
+    slot = scene.connect(ent)
+    ent.slot = weakref.ref(slot)
     assert len(scene) == 1
 
-    e.remove()
+    ent.remove()
     assert len(scene) == 0
-
-
-def test_entity():
-
-    e = Entity(None, None)
-    e.position = (1, 2, 3)
-
-    assert math.isclose(e.position.x, 1)
-    assert math.isclose(e.position.y, 2)
-    assert isinstance(e.position, glm.vec3)
+    
