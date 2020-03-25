@@ -55,10 +55,7 @@ class Entity:
 
         self.filename = filename
         if filename:
-            self._surface = self.app.load(
-                filename, lambda: pygame.image.load(path.join(SPRITES_DIR, filename))
-            )
-
+            self._surface = self.app.load_img(filename)
             self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.size = vec3(0)

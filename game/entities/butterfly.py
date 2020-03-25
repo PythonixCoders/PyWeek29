@@ -38,10 +38,10 @@ class Butterfly(Entity):
         self.explosion_snd = None
 
     def get_animation(self, color):
-        fn = path.join(SPRITES_DIR, "butterfly-orange.png")
+        filename = path.join(SPRITES_DIR, "butterfly-orange.png")
 
         # load an image if its not already in the cache, otherwise grab it
-        image: pygame.SurfaceType = self.app.load(fn, lambda: pygame.image.load(fn))
+        image: pygame.SurfaceType = self.app.load_img(filename)
 
         h, s, v = rgb2hsv(*color)
         brighter = hsv2rgb(h + 0.03, s + 0.1, v + 0.1)

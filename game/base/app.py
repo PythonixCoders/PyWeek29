@@ -50,6 +50,10 @@ class App:
             return r
         return self.cache[filename]
 
+    def load_img(self, filename):
+        """Load the image at the given path in a pygame surface. Results are cached"""
+        return self.load(filename, lambda: pygame.image.load(filename))
+
     # def pend(self):
 
     #     self.dirty = True
