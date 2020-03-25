@@ -35,6 +35,7 @@ class Script:
             self.event_slot = None
 
         # Is True while the script is not yielding
+        # Meaning if a script calls something, .inside is True during that call
         # Useful for checking assert for script-only functions
         self.inside = False
 
@@ -89,7 +90,10 @@ class Script:
         print("Script:", script)
         if isinstance(script, str):
             run = importlib.import_module('game.scripts.' + script).run
+            self.inside = True
             self._script = run(self.app, self.ctx, self)
+            self.inside = False
+            self.paused = False
             # self.locals = {}
             # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
             
@@ -102,6 +106,7 @@ class Script:
             self.inside = True
             self._script = iter(script(self.app, self.ctx, self))
             self.inside = False
+            self.paused = False
         elif script is None:
             self._script = None
         else:
