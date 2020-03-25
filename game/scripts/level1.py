@@ -5,32 +5,30 @@
 # Use scene.when to schedule events.
 # Yield when you want to wait until the next event.
 # This is a generator.  Using a busy loop will halt the game.
+from game.scripts.level import Level
 
 
-def script(app, scene):
-    when = scene.when
-    resume = scene.resume
-    yield
+class Level1(Level):
+    name = "Level 1"
+    sky = "#59ABE3"
 
-    # msg = "Welcome to Butterfly Destroyers!"
-    # for i in range(len(msg)):
-    #     app.state.terminal.write(msg[i], (i, 0), "red")
-    #     yield scene.sleep(0.1)
+    def script(self):
+        yield from super().script()
 
-    # print("level")
-    # yield when.once(0.3, resume)
+        for _ in range(10):
+            self.spawn(0, 0)
+            yield self.pause(1)
 
-    # print("script")
-    # yield when.once(0.3, resume)
+        self.spawn(0.5, 0.5)
+        self.spawn(0.5, -0.5)
+        self.spawn(-0.5, -0.5)
+        self.spawn(-0.5, 0.5)
 
-    # print("test")
-    # yield when.once(0.3, resume)
+        yield self.pause(3)
 
-    # print("1")
-    # yield when.once(0.3, resume)
-
-    # print("2")
-    # yield when.once(0.3, resume)
-
-    # print("3")
-    # yield when.once(0.3, resume)
+        self.spawn(0, 0)
+        yield self.pause(1)
+        for i in range(1, 5):
+            self.spawn(i / 10, 0)
+            self.spawn(-i / 10, 0)
+            yield self.pause(1)

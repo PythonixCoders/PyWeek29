@@ -5,7 +5,7 @@ import pytest
 
 sys.path.append("..")
 
-from game.util.when import When
+from game.base.when import When
 from game.constants import EPSILON
 
 

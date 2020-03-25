@@ -1,18 +1,17 @@
 #!/usr/bin/env python
-import random
 from random import randrange
 
 from glm import vec2, vec3
 
 from game.constants import GROUND_HEIGHT
 from game.entities.ground import Ground
+from game.scripts.level1 import Level1
 from game.scene import Scene
 from game.base.state import State
 from game.entities.butterfly import Butterfly, random_color
 from game.entities.camera import Camera
 from game.entities.ship import Ship
 from game.entities.terminal import Terminal
-from game.level import BaseLevelBuilder
 
 
 class Game(State):
@@ -29,7 +28,7 @@ class Game(State):
         # control the camera
         # self.app.add_event_listener(self.player) # don't need this anymore
 
-        self.level = BaseLevelBuilder().uniform(10, 8)
+        self.scene.script = Level1
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
@@ -51,13 +50,13 @@ class Game(State):
         :param dt: time since last frame in seconds
         """
 
-        if self.level.is_over():
-            if random.random() < 0.5:
-                self.level = BaseLevelBuilder().uniform(10, 5)
-            else:
-                self.level = BaseLevelBuilder().circle(30, 4)
+        # if self.level.is_over():
+        #     if random.random() < 0.5:
+        #         self.level = BaseLevelBuilder().uniform(10, 5)
+        #     else:
+        #         self.level = BaseLevelBuilder().circle(30, 4)
 
-        self.spawn(self.level.update(dt))
+        # self.spawn(self.level.update(dt))
         self.scene.update(dt)
         # self.update_camera()
         self.camera.position = self.player.position
@@ -70,7 +69,7 @@ class Game(State):
         """
 
         # Render Player's Score
-        score_display = "Score: {}".format(self.player.position - self.camera.position)
+        score_display = "Score: {}".format(self.player.position)
         score_pos = (self.terminal.size.x - len(score_display), 0)
         self.terminal.write(score_display, score_pos)
 

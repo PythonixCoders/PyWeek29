@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import pygame
 import functools
-from game.util.signal import Signal, Slot
-from game.util.when import When
+from game.base.signal import Signal, Slot
+from game.base.when import When
 from os import path
 from pygame import Color
 from game.constants import *
@@ -14,7 +13,7 @@ z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().posit
 
 
 class Scene(Signal):
-    def __init__(self, app, script="level1"):
+    def __init__(self, app, script=None):
         super().__init__()
         self.app = app
         self.when = When()
@@ -81,9 +80,18 @@ class Scene(Signal):
 
     @script.setter
     def script(self, script):
-        local = {}
-        exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), local)
-        self._script = local["script"](self.app, self)
+        print(script)
+        if isinstance(script, str):
+            local = {}
+            exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), local)
+            self._script = local["script"](self.app, self)
+        elif isinstance(script, type):
+            # So we can pass a Level class
+            self._script = iter(script(self.app, self))
+        elif script is None:
+            self._script = None
+        else:
+            raise TypeError
 
     def sleep(self, t):
         return self.when.once(t, self.resume)

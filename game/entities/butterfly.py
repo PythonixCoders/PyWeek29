@@ -1,13 +1,13 @@
 from os import path
 
 import pygame
-from glm import ivec2, vec3
+from glm import ivec2
 
 from game.base.entity import Entity
 
 from game.constants import SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
 from game.entities.camera import Camera
-from game.util.util import *
+from game.util import *
 
 
 class Butterfly(Entity):
