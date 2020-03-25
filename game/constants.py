@@ -12,6 +12,7 @@ TOP_LEVEL_DIR = os.path.dirname(os.path.dirname(__file__))
 ASSETS_DIR = os.path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "sprites")
 SCRIPTS_DIR = os.path.join(TOP_LEVEL_DIR, "game", "scripts")
+SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
 
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)

@@ -39,6 +39,13 @@ class App:
         self.next_state = initial_state
         self.process_state_change()
 
+        self.channels = [
+            pygame.mixer.Channel(0),
+            pygame.mixer.Channel(1),
+            pygame.mixer.Channel(2),
+            pygame.mixer.Channel(3),
+        ]
+
     def load(self, filename, resource_func):
         """
         Attempt to load a resource from the cache, otherwise, loads it

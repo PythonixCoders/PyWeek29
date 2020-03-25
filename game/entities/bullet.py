@@ -3,6 +3,7 @@
 from game.constants import *
 from game.base.entity import Entity
 from glm import vec3
+from game.entities.butterfly import Butterfly
 
 
 class Bullet(Entity):
@@ -20,9 +21,6 @@ class Bullet(Entity):
         self.parent = parent
 
     def collision(self, other, dt):
-        # print('bullet collision ->', other)
-        # if self.removed:
-        #     assert False
-        if self.parent is not other:
+        if isinstance(other, Butterfly):
             self.parent.score += 1
-            other.remove()
+            other.explode()

@@ -32,7 +32,7 @@ class Player(Entity):
     def collision(self, other, dt):
         if isinstance(other, Butterfly):
             self.score += 1
-            other.remove()
+            other.explode()
 
     def action(self, btn):
         self.scene.add(

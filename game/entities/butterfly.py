@@ -5,7 +5,7 @@ from glm import ivec2
 
 from game.base.entity import Entity
 
-from game.constants import SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
+from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
 from game.entities.camera import Camera
 from game.util import *
 
@@ -32,9 +32,7 @@ class Butterfly(Entity):
 
         self.time = 0
         self.frame = 0
-
-        fn = path.join(SOUNDS_DIR, "hit.wav")
-        self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
+        self.explosion_snd = None
 
     def get_animation(self, color):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -62,15 +60,26 @@ class Butterfly(Entity):
 
         return frames
 
+    def fall(self):
+        self.velocity = -Y * 100
+
     def explode(self):
         self.scene.add(
             Entity(self.app, self.scene, "bullet.png", position=self.position, life=1)
         )
-        self.explosion_snd
+        fn = path.join(SOUNDS_DIR, "hit.wav")
+        self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
+        self.explosion_snd.play()
+        self.slots.append(
+            self.scene.when.once(self.explosion_snd.get_length(), lambda: self.fall())
+        )
 
     def update(self, dt):
         super().update(dt)
         self.time += dt * 10
+
+        if self.position.y < -1000:
+            self.remove()
 
     def render(self, camera: Camera):
         pos = camera.world_to_screen(self.position)
