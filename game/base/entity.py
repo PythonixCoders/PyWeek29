@@ -59,6 +59,11 @@ class Entity:
             self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.size = vec3(0)
+        self.render_size = None
+        """Should hold the size in pixel at which the entity was last rendered"""
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(pos: {self.position})"
 
     @property
     def position(self):
@@ -142,6 +147,7 @@ class Entity:
 
         surf: SurfaceType = surf or self._surface
         if not surf:
+            self.render_size = None
             return
 
         half_diag = vec3(-surf.get_width(), surf.get_height(), 0) / 2
@@ -156,6 +162,7 @@ class Entity:
             return
 
         size = ivec2(pos_bl.xy - pos_tl.xy)
+        self.render_size = size
 
         max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
         fade = surf_fader(max_fade_dist, camera.distance(self.position))

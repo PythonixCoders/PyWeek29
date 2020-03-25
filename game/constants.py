@@ -17,6 +17,7 @@ SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
 # Images should all be in the SPRITES_DIR
 SHIP_IMAGE_PATH = "ship.png"
 CROSSHAIR_IMAGE_PATH = "crosshair.png"
+CROSSHAIR_GREEN_IMAGE_PATH = "crosshair_green.png"
 BULLET_IMAGE_PATH = "bullet.png"
 
 ORANGE = (255, 165, 0)
@@ -33,7 +34,7 @@ EPSILON = 0.0001  # for floating point comparisons
 GROUND_HEIGHT = -300
 PLAYER_SPEED = glm.vec3(80, 80, 200)
 BULLET_SPEED = 4000
-BULLET_OFFSET = glm.vec3(0, -20, -200)
+BULLET_OFFSET = glm.vec3(0, -20, -10)
 SCREEN_DIST = 3000
 FULL_FOG_DISTANCE = 3.3
 """
