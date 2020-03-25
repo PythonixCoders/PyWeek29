@@ -83,7 +83,7 @@ class Script:
 
     @property
     def script(self):
-        assert False
+        return self._script
 
     @script.setter
     def script(self, script=None):
@@ -151,6 +151,7 @@ class Script:
                 self._script = None
             except Exception as e:
                 print(e)
+                self._script = None
 
         self.inside = False
         
