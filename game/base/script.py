@@ -8,6 +8,7 @@ from pygame import Color
 from game.constants import *
 from glm import vec3, vec4, ivec4
 import math
+import importlib
 
 
 class Script:
@@ -45,13 +46,15 @@ class Script:
     def script(self, script=None):
         print("Script:", script)
         if isinstance(script, str):
-            local = {}
-            exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), local)
-            if "run" not in local:
-                assert False
-            self.inside = True
-            self._script = local["run"](self.app, self.ctx, self)
-            self.inside = False
+            run = importlib.import_module('game.scripts.' + script).run
+            self._script = run(self.app, self.ctx, self)
+            # self.locals = {}
+            # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
+            
+            # if "run" not in self.locals:
+            #     assert False
+            # self.inside = True
+            # self._script = self.locals["run"](self.app, self.ctx, self)
         elif isinstance(script, type):
             # So we can pass a Level class
             self.inside = True

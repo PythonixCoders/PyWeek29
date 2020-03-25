@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import pygame.mixer
+import glm
 from glm import vec3, vec4
 
 
@@ -12,7 +13,7 @@ def run(app, scene, script):
     terminal = app.state.terminal
     keys = scene.keys
 
-    # when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
+    when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
     a = when.fade(
         3,
         (0, 1),
@@ -44,16 +45,17 @@ def run(app, scene, script):
 
     while True:
 
-        terminal.write("Press any key to continue", (0, 2), "white")
+        terminal.write("Press any key to continue", (0, 20), "green")
 
         yield script.sleep(0.2)
-        if any(keys()):
+        if len(keys()):
             break
 
-        terminal.clear(2)
+        terminal.clear(20)
 
         yield script.sleep(0.2)
-        if any(keys()):
+        if len(keys()):
             break
 
     app.state = "game"
+    

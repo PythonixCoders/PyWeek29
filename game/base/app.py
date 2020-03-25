@@ -15,7 +15,7 @@ import time
 class App:
 
     STATES = {"intro": Intro, "game": Game}
-    MAX_KEYS = 512
+    # MAX_KEYS = 512
 
     def __init__(self, initial_state):
         """
@@ -35,7 +35,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.time = 0
         self.dirty = True
-        self.keys = [False] * self.MAX_KEYS
+        # self.keys = [False] * self.MAX_KEYS
 
         self._state = None
         self.last_state = None
