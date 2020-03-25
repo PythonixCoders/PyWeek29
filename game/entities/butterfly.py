@@ -62,24 +62,27 @@ class Butterfly(Entity):
 
     def fall(self):
         self.velocity = -Y * 100
+        self.life = 2
 
     def explode(self):
-        self.scene.add(
-            Entity(self.app, self.scene, "bullet.png", position=self.position, life=1)
-        )
-        fn = path.join(SOUNDS_DIR, "hit.wav")
-        self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
-        self.explosion_snd.play()
-        self.slots.append(
-            self.scene.when.once(self.explosion_snd.get_length(), lambda: self.fall())
-        )
+        if not self.explosion_snd:
+            self.scene.add(
+                Entity(
+                    self.app, self.scene, "bullet.png", position=self.position, life=1
+                )
+            )
+            fn = path.join(SOUNDS_DIR, "hit.wav")
+            self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
+            self.explosion_snd.play()
+            self.slots.append(
+                self.scene.when.once(
+                    self.explosion_snd.get_length(), lambda: self.fall()
+                )
+            )
 
     def update(self, dt):
         super().update(dt)
         self.time += dt * 10
-
-        if self.position.y < -1000:
-            self.remove()
 
     def render(self, camera: Camera):
         pos = camera.world_to_screen(self.position)
