@@ -1,5 +1,5 @@
 import pygame
-from glm import vec3
+from glm import vec3, ivec2
 from pygame.camera import Camera
 
 from game.entities.butterfly import Butterfly
@@ -55,13 +55,17 @@ class Level:
             terminal = self.app.state.terminal
             typ = pygame.mixer.Sound("data/sounds/type.wav")
 
+            left = ivec2(
+                (terminal.size.x - len(self.name)) / 2,
+                5
+            )
             for i, letter in enumerate(self.name):
-                terminal.write(letter, (i+5, 5), "red")
+                terminal.write(letter, left + (i, 0), "red")
                 typ.play()
                 yield self.pause(0.1)
-
+            yield self.pause(0.5)
             for i in range(len(self.name)):
-                terminal.clear((i+5, 5))
+                terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
 
     def __iter__(self):

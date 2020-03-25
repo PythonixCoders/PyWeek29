@@ -17,4 +17,19 @@ class Level1(Level):
 
         for _ in range(10):
             self.spawn(0, 0)
-            yield self.pause(0.5)
+            yield self.pause(1)
+
+        self.spawn(0.5, 0.5)
+        self.spawn(0.5, -0.5)
+        self.spawn(-0.5, -0.5)
+        self.spawn(-0.5, 0.5)
+
+        yield self.pause(3)
+
+        self.spawn(0, 0)
+        yield self.pause(1)
+        for i in range(1, 5):
+            self.spawn(i / 10, 0)
+            self.spawn(-i / 10, 0)
+            yield self.pause(1)
+
