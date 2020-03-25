@@ -21,7 +21,8 @@ def test_scene():
 
     ent.remove()
     assert len(scene) == 0
-    
+
+
 def test_scene_blocked():
 
     scene = Signal()
@@ -31,7 +32,7 @@ def test_scene_blocked():
     slot = scene.connect(ent)
     scene.blocked -= 1
     ent.slot = weakref.ref(slot)
-    
+
     assert len(scene) == 0
     scene.refresh()
     assert len(scene) == 1
@@ -39,9 +40,7 @@ def test_scene_blocked():
     scene.blocked += 1
     ent.remove()
     scene.blocked -= 1
-  
+
     assert len(scene) == 1
     scene.refresh()
     assert len(scene) == 0
-
- 

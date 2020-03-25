@@ -16,7 +16,7 @@ def run(app, scene, script):
     a = when.fade(
         3,
         (0, 1),
-        lambda t: scene.set_sky_color(glm.mix(color("black"), color("darkblue"), t)),
+        lambda t: scene.set_sky_color(glm.mix(color("black"), color("darkgray"), t)),
     )
 
     # scene.sky_color = "black"
@@ -27,6 +27,20 @@ def run(app, scene, script):
         terminal.write(msg[i], (i, 0), "red")
         typ.play()
         yield script.sleep(0.1)
+
+    msg = [
+        "In the year, 20XX, the butterfly",
+        "overpopulation problem has",
+        "reached critical mass",
+        "The military has decided to intervene.",
+        "Your mission is simple: murder all the",
+        "butterflies before the world ends.",
+    ]
+    for y, line in enumerate(msg):
+        for x, m in enumerate(line):
+            terminal.write(m, (x, y * 2 + 3), "white")
+            typ.play()
+            yield script.sleep(0.05)
 
     while True:
 
@@ -42,4 +56,4 @@ def run(app, scene, script):
         if any(keys()):
             break
 
-    app.state = "intro"
+    app.state = "game"

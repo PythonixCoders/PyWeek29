@@ -97,7 +97,8 @@ class Script:
                     pass
 
             except StopIteration:
-                print("Level Finished")
+                print("Script Finished")
+                self._script = None
             except Exception as e:
                 print(e)
 

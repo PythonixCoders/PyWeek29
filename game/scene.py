@@ -188,7 +188,7 @@ class Scene(Signal):
         #         slot = wslot()
         #         if not slot:
         #             return
-                
+
         #     super().disconnect(slot)
 
     # def resume(self):

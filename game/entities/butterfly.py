@@ -33,6 +33,9 @@ class Butterfly(Entity):
         self.time = 0
         self.frame = 0
 
+        fn = path.join(SOUNDS_DIR, "hit.wav")
+        self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
+
     def get_animation(self, color):
         fn = path.join(SPRITES_DIR, "butterfly-orange.png")
 
@@ -59,6 +62,12 @@ class Butterfly(Entity):
 
         return frames
 
+    def explode(self):
+        self.scene.add(
+            Entity(self.app, self.scene, "bullet.png", position=self.position, life=1)
+        )
+        self.explosion_snd
+
     def update(self, dt):
         super().update(dt)
         self.time += dt * 10
@@ -75,15 +84,15 @@ class Butterfly(Entity):
 
         size = pos_bl.xy - pos.xy
         self.size = vec3(size, min(*size))  # size for collision
-        
+
         if size.x > 150 or size.y > 150:
             return
 
         if size.x > 0:
-            
+
             max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
             fade = surf_fader(max_fade_dist, camera.distance(self.position))
-            
+
             # print(size)
             self.surf = pygame.transform.scale(
                 self.frames[int(self.time + self.num) % self.NB_FRAMES], ivec2(size)
