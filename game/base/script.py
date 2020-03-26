@@ -170,13 +170,12 @@ class Script:
                 else:
                     pass
 
-            except StopIteration as e:
+            except StopIteration:
                 print("Script Finished")
                 # traceback.print_exc()
                 self._script = None
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
-                print(e)
                 self._script = None
 
         self.inside = False

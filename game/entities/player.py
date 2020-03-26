@@ -214,14 +214,14 @@ class Player(Being):
 
     def update(self, dt):
 
-        self.velocity = (
-            vec3(
-                self.horiz_direction,
-                -self.dir[3] + self.dir[2],
-                -1,  # always going forwards
-            )
-            * self.speed
-        )
+        # self.velocity = (
+        #     vec3(
+        #         self.horiz_direction,
+        #         -self.dir[3] + self.dir[2],
+        #         -1,  # always going forwards
+        #     )
+        #     * self.speed
+        # )
 
         if self.position.y <= -299:
             # too low ?

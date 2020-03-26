@@ -75,7 +75,7 @@ class Butterfly(Enemy):
         )
         self.play_sound("butterfly.wav")
         self.fall()
-
+        
     # def hurt(self, damage, bullet, player):
     #     return super().hurt(damage, bullet, player)
 

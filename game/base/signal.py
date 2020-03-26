@@ -7,7 +7,7 @@ class SlotList:
     def __init__(self):
         self._slots = []
 
-    def clear():
+    def clear(self):
         self._slots = []
 
     def __bool__(self):
@@ -108,13 +108,26 @@ class Signal:
                 slot(*args)
         self.blocked -= 1
 
-        self.refresh()
+        self.clean()
 
-    def refresh(self):
+    def clean(self):
         if self.blocked == 0:
+            for wref in self.slots:
+                if isinstance(wref, weakref.ref):
+                    slot = wref()
+                    if not slot:
+                        self.disconnect(wref)
+                    elif isinstance(slot.func, weakref.ref):
+                        wfunc = slot.func()
+                        if not wfunc:
+                            self.disconnect(wref)
+            
             for func in self.queued:
                 func()
             self.queued = []
+    
+    def refresh(self): # old name
+        self.clean()
 
     def each(self, func, *args):
         if self.blocked:
@@ -126,7 +139,7 @@ class Signal:
             s.with_item(func, *args)
         self.blocked -= 1
 
-        self.refresh()
+        self.clean()
 
     def each_slot(self, func, *args):
         if self.blocked:
@@ -142,7 +155,7 @@ class Signal:
             s.with_slot(func, *args)
         self.blocked -= 1
 
-        self.refresh()
+        self.clean()
 
     def __iadd__(self, func):
         return self.connect(func, weak=False)
