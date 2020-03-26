@@ -90,8 +90,10 @@ class Game(State):
         assert self.scene.blocked == 0
 
     def build_inputs(self):
+        pg = pygame
+
         inputs = Inputs()
-        inputs["hmove"] = Axis(pygame.K_LEFT, pygame.K_RIGHT)
-        inputs["vmove"] = Axis(pygame.K_DOWN, pygame.K_UP)
-        inputs["fire"] = Button(pygame.K_SPACE, pygame.K_RETURN)
+        inputs["hmove"] = Axis((pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d))
+        inputs["vmove"] = Axis((pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w))
+        inputs["fire"] = Button(pg.K_SPACE, pg.K_RETURN)
         return inputs
