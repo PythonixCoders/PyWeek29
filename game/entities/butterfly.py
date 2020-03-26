@@ -9,6 +9,7 @@ from game.base.entity import Entity
 from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE, GRAY
 from game.entities.camera import Camera
 from game.util import *
+import random
 
 
 class Butterfly(Enemy):
@@ -70,9 +71,22 @@ class Butterfly(Enemy):
         self.frames = self.get_animation(GRAY)
 
         # TODO: This is supposed to be an explosion
-        self.scene.add(
-            Entity(self.app, self.scene, "bullet.png", position=self.position, life=1)
-        )
+        for x in range(10):
+            self.scene.add(
+                Entity(
+                    self.app,
+                    self.scene,
+                    "bullet.png",
+                    position=self.position,
+                    velocity=self.velocity +
+                        (vec3(
+                            random.random(),
+                            random.random(),
+                            random.random()
+                        ) - vec3(.5)) * 200,
+                    life=1
+                ),
+            )
         self.play_sound("butterfly.wav")
         self.fall()
 
