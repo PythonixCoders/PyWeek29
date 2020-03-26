@@ -42,7 +42,7 @@ class Scene(Signal):
         self.on_collision.once = self.on_collision_once
         self.on_collision.enter = self.on_collision_enter
         self.on_collision.leave = self.on_collision_leave
-    
+
     @property
     def when(self):
         if self._script.running():

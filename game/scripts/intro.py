@@ -55,7 +55,7 @@ def run(app, scene, script):
         yield script.sleep(0.2)
         if len(keys()):
             break
-        
+
         # t += script.dt
 
         terminal.clear(20)

@@ -136,23 +136,21 @@ class Entity:
         if filename in self.sounds:
             self.sounds[filename][1].stop()
             del self.sounds[filename]
-        
+
         filename = path.join(SOUNDS_DIR, filename)
         sound = self.app.load(filename, lambda: pygame.mixer.Sound(filename))
         assert not isinstance(sound, str)
         channel = pygame.mixer.find_channel()
         assert not isinstance(channel, str)
         if callback:
-            slot = self.scene.when.once(
-                self.sounds[0].get_length(), callback
-            )
+            slot = self.scene.when.once(self.sounds[0].get_length(), callback)
             self.slots.add(slot)
         else:
             slot = None
         self.sounds[filename] = (sound, channel, slot)
         channel.play(sound, *args)
         return sound, channel, slot
-        
+
     def update(self, dt):
         if self.acceleration != vec3(0):
             self.velocity += self.acceleration * dt

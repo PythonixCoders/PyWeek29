@@ -74,10 +74,10 @@ class Butterfly(Entity):
                     self.app, self.scene, "bullet.png", position=self.position, life=1
                 )
             )
-            self.play_sound('butterfly.wav')
+            self.play_sound("butterfly.wav")
             self.fall()
             self.exploded = True
-            
+
     def update(self, dt):
         super().update(dt)
         self.time += dt * 10

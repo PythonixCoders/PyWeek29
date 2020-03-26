@@ -25,6 +25,7 @@ class Char:
         self.color = color
         self.offset = offset
 
+
 class Terminal(Entity):
     def __init__(self, app, scene):
         super().__init__(app, scene)
@@ -34,7 +35,7 @@ class Terminal(Entity):
 
         self.font_size = ivec2(24, 24)
         self.spacing = ivec2(0, 0)
-        font_fn = path.join(FONTS_DIR, 'PressStart2P-Regular.ttf')
+        font_fn = path.join(FONTS_DIR, "PressStart2P-Regular.ttf")
 
         # load the font if its not already loaded (cacheble)
         # we're appending :16 to cache name since we may need to cache
@@ -50,8 +51,8 @@ class Terminal(Entity):
         # dirty flags for lazy redrawing
         self.dirty = True
         self.dirty_line = [True] * self.size.y  # dirty flags per line
-        
-        self._offset = ivec2(0,0)
+
+        self._offset = ivec2(0, 0)
 
         # 2d array of pygame text objects
         self.chars = []
@@ -93,33 +94,28 @@ class Terminal(Entity):
         self.dirty = True
 
     def offset(self, pos=(0, 0), offset=None):
-        
+
         if offset is None:
             # no ofs parameter? move entire terminal by offset (stored in pos now)
             self._offset = pos
             self.dirty = True
             return
 
-        if isinstance(pos, int): # row
+        if isinstance(pos, int):  # row
             for i in range(self.size.x):
                 self.offset((pos, i), offset)
             return
-            
+
         # try:
         ch = self.chars[pos[1]][pos[0]]
         # except IndexError:
         #     # outside of screen
         #     return
-        
+
         # offset char at position
         if ch:
             self.write(
-                ch.text,
-                ch.pos,
-                ch.color,
-                offset=offset,
-                align=-1,
-                length=0,
+                ch.text, ch.pos, ch.color, offset=offset, align=-1, length=0,
             )
 
     def write(
@@ -184,16 +180,18 @@ class Terminal(Entity):
             [
                 self.font.render(text, True, color),
                 self.font.render(text, True, self.shadow_color),
-                self.font.render(text, True, self.shadow2_color)
+                self.font.render(text, True, self.shadow2_color),
             ],
             ivec2(*pos),
             color,
-            ivec2(*offset)
+            ivec2(*offset),
         )
         self.dirty_line[pos[1]] = True
         self.dirty = True
 
-    def write_center(self, text, pos=0, color=(255, 255, 255, 0), offset=(0,0), length=0):
+    def write_center(
+        self, text, pos=0, color=(255, 255, 255, 0), offset=(0, 0), length=0
+    ):
         """
         write() to screen center X on row `pos`
         """
@@ -207,7 +205,9 @@ class Terminal(Entity):
         pos.x -= self.size.x / 2 + 1
         return self.write(text, pos, color, offset, 0, length)
 
-    def write_right(self, text, pos=0, color=(255, 255, 255, 0), offset=(0,0), length=0):
+    def write_right(
+        self, text, pos=0, color=(255, 255, 255, 0), offset=(0, 0), length=0
+    ):
         """
         write() to screen right side
         """
@@ -266,8 +266,8 @@ class Terminal(Entity):
                     if ch:
                         ofs = self._offset + ch.offset + self.spacing / 2
                         pos = ivec2(x, y) * self.font_size + ofs
-                        pos.x = max(0,min(self.app.size.x, pos.x))
-                        pos.y = max(0,min(self.app.size.y, pos.y))
+                        pos.x = max(0, min(self.app.size.x, pos.x))
+                        pos.y = max(0, min(self.app.size.y, pos.y))
                         self.surface.blit(
                             ch.imgs[1], pos + ivec2(2, -2),
                         )
@@ -275,9 +275,7 @@ class Terminal(Entity):
                             ch.imgs[2], pos + ivec2(-3, 3),
                         )
                         # text
-                        self.surface.blit(
-                            ch.imgs[0], pos
-                        )
+                        self.surface.blit(ch.imgs[0], pos)
                     self.dirty_line[y] = False
 
             self.dirty = False
