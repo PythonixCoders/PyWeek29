@@ -58,7 +58,7 @@ class Player(Being):
         self.slots += [
             self.app.inputs["hmove"].always_call(self.set_vel_x),
             self.app.inputs["vmove"].always_call(self.set_vel_y),
-            self.app.inputs["fire"].always_call(self.fire),
+            self.app.inputs["fire"].while_pressed(self.fire),
         ]
 
         self.position = vec3(0, 0, 0)
@@ -165,10 +165,7 @@ class Player(Being):
     def set_vel_y(self, axis: Axis):
         self.velocity.y = axis.value * self.speed.y
 
-    def fire(self, btn):
-
-        if not btn._pressed:
-            return
+    def fire(self, btn, dt):
 
         if self.fire_cooldown:
             return False

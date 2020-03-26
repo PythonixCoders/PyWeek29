@@ -20,6 +20,8 @@ class Button:
         self.just_double_pressed = False
 
         self._always = Signal()
+        self._while_pressed = Signal()
+        self._while_released = Signal()
         self._on_press = Signal()
         self._on_release = Signal()
         self._on_double_press = Signal()
@@ -41,6 +43,14 @@ class Button:
             self.press_time += dt
 
         self._always(self)
+
+        if self._while_pressed:
+            if self._pressed:
+                self._while_pressed(self, dt)
+
+        if self._while_released:
+            if not self._pressed:
+                self._while_pressed(self, dt)
 
         if self.just_pressed:
             self._on_press(self)
@@ -107,6 +117,12 @@ class Button:
     def always_call(self, callback):
         return self._always.connect(callback)
 
+    def while_pressed(self, callback):
+        return self._while_pressed.connect(callback)
+
+    def while_released(self, callback):
+        return self._while_released.connect(callback)
+
     def on_press(self, callback):
         return self._on_press.connect(callback)
 
@@ -135,6 +151,10 @@ class Button:
         """Remove a callback from all types if present."""
         if callback in self._always:
             self._always.disconnect(callback)
+        if callback in self._while_press:
+            self._while_press.disconnect(callback)
+        if callback in self._while_release:
+            self._while_release.disconnect(callback)
         if callback in self._on_press:
             self._on_press.disconnect(callback)
         if callback in self._on_release:
