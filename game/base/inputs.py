@@ -22,7 +22,7 @@ class Button:
         self._on_press = set()
         self._on_release = set()
         self._on_double_press = set()
-        self._repeat = dict()  # _repeat[callback] = [delay, trigger_count]
+        self._repeat = set()  # _repeat[callback] = [delay, trigger_count]
 
         self.last_press = float("-inf")
         """Time since last release of the button"""
@@ -55,9 +55,10 @@ class Button:
                 c(self)
 
         if self.pressed:
-            for c, pair in self._repeat.items():
-                if pair[0] * pair[1] <= self.press_time:
-                    pair[1] += 1
+            for c in self._repeat:
+                if c.delay * c.repetitions <= self.press_time:
+                    # It isn;t possible to set it directly, I don't know why
+                    c.__dict__["repetitions"] += 1
                     c(self)
 
     def event(self, events):
@@ -84,8 +85,8 @@ class Button:
                         # All keys were just released
                         self.last_press = 0
                         self.just_released = True
-                        for pair in self._repeat.values():
-                            pair[1] = 0
+                        for c in self._repeat:
+                            c.__dict__["repetitions"] = 0
 
     @property
     def pressed(self):
@@ -113,8 +114,14 @@ class Button:
         """
         Call `callback` when the button is pressed and
         every `delay` seconds while it is pressed.
+        Note: the same function cannot be a repeat callback
+        for two different things.
         """
-        self._repeat[callback] = [delay, 0]
+
+        # It isn't possible to set it directly, I don't know why
+        callback.__dict__["delay"] = delay
+        callback.__dict__["repetitions"] = 0
+        self._repeat.add(callback)
 
     def remove(self, callback):
         """Remove a callback from all types if present."""
@@ -127,7 +134,7 @@ class Button:
         if callback in self._on_double_press:
             self._on_double_press.remove(callback)
         if callback in self._repeat:
-            del self._repeat[callback]
+            self._on_double_press.remove(callback)
 
 
 class Axis:
