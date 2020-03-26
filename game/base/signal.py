@@ -121,12 +121,12 @@ class Signal:
                         wfunc = slot.func()
                         if not wfunc:
                             self.disconnect(wref)
-            
+
             for func in self.queued:
                 func()
             self.queued = []
-    
-    def refresh(self): # old name
+
+    def refresh(self):  # old name
         self.clean()
 
     def each(self, func, *args):
