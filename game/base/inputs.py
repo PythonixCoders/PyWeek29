@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Dict, Union
 
 import pygame
@@ -148,19 +149,44 @@ class Button:
             self._on_double_press.disconnect(callback)
 
 
+@dataclass(frozen=True)
+class JoyAxis:
+    joy_id: int
+    axis: int
+    reversed: bool = False
+    sensibility: float = 1.0
+    threshold: float = 0.0
+
+    def match(self, event):
+        return (
+            event.type == pygame.JOYAXISMOTION
+            and event.joy == self.joy_id
+            and event.axis == self.axis
+        )
+
+    def value(self, event):
+        """The value of a matching event."""
+
+        if abs(event.value) < self.threshold:
+            return 0
+
+        scaled = event.value * self.sensibility
+        if self.reversed:
+            return -scaled
+        else:
+            return scaled
+
+
 class Axis:
-    def __init__(self, negative, positive, *axis, treshold=0.3, sensibilty=1):
+    def __init__(self, negative, positive, *axis):
         """
         An input axis taking values between -1 and 1.
 
-        Callbacks are set and disconnectd with += and -=
+        Callbacks are disconnected with -=
         :param negative: keycode or list of keycodes
         :param positive: keycode or list of keycodes
-        :param axis: not implemented yet
+        :param axis: any number of JoyAxis
         """
-
-        self.threshold = treshold
-        self.sensibility = sensibilty
 
         self._negative = {negative} if isinstance(negative, int) else set(negative)
         self._positive = {positive} if isinstance(positive, int) else set(positive)
@@ -178,11 +204,7 @@ class Axis:
 
     @property
     def value(self):
-        total = self._value + self._axis_value
-        total *= self.sensibility
-        if abs(total) < self.threshold:
-            return 0
-        return clamp(total, -1, 1)
+        return clamp(self._value + self._axis_value, -1, 1)
 
     def always_call(self, callback):
         return self._callbacks.connect(callback)
@@ -212,9 +234,10 @@ class Axis:
                     self._value -= 1
 
             if event.type == pygame.JOYAXISMOTION:
-                if (event.joy, event.axis) in self._axis:
-                    axis_value += event.value
-                    any_axis = True
+                for axis in self._axis:
+                    if axis.match(event):
+                        axis_value += axis.value(event)
+                        any_axis = True
 
         if any_axis:
             self._axis_value = axis_value
@@ -230,3 +253,4 @@ class Inputs(dict, Dict[str, Union[Button, Axis]]):
         """Actualize buttons and axis."""
         for inp in self.values():
             inp.event(event)
+            print(event)

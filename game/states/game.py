@@ -3,7 +3,7 @@ import pygame
 from glm import vec3, sign
 from random import randint
 
-from game.base.inputs import Inputs, Axis, Button
+from game.base.inputs import Inputs, Axis, Button, JoyAxis
 from game.base.state import State
 from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
@@ -115,9 +115,22 @@ class Game(State):
     def build_inputs(self):
         pg = pygame
 
+        pg.joystick.quit()  # Reload
+        pg.joystick.init()
+        for j in range(pg.joystick.get_count()):
+            j = pg.joystick.Joystick(j)
+            j.init()
+
         inputs = Inputs()
-        inputs["hmove"] = Axis((pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d))
-        inputs["vmove"] = Axis((pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w))
+        inputs["hmove"] = Axis(
+            (pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d), JoyAxis(0, 0), JoyAxis(0, 3)
+        )
+        inputs["vmove"] = Axis(
+            (pg.K_DOWN, pg.K_s),
+            (pg.K_UP, pg.K_w),
+            JoyAxis(0, 1, True),
+            JoyAxis(0, 4, True),
+        )
         inputs["fire"] = Button(pg.K_SPACE, pg.K_RETURN)
         inputs["debug"] = Button(pg.K_TAB)
         inputs["switch-gun"] = Button(pg.K_RSHIFT, pg.K_LSHIFT)

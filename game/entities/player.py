@@ -192,7 +192,7 @@ class Player(Being):
         # Ship
         rect = self._surface.get_rect()
         rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
-        direction = sign(self.velocity.xy)
+        direction = self.velocity.xy / self.speed.xy
         rect.center += direction * (10, -10)
 
         self.app.screen.blit(self._surface, rect)
