@@ -7,6 +7,7 @@ import weakref
 
 from game.base.entity import Entity
 from game.base.being import Being
+from game.base.inputs import Inputs, Axis
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
@@ -23,6 +24,7 @@ class Weapon:
         self.speed = float(speed)
         self.damage = damage
         self.img = None
+
 
 class Player(Being):
 
@@ -52,9 +54,13 @@ class Player(Being):
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE, pygame.K_LSHIFT]
         self.dir = [False] * len(self.dirkeys)
         self.actions = [False] * len(self.actionkeys)
+        # self.app.inputs["fire"].on_press_repeated(self.fire, 0.15)
+        self.slots.append(self.app.inputs["hmove"].always_call(self.set_vel_x))
+        self.slots.append(self.app.inputs["vmove"].always_call(self.set_vel_y))
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)
+        self.velocity = vec3(self.speed)
 
         self.alive = True
         self.solid = True
@@ -84,13 +90,13 @@ class Player(Being):
         """
         if self.hp <= 0:
             return 0
-        
-        damage = min(self.hp, damage) # calc effective damage (not more than hp)
+
+        damage = min(self.hp, damage)  # calc effective damage (not more than hp)
         self.hp -= damage
         if self.hp <= 0:
             self.kill(damage, bullet, enemy)
         return damage
-    
+
     def collision(self, other, dt):
         if isinstance(other, Enemy):
             self.score += other.hp
@@ -138,7 +144,13 @@ class Player(Being):
             self.update_weapon_stats()
             self.play_sound("powerup.wav")
 
-    def fire(self):
+    def set_vel_x(self, axis: Axis):
+        self.velocity.x = axis.value * self.speed.x
+
+    def set_vel_y(self, axis: Axis):
+        self.velocity.y = axis.value * self.speed.y
+
+    def fire(self, *args):
 
         if self.fire_cooldown:
             return False
@@ -210,7 +222,7 @@ class Player(Being):
             )
             * self.speed
         )
-        
+
         if self.position.y <= -299:
             # too low ?
             self.velocity.y = max(0, self.velocity.y)

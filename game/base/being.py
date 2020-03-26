@@ -2,10 +2,12 @@
 
 from game.base.entity import Entity
 
+
 class Being(Entity):
     """
     An entity with HP
     """
+
     def __init__(self, app, scene, filename=None):
         super().__init__(app, scene, filename)
         self.solid = True

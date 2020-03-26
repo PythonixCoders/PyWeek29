@@ -4,6 +4,7 @@ import os
 import pygame
 from glm import ivec2, vec2
 
+from game.base.inputs import Inputs
 from game.base.signal import Signal
 from game.constants import SPRITES_DIR
 
@@ -34,6 +35,7 @@ class App:
         self.on_event = Signal()
         self.quit = False
         self.clock = pygame.time.Clock()
+        self.inputs = Inputs()
         self.time = 0
         self.dirty = True
         # self.keys = [False] * self.MAX_KEYS
@@ -110,18 +112,18 @@ class App:
             # print(t)
 
             # time.sleep(0.0001)
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     return 0
-                # elif event.type == pygame.KEYDOWN:
-                #     self.keys[event.key] = True
-                # elif event.type == pygame.KEYDOWN:
-                #     self.keys[event.key] = False
                 self.on_event(event)
+
+            self.inputs.event(events)
 
             if self.state is None:
                 break
 
+            self.inputs.update(dt)
             if self.update(dt) is False:
                 break
 
@@ -131,7 +133,7 @@ class App:
             dt = 0  # reset to accumulate
 
     def add_event_listener(self, obj):
-        slot = self.on_event.connect(obj.event, weak=True)
+        slot = self.on_event.connect(obj.event)
         obj.slots.append(slot)
         return slot
 

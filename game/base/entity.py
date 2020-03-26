@@ -3,7 +3,7 @@ from glm import ivec2
 from pygame.surface import SurfaceType
 
 from game.base.script import Script
-from game.base.signal import Signal
+from game.base.signal import Signal, SlotList
 from game.constants import *
 from os import path
 from game.util import *
@@ -20,7 +20,7 @@ class Entity:
         self.app = app
         self.scene = scene
         self.slot = None  # weakref
-        self.slots = []
+        self.slots = SlotList()
         self._life = kwargs.get("life")
         self.on_move = Signal()
         self.on_remove = Signal()
@@ -64,6 +64,9 @@ class Entity:
             self.size = vec3(0)
         self.render_size = vec3(0)
         """Should hold the size in pixel at which the entity was last rendered"""
+
+        if hasattr(self, "event"):
+            self.slots += app.add_event_listener(self)
 
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"
@@ -179,10 +182,9 @@ class Entity:
         if self._script:  # Script object
             self._script.update(dt)
 
-        # clear temp one-time when/event slots
         if self.slots:
-            self.slots = list(
-                filter(lambda slot: not slot.once or not slot.count, self.slots)
+            self.slots._slots = list(
+                filter(lambda slot: not slot.once or not slot.count, self.slots._slots)
             )
 
     def render(self, camera, surf=None):
@@ -223,9 +225,9 @@ class Entity:
         # if size.x > 150:
         #     self.scene.remove(self)
 
-    def __del__(self):
-        for slot in self.slots:
-            slot.disconnect()
+    # def __del__(self):
+    #     for slot in self.slots:
+    #         slot.disconnect()
 
     # NOTE: Implementing the below method automatically sets up Script
 

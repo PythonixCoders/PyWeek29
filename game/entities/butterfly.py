@@ -68,12 +68,10 @@ class Butterfly(Enemy):
     def kill(self, damage, bullet, player):
         # Butterfly will turn gray when killed
         self.frames = self.get_animation(GRAY)
-        
+
         # TODO: This is supposed to be an explosion
         self.scene.add(
-            Entity(
-                self.app, self.scene, "bullet.png", position=self.position, life=1
-            )
+            Entity(self.app, self.scene, "bullet.png", position=self.position, life=1)
         )
         self.play_sound("butterfly.wav")
         self.fall()

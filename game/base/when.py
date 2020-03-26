@@ -21,10 +21,10 @@ class When(Signal):
             slot = slot()
             if not slot:
                 if isinstance(self.sig, weakref.ref):
-                    sig = sig()
+                    sig = self.sig()
                     if not sig:
                         return
-                self.sig.disconnect(sig)
+                self.sig.disconnect(wref)
                 return
 
         if slot.start_t != 0:  # not infinite timer

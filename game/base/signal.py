@@ -3,6 +3,37 @@
 import weakref
 
 
+class SlotList:
+    def __init__(self):
+        self._slots = []
+
+    def clear():
+        self._slots = []
+
+    def __bool__(self):
+        return bool(self._slots)
+        
+    def __iadd__(self, func):
+        assert func is not None
+        self._slots.append(func)
+        return self
+
+    def __isub__(self, func):
+        for i, slot in enumerate(self._slots):
+            if slot is func:
+                del self._slots[i]
+        return self
+
+    # backwards compat with list
+    def append(self, func):
+        assert func is not None
+        self._slots.append(func)
+        return self
+
+    def __iter__(self):
+        return iter(self._slots)
+
+
 class Slot:
     def __init__(self, func, sig):
         self.func = func
@@ -112,6 +143,12 @@ class Signal:
         self.blocked -= 1
 
         self.refresh()
+
+    def __iadd__(self, func):
+        return self.connect(func, weak=False)
+
+    def __isub__(self, func):
+        return self.disconnect(func, weak=False)
 
     def connect(self, func, weak=True, once=False):
 
