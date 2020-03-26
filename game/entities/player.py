@@ -164,7 +164,7 @@ class Player(Being):
         else:
             aim = butt.position
 
-        start = camera.rel_to_world(BULLET_OFFSET) - Z * self.fire_offset
+        start = camera.rel_to_world(BULLET_OFFSET)
         direction = aim - start
         return start, aim, direction
 
