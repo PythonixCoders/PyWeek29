@@ -51,16 +51,16 @@ class Level:
 
     def __call__(self):
         self.scene.sky_color = self.sky
-        self.cloudy()
+        self.scene.ground_color = self.ground
+        self.scene.music = self.music
 
         if self.name:
             terminal = self.app.state.terminal
-            typ = pygame.mixer.Sound("data/sounds/type.wav")
 
             left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
             for i, letter in enumerate(self.name):
                 terminal.write(letter, left + (i, 0), "white")
-                typ.play()
+                self.scene.play_sound("type.wav")
                 yield self.pause(0.1)
 
             terminal.clear(left[1])

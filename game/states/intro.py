@@ -45,7 +45,6 @@ class Intro(State):
         scene = self.scene
         color = self.scene.color
         terminal = self.terminal
-        keys = script.keys
 
         when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
         a = when.fade(
@@ -57,13 +56,11 @@ class Intro(State):
         )
 
         # scene.sky_color = "black"
-        typ = pygame.mixer.Sound("data/sounds/type.wav")
-
         msg = "Welcome to Butterfly Destroyers!"
         for i in range(len(msg)):
             terminal.write(msg[i], (i, 0), "red")
-            typ.play()
-            yield script.sleep(0.1)
+            scene.ensure_sound("type.wav")
+            yield script.sleep(0.01 if script.keys else 0.05)
 
         msg = [
             "In the year, 20XX, the butterfly",
@@ -78,8 +75,8 @@ class Intro(State):
         for y, line in enumerate(msg):
             for x, m in enumerate(line):
                 terminal.write(m, (x, y * 2 + 3), "white")
-                typ.play()
-                yield script.sleep(0.05)
+                scene.ensure_sound("type.wav")
+                yield script.sleep(0.01 if script.keys else 0.05)
 
         t = 0
         while True:
@@ -93,15 +90,7 @@ class Intro(State):
             #     terminal.offset((x,20), (0, math.sin(t*math.tau*300)*4 - 2))
 
             yield script.sleep(0.2)
-            if len(keys()):
-                break
-
-            # t += script.dt
-
-            terminal.clear(20)
-
-            yield script.sleep(0.2)
-            if len(keys()):
+            if script.keys_down:
                 break
 
         self.app.state = "game"

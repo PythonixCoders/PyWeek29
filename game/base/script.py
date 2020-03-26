@@ -25,8 +25,9 @@ class Script:
 
         # these are accumulated between yields
         # this is different from get_pressed()
-        self.key_down = set()
-        self.key_up = set()
+        self.keys = set()
+        self.keys_down = set()
+        self.keys_up = set()
 
         if use_input:
             self.event_slot = self.app.on_event.connect(self.event)
@@ -48,9 +49,14 @@ class Script:
 
     def event(self, ev):
         if ev.type == pygame.KEYDOWN:
-            self.key_down.add(ev.key)
+            self.keys_down.add(ev.key)
+            self.keys.add(ev.key)
         elif ev.type == pygame.KEYUP:
-            self.key_up.add(ev.key)
+            self.keys_up.add(ev.key)
+            try:
+                self.keys.remove(ev.key)
+            except KeyError:
+                pass
 
     def running(self):
         return self._script is not None
@@ -66,8 +72,19 @@ class Script:
         assert self.event_slot  # input needs to be enabled (default)
 
         if isinstance(k, str):
-            return self.key_down[ord(k)]
-        return self.key_down[k]
+            return ord(k) in self.keys
+        return k in self.keys
+
+    def key_down(self, k):
+        # if we're in a script: return keys since last script yield
+        # assert self.script.inside
+
+        assert self.inside  # please only use this in scripts
+        assert self.event_slot  # input needs to be enabled (default)
+
+        if isinstance(k, str):
+            return ord(k) in self.keys_down
+        return k in self.keys_down
 
     def key_up(self, k):
         # if we're in a script: return keys since last script yield
@@ -77,23 +94,23 @@ class Script:
         assert self.event_slot  # input needs to be enabled (default)
 
         if isinstance(k, str):
-            return self.key_up[ord(k)]
-        return self.key_up[k]
+            return ord(k) in self.keys_up
+        return k in self.keys_up
 
     # This makes scripting cleaner than checking script.keys directly
     # We need these so scripts can do "keys = script.keys"
     # and then call keys(), since it changes
-    def keys(self):
-        # return key downs since last script yield
-        assert self.inside  # please only use this in scripts
-        assert self.event_slot  # input needs to be enabled (default)
-        return self.key_down
+    # def keys(self):
+    #     # return key downs since last script yield
+    #     assert self.inside  # please only use this in scripts
+    #     assert self.event_slot  # input needs to be enabled (default)
+    # return self._keys
 
-    def keys_up(self):
-        # return key ups since last script yield
-        assert self.inside  # please only use this in scripts
-        assert self.event_slot  # input needs to be enabled (default)
-        return self.key_up
+    # def keys_up(self):
+    #     # return key ups since last script yield
+    #     assert self.inside  # please only use this in scripts
+    #     assert self.event_slot  # input needs to be enabled (default)
+    #     return self._key_up
 
     @property
     def script(self):

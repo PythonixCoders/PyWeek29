@@ -16,6 +16,9 @@ SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
 MUSIC_DIR = os.path.join(ASSETS_DIR, "music")
 FONTS_DIR = ASSETS_DIR
 
+SOUND_VOLUME = 0.1
+MUSIC_VOLUME = 1.0
+
 # Images should all be in the SPRITES_DIR
 SHIP_IMAGE_PATH = "ship.png"
 CROSSHAIR_IMAGE_PATH = "crosshair.png"

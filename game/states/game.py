@@ -29,7 +29,7 @@ class Game(State):
 
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
+        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 

@@ -11,6 +11,7 @@ class Ground(Entity):
     def __init__(self, app, scene, height):
         super().__init__(app, scene)
         self.position = vec3(0, height, float("-inf"))
+        self.color = GREEN
 
     def render(self, camera: Camera):
         super().render(camera)
@@ -53,4 +54,4 @@ class Ground(Entity):
 
         if len(poly) > 2:
             poly = [tuple(camera.world_to_screen(p)) for p in poly]
-            pygame.draw.polygon(self.app.screen, GREEN, poly)
+            pygame.draw.polygon(self.app.screen, self.color, poly)

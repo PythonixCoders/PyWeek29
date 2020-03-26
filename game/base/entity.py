@@ -164,6 +164,7 @@ class Entity:
         channel = pygame.mixer.find_channel()
         if not channel:
             return None, None, None
+        channel.set_volume(SOUND_VOLUME)
         if callback:
             slot = self.scene.when.once(self.sounds[0].get_length(), callback)
             self.slots.add(slot)

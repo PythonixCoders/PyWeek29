@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import functools
-from game.base.signal import Signal, Slot
+from game.base.signal import Signal, Slot, SlotList
 from game.base.when import When
 from os import path
 from pygame import Color
@@ -22,12 +22,15 @@ class Scene(Signal):
         super().__init__()
         self.app = app
         self.state = state
-        self._when = When()
+        self.when = When()
+        self.slotlist = SlotList()
 
         # self.script_paused = False
         # self.script_slots = []
         self.sky_color = None
         self.dt = 0
+        self.sounds = {}
+
         # self.script_fn = script
         # self.event_slot = self.app.on_event.connect(self.event)
 
@@ -51,14 +54,50 @@ class Scene(Signal):
         else:
             self._script = None
 
-    @property
-    def when(self):
-        if self._script and self._script.running():
-            # Sanity Check:
-            # Don't use scene.when() when inside a script.
-            # Use script.when()
-            assert not self._script.inside
-        return self._when
+    def remove_sound(self, filename):
+        if filename in self.sounds:
+            self.sounds[filename][0].stop()
+            del self.sounds[filename]
+            return True
+        return False
+
+    def ensure_sound(self, filename, callback=None, *args):
+        """
+        Ensure a sound is playing.  If it isn't, play it.
+        """
+        if filename in self.sounds:
+            return None, None, None
+        return self.play_sound(filename, callback, *args)
+
+    def play_sound(self, filename, callback=None, *args):
+        """
+        Plays the sound with the given filename (relative to SOUNDS_DIR).
+        Returns sound, channel, and callback slot.
+        """
+
+        if filename in self.sounds:
+            self.sounds[filename][0].stop()
+            del self.sounds[filename]
+
+        filename = path.join(SOUNDS_DIR, filename)
+        sound = self.app.load(filename, lambda: pygame.mixer.Sound(filename))
+        if not sound:
+            return None, None, None
+        channel = pygame.mixer.find_channel()
+        if not channel:
+            return None, None, None
+        channel.set_volume(SOUND_VOLUME)
+        if callback:
+            slot = self.when.once(self.sounds[0].get_length(), callback)
+            self.slotlist += slot
+        else:
+            slot = None
+        self.sounds[filename] = (sound, channel, slot)
+        channel.play(sound, *args)
+        self.slotlist += self.when.once(
+            sound.get_length(), lambda: self.remove_sound(sound)
+        )
+        return sound, channel, slot
 
     @property
     def script(self):
@@ -76,6 +115,17 @@ class Scene(Signal):
     def music(self):
         return self._music
 
+    @property
+    def ground_color(self):
+        return self.color(self.app.state.ground.color)
+
+    @ground_color.setter
+    def ground_color(self, color):
+        c = self.color(color)
+        self.app.state.ground.color = pygame.Color(
+            int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
+        )
+
     @music.setter
     def music(self, filename):
         self._music = filename
@@ -88,15 +138,18 @@ class Scene(Signal):
         Given a color string, a pygame color, or vec3,
         return that as a normalized vec4 color
         """
-        # print(c)
         if isinstance(c, str):
             c = vec4(*pygame.Color(c)) / 255.0
+        elif isinstance(c, tuple):
+            c = vec4(*c, 0) / 255.0
         elif isinstance(c, pygame.Color):
-            c = vec4(*c) / 255.0
+            c = vec4(*c, 0) / 255.0
         elif isinstance(c, vec3):
             c = vec4(*c, 0)
         elif isinstance(c, (float, int)):
             c = vec4(c, c, c, 0)
+        elif c is None:
+            c = vec4(0)
         return c
 
     def mix(self, a, b, t):
@@ -170,11 +223,14 @@ class Scene(Signal):
 
     @sky_color.setter
     def sky_color(self, c):
-        self._sky_color = self.color(c)
+        self._sky_color = self.color(c) if c else None
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):
-        self._sky_color = self.color(c)
+        self._sky_color = self.color(c) if c else None
+
+    def set_ground_color(self, c):
+        self.ground_color = self.color(c) if c else None
 
     def remove(self, entity):
         super().disconnect(entity)

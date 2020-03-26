@@ -47,7 +47,9 @@ def test_once():
     slot = s.once(2, lambda: c.increment())
     s.update(1)
     assert c.x == 0
-    s.update(1)
+    s.update(0.5)
+    assert c.x == 0
+    s.update(0.5)
     assert c.x == 1
     s.update(10)
     assert c.x == 1
