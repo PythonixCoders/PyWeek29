@@ -26,7 +26,7 @@ class Entity:
         self.scene = scene
         self.slot = None  # weakref
         self.slots = SlotList()
-        self._life = kwargs.get("life")
+        self._life = kwargs.get("life")  # particle life (length of time to exist)
         self.on_move = Signal()
         self.on_remove = Signal()
         # self.dirty = True

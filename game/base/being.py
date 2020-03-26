@@ -12,13 +12,21 @@ class Being(Entity):
         super().__init__(app, scene, filename)
         self.solid = True
         self.hp = 1.0
+        self.score = 0
+        self.alive = True  # prevent mutliple kill()
 
-    def hurt(self, dmg, bullet, player):
+    def hurt(self, dmg, bullet, damager):
+        """
+        Apply damage from bullet shot by damager
+        Returns amount of damage taken (won't be more than self.hp)
+        """
         if not self.hp:
             return 0
-        self.hp -= dmg
-        if self.hp <= 0:
-            player.score += max(int(dmg), 1)
-            self.kill(dmg, bullet, player)
-            return dmg
-        return dmg
+        dmg_taken = min(self.hp, dmg)
+        if dmg_taken > 0:
+            self.hp -= dmg_taken
+            assert self.hp >= 0
+            if self.hp == 0:
+                self.kill(dmg_taken, bullet, damager)
+            damager.score += max(int(dmg_taken), 1)
+        return dmg_taken

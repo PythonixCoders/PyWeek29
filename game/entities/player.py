@@ -66,7 +66,7 @@ class Player(Being):
         damage = min(self.hp, damage)  # calc effective damage (not more than hp)
         self.hp -= damage
         if self.hp <= 0:
-            self.kill(damage, bullet, enemy)
+            self.kill(damage, bullet, enemy)  # kill self
         # if self.hp < 3:
         # self.smoke_event = scene.when.every(1, self.smoke)
         return damage

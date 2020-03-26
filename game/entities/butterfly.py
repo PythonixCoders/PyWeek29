@@ -64,9 +64,13 @@ class Butterfly(Enemy):
 
     def fall(self):
         self.velocity = -Y * 100
-        self.life = 2
+        self.life = 2  # remove in 2 seconds
 
     def kill(self, damage, bullet, player):
+
+        if not self.alive:
+            return False
+
         # Butterfly will turn gray when killed
         self.frames = self.get_animation(GRAY)
 
@@ -90,6 +94,9 @@ class Butterfly(Enemy):
             )
         self.play_sound("butterfly.wav")
         self.fall()
+
+        self.alive = False
+        return True
 
     # def hurt(self, damage, bullet, player):
     #     return super().hurt(damage, bullet, player)
