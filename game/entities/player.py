@@ -39,7 +39,7 @@ class Player(Being):
         self.game_state = self.scene.state
 
         self.score = 0
-        self.hp = 100
+        self.hp = 3
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
@@ -136,8 +136,7 @@ class Player(Being):
 
         self.game_state.terminal.write(wpn.letter + " " + ammo, (0, 21), wpn.color)
 
-        redbars = self.hp // 20
-        self.game_state.terminal.write("♥" * redbars + " " * (10 - redbars), 0, "green")
+        self.game_state.terminal.write("♥ " * self.hp + "  " * (3 - self.hp), 0, "red")
 
         # self.game_state.terminal.write("WPN " + wpn.letter, (0,20), wpn.color)
         # if wpn.max_ammo == -1:
@@ -183,47 +182,21 @@ class Player(Being):
         direction = aim - start
 
         # weapon logic
-        if wpn.letter == "P":
+        if wpn.letter == 'P':
             self.scene.add(
-                Bullet(
-                    self.app, self.scene, self, start, direction, wpn.damage, wpn.img
-                )
+                Bullet(self.app, self.scene, self, start, direction, wpn.damage, wpn.img)
             )
-        elif wpn.letter == "M":
+        elif wpn.letter == 'M':
             self.scene.add(
-                Bullet(
-                    self.app,
-                    self.scene,
-                    self,
-                    start - X * 8,
-                    direction,
-                    wpn.damage,
-                    wpn.img,
-                )
+                Bullet(self.app, self.scene, self, start - X*8, direction, wpn.damage, wpn.img)
             )
             self.scene.add(
-                Bullet(
-                    self.app,
-                    self.scene,
-                    self,
-                    start + X * 8,
-                    direction,
-                    wpn.damage,
-                    wpn.img,
-                )
+                Bullet(self.app, self.scene, self, start + X*8, direction, wpn.damage, wpn.img)
             )
-        if wpn.letter == "L":
+        if wpn.letter == 'L':
             for x in range(5):
                 self.scene.add(
-                    Bullet(
-                        self.app,
-                        self.scene,
-                        self,
-                        start - Z * 100 * x,
-                        direction,
-                        wpn.damage / 5,
-                        wpn.img,
-                    )
+                    Bullet(self.app, self.scene, self, start - Z*100*x, direction, wpn.damage/5, wpn.img)
                 )
 
         self.play_sound("shoot.wav")
