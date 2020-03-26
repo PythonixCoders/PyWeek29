@@ -131,18 +131,18 @@ class Button:
 
 
 class Axis:
-    def __init__(self, left, right, axis=()):
+    def __init__(self, negative, positive, axis=()):
         """
         An input axis taking values between -1 and 1.
 
         Callbacks are set and removed with += and -=
-        :param left: keycode or list of keycodes
-        :param right: keycode or list of keycodes
+        :param negative: keycode or list of keycodes
+        :param positive: keycode or list of keycodes
         :param axis: not implemented yet
         """
 
-        self._left = {left} if isinstance(left, int) else set(left)
-        self._right = {right} if isinstance(right, int) else set(right)
+        self._negative = {negative} if isinstance(negative, int) else set(negative)
+        self._positive = {positive} if isinstance(positive, int) else set(positive)
         self._axis = {axis} if isinstance(axis, int) else set(axis)
         self._callbacks = set()
 
@@ -172,15 +172,15 @@ class Axis:
     def event(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key in self._left:
+                if event.key in self._negative:
                     self._value -= 1
-                if event.key in self._right:
+                if event.key in self._positive:
                     self._value += 1
 
             if event.type == pygame.KEYUP:
-                if event.key in self._left:
+                if event.key in self._negative:
                     self._value += 1
-                if event.key in self._right:
+                if event.key in self._positive:
                     self._value -= 1
 
             # TODO: Implement joystick axis

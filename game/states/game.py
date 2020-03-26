@@ -92,6 +92,6 @@ class Game(State):
     def build_inputs(self):
         inputs = Inputs()
         inputs["hmove"] = Axis(pygame.K_LEFT, pygame.K_RIGHT)
-        inputs["vmove"] = Axis(pygame.K_UP, pygame.K_DOWN)
+        inputs["vmove"] = Axis(pygame.K_DOWN, pygame.K_UP)
         inputs["fire"] = Button(pygame.K_SPACE, pygame.K_RETURN)
         return inputs
