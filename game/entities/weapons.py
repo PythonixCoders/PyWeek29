@@ -31,7 +31,6 @@ class Weapon(Entity):
     def update(self, dt):
         super().update(dt)
 
-        print(self.last_fire)
         self.last_fire += dt
 
     def get_bullets(self, aim):
