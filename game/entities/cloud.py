@@ -6,7 +6,12 @@ import os
 
 
 class Cloud(Entity):
-    def __init__(self, app, scene, player):
-        pos = vec3(0, 200, -5000)
-        vel = vec3(randint(-15, 15), 0, player.velocity.z)
+    if randint(0, 10) <= 5:
+        hdg = -1
+    else:
+        hdg = 1
+
+    def __init__(self, app, scene, pos: vec3, z_vel: float):
+        vel = vec3(randint(0, 15) * Cloud.hdg, 0, z_vel)
+
         super().__init__(app, scene, SHIP_IMAGE_PATH, position=pos, velocity=vel)

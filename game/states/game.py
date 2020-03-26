@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pygame
 from glm import vec3, sign
+from random import randint
 
 from game.base.inputs import Inputs, Axis, Button
 from game.base.state import State
@@ -29,7 +30,6 @@ class Game(State):
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
-        self.cloud = self.scene.add(Cloud(app, self.scene, self.player))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
         self.scene.script = Level1
@@ -39,6 +39,13 @@ class Game(State):
         # )
 
         self.time = 0
+
+        for i in range(20):
+            x = randint(-1000, 1000)
+            y = randint(300, 600)
+            z = randint(-6000, -3000)
+            pos = vec3(x, y, z)
+            self.scene.add(Cloud(self.app, self.scene, pos, self.player.velocity.z))
 
     def pend(self):
 
