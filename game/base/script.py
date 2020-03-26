@@ -123,20 +123,31 @@ class Script:
         self.paused = False
 
         if isinstance(script, str):
-            run = importlib.import_module("game.scripts." + script).run
-            self.inside = True
-            if self.script_args:
-                self._script = run(*self.script_args, self)
+            lib = importlib.import_module("game.scripts." + script)
+            run = False
+            if not hasattr(lib, "run"):
+                # no run method? look for cls
+                for name, cls in lib.__dict__.items():
+                    if name != "Level" and name.startswith("Level"):
+                        if self.script_args:
+                            self._script = iter(cls(*self.script_args, self))
+                        else:
+                            self._script = iter(cls(self))
+                        break
             else:
-                self._script = run(self)
-            self.inside = False
-            # self.locals = {}
-            # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
+                self.inside = True
+                if self.script_args:
+                    self._script = run(*self.script_args, self)
+                else:
+                    self._script = run(self)
+                self.inside = False
+                # self.locals = {}
+                # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
 
-            # if "run" not in self.locals:
-            #     assert False
-            # self.inside = True
-            # self._script = self.locals["run"](self.app, self.ctx, self)
+                # if "run" not in self.locals:
+                #     assert False
+                # self.inside = True
+                # self._script = self.locals["run"](self.app, self.ctx, self)
         elif isinstance(script, type):
             # So we can pass a Level class
             if self.script_args:

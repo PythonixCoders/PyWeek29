@@ -33,7 +33,7 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
-        self.scene.script = Level1
+        self.level = 1
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
@@ -46,6 +46,9 @@ class Game(State):
         ]
 
         self.time = 0
+
+    def level(self, num):
+        self.scene.script = "level" + str(num)
 
     def debug_mode(self, b):
         self.debug = b
@@ -68,7 +71,7 @@ class Game(State):
         super().update(dt)  # needed for state script (unused)
 
         if not self.scene.script or self.scene.script.done():
-            self.scene.script = Level1  # restart
+            self.scene.script = "level1"  # restart
 
         self.scene.update(dt)
         self.gui.update(dt)
