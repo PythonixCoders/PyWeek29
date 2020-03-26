@@ -53,7 +53,10 @@ class Button:
 
         if self.pressed:
             self._repeat.blocked += 1
-            for c in self._repeat.slots:
+            for wref in self._repeat.slots:
+                c = wref()
+                if not c:
+                    continue
                 if c.delay * c.repetitions <= self.press_time:
                     # It isn;t possible to set it directly, I don't know why
                     c.repetitions += 1
@@ -85,7 +88,10 @@ class Button:
                         # All keys were just released
                         self.last_press = 0
                         self.just_released = True
-                        for c in self._repeat.slots:
+                        for wref in self._repeat.slots:
+                            c = wref()
+                            if not c:
+                                continue
                             c.repetitions = 0
 
     @property

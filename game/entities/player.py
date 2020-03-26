@@ -54,7 +54,7 @@ class Player(Being):
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE, pygame.K_LSHIFT]
         self.dir = [False] * len(self.dirkeys)
         self.actions = [False] * len(self.actionkeys)
-        # self.app.inputs["fire"].on_press_repeated(self.fire, 0.15)
+        self.slots.append(self.app.inputs["fire"].on_press_repeated(self.fire, 0.15))
         self.slots.append(self.app.inputs["hmove"].always_call(self.set_vel_x))
         self.slots.append(self.app.inputs["vmove"].always_call(self.set_vel_y))
 
@@ -232,8 +232,8 @@ class Player(Being):
             self.velocity.y = min(0, self.velocity.y)
             self.position.y = 300
 
-        if self.actions[0] or self.actions[1]:
-            self.fire()
+        # if self.actions[0] or self.actions[1]:
+        #     self.fire()
 
         super().update(dt)
 
