@@ -105,10 +105,4 @@ class Butterfly(Enemy):
             return
 
         surf = self.frames[int(self.time + self.num) % self.NB_FRAMES]
-
-        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
-        fade = surf_fader(max_fade_dist, camera.distance(self.position))
-        surf.set_alpha(fade)
-        surf.set_colorkey(0)
-
         super(Butterfly, self).render(camera, surf)

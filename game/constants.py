@@ -39,7 +39,7 @@ PLAYER_SPEED = glm.vec3(80, 80, -200)
 BULLET_SPEED = 4000
 BULLET_OFFSET = glm.vec3(0, -20, -10)
 SCREEN_DIST = 3000
-FULL_FOG_DISTANCE = 3.3
+FULL_FOG_DISTANCE = 1.5
 """
 Distance at which we see nothing behing the screen camera.
 If the screen is 1000px from the camera, everything at 1300px will
