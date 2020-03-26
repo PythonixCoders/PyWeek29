@@ -4,6 +4,7 @@ import os
 import pygame
 from glm import ivec2, vec2
 
+from game.base.inputs import Inputs
 from game.base.signal import Signal
 from game.constants import SPRITES_DIR
 
@@ -32,6 +33,7 @@ class App:
         self.screen = pygame.display.set_mode(self.size)
         self.quit = False
         self.clock = pygame.time.Clock()
+        self.inputs = Inputs()
         self.time = 0
         self.dirty = True
         # self.keys = [False] * self.MAX_KEYS

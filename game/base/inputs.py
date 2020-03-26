@@ -131,7 +131,7 @@ class Button:
 
 
 class Axis:
-    def __init__(self, left, right, axis=None):
+    def __init__(self, left, right, axis=()):
         """
         An input axis taking values between -1 and 1.
 
