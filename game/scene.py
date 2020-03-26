@@ -16,6 +16,8 @@ z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().posit
 
 
 class Scene(Signal):
+    MAX_PARTICLES = 16
+
     def __init__(self, app, state, script=None, script_args=None):
         super().__init__()
         self.app = app
@@ -249,6 +251,18 @@ class Scene(Signal):
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)
+
+        # update particles (remove if too many)
+        self.blocked += 1
+        particle_count = 0
+        for i, slot in enumerate(reversed(self.slots)):
+            e = slot.get()
+            if e.particle:
+                particle_count += 1
+                if particle_count >= self.MAX_PARTICLES:
+                    slot.disconnect()
+        self.blocked -= 1
+        self.clean()
 
     def render(self, camera):
         # call render(camera) on all scene entities

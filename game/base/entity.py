@@ -29,6 +29,7 @@ class Entity:
         self.removed = False
         self.parent = kwargs.get("parent")
         self.sounds = {}
+        self.particle = kwargs.get("particle")
 
         self._script_func = False
 

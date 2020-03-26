@@ -78,13 +78,14 @@ class Butterfly(Enemy):
                     self.scene,
                     "bullet.png",
                     position=self.position,
-                    velocity=self.velocity +
-                        (vec3(
-                            random.random(),
-                            random.random(),
-                            random.random()
-                        ) - vec3(.5)) * 200,
-                    life=1
+                    velocity=self.velocity
+                    + (
+                        vec3(random.random(), random.random(), random.random())
+                        - vec3(0.5)
+                    )
+                    * 100,
+                    life=1,
+                    particle=True,
                 ),
             )
         self.play_sound("butterfly.wav")
