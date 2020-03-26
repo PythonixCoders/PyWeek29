@@ -178,9 +178,10 @@ class Entity:
             self._script.update(dt)
 
         # clear temp one-time when/event slots
-        self.slots = list(
-            filter(lambda slot: not slot.once or not slot.count, self.slots)
-        )
+        if self.slots:
+            self.slots = list(
+                filter(lambda slot: not slot.once or not slot.count, self.slots)
+            )
 
     def render(self, camera, surf=None):
         """
