@@ -23,6 +23,7 @@ BULLET_IMAGE_PATH = "bullet.png"
 
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)
+GRAY = (100, 100, 100)
 BACKGROUND = pygame.Color("lightblue")
 
 # we're in "2d" so X and Y basis vectors should be 2d

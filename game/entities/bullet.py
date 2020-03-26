@@ -22,5 +22,6 @@ class Bullet(Entity):
 
     def collision(self, other, dt):
         if isinstance(other, Butterfly):
+            other.frames = other.get_animation(GRAY)
             other.hurt(self.damage, self, self.parent)
             self.remove()
