@@ -3,6 +3,7 @@ from os import path
 import pygame
 from glm import ivec2
 
+from game.base.enemy import Enemy
 from game.base.entity import Entity
 
 from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
@@ -10,7 +11,7 @@ from game.entities.camera import Camera
 from game.util import *
 
 
-class Butterfly(Entity):
+class Butterfly(Enemy):
     NB_FRAMES = 4
     DEFAULT_SCALE = 5
 
@@ -22,10 +23,7 @@ class Butterfly(Entity):
         :param scale:
         """
 
-        super().__init__(app, scene)
-
-        self.num = num
-        self.solid = True
+        super().__init__(app, scene, pos, color, scale, num, hp=1)
 
         self.frames = self.get_animation(color)
 
@@ -77,6 +75,12 @@ class Butterfly(Entity):
             self.play_sound("butterfly.wav")
             self.fall()
             self.exploded = True
+
+    def hurt(self, damage, bullet, player):
+        dmg = super().hurt(damage, bullet, player)
+        if self.hp <= 0:
+            self.explode()
+        return dmg
 
     def update(self, dt):
         super().update(dt)

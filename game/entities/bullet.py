@@ -18,9 +18,9 @@ class Bullet(Entity):
         self.damage = damage
         self.solid = True
         self.size.z = 1000  # to prevent tunneling
-        self.parent = parent
+        self.parent = parent  # whoever shot the bullet
 
     def collision(self, other, dt):
         if isinstance(other, Butterfly):
-            self.parent.score += 1
-            other.explode()
+            other.hurt(self.damage, self, self.parent)
+            self.remove()

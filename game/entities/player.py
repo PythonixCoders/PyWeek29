@@ -9,6 +9,7 @@ from game.base.entity import Entity
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
+from game.base.enemy import Enemy
 
 
 class Weapon:
@@ -73,8 +74,8 @@ class Player(Entity):
             weapon.ammo = weapon.max_ammo
 
     def collision(self, other, dt):
-        if isinstance(other, Butterfly):
-            self.score += 1
+        if isinstance(other, Enemy):
+            self.score += other.hp
             other.explode()
 
     def find_butterfly_in_crosshair(self):
@@ -191,6 +192,15 @@ class Player(Entity):
             )
             * self.speed
         )
+        
+        if self.position.y <= -299:
+            # too low ?
+            self.velocity.y = max(0, self.velocity.y)
+            self.position.y = -299
+        elif self.position.y >= 300:
+            # too high ?
+            self.velocity.y = min(0, self.velocity.y)
+            self.position.y = 300
 
         if self.actions[0] or self.actions[1]:
             self.fire()
