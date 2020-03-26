@@ -20,8 +20,6 @@ class Button:
         self.just_double_pressed = False
 
         self._always = Signal()
-        self._while_pressed = Signal()
-        self._while_released = Signal()
         self._on_press = Signal()
         self._on_release = Signal()
         self._on_double_press = Signal()
@@ -46,14 +44,6 @@ class Button:
         self.dt = dt
 
         self._always(self)
-
-        if self._while_pressed:
-            if self._pressed:
-                self._while_pressed(self)
-
-        if self._while_released:
-            if not self._pressed:
-                self._while_released(self)
 
         if self.just_pressed:
             self._on_press(self)
@@ -120,12 +110,6 @@ class Button:
     def always_call(self, callback):
         return self._always.connect(callback)
 
-    def while_pressed(self, callback):
-        return self._while_pressed.connect(callback)
-
-    def while_released(self, callback):
-        return self._while_released.connect(callback)
-
     def on_press(self, callback):
         return self._on_press.connect(callback)
 
@@ -154,10 +138,6 @@ class Button:
         """Remove a callback from all types if present."""
         if callback in self._always:
             self._always.disconnect(callback)
-        if callback in self._while_press:
-            self._while_press.disconnect(callback)
-        if callback in self._while_release:
-            self._while_release.disconnect(callback)
         if callback in self._on_press:
             self._on_press.disconnect(callback)
         if callback in self._on_release:
@@ -169,7 +149,7 @@ class Button:
 
 
 class Axis:
-    def __init__(self, negative, positive, axis=()):
+    def __init__(self, negative, positive, *axis, treshold=0.3, sensibilty=1):
         """
         An input axis taking values between -1 and 1.
 
@@ -179,19 +159,30 @@ class Axis:
         :param axis: not implemented yet
         """
 
+        self.threshold = treshold
+        self.sensibility = sensibilty
+
         self._negative = {negative} if isinstance(negative, int) else set(negative)
         self._positive = {positive} if isinstance(positive, int) else set(positive)
-        self._axis = {axis} if isinstance(axis, int) else set(axis)
+        self._axis = set(axis)
         self._callbacks = Signal()
 
+        # Hold the number of keys pressed
         self._value = 0
+        # Hold the total value of axis,
+        # separately because of different tracking methods
+        self._axis_value = 0
 
     def __str__(self):
         return f"Axis({self.value})"
 
     @property
     def value(self):
-        return clamp(self._value, -1, 1)
+        total = self._value + self._axis_value
+        total *= self.sensibility
+        if abs(total) < self.threshold:
+            return 0
+        return clamp(total, -1, 1)
 
     def always_call(self, callback):
         return self._callbacks.connect(callback)
@@ -205,6 +196,8 @@ class Axis:
         self._callbacks(self)
 
     def event(self, events):
+        axis_value = 0
+        any_axis = False
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key in self._negative:
@@ -212,13 +205,19 @@ class Axis:
                 if event.key in self._positive:
                     self._value += 1
 
-            if event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 if event.key in self._negative:
                     self._value += 1
                 if event.key in self._positive:
                     self._value -= 1
 
-            # TODO: Implement joystick axis
+            if event.type == pygame.JOYAXISMOTION:
+                if (event.joy, event.axis) in self._axis:
+                    axis_value += event.value
+                    any_axis = True
+
+        if any_axis:
+            self._axis_value = axis_value
 
 
 class Inputs(dict, Dict[str, Union[Button, Axis]]):
