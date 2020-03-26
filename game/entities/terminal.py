@@ -6,7 +6,24 @@ import pygame
 from glm import ivec2, ivec4
 
 from game.base.entity import Entity
+from game.constants import FONTS_DIR
+from os import path
 
+
+class Char:
+    def __init__(
+        self,
+        text,
+        imgs,
+        pos=ivec2(0, 0),
+        color=pygame.Color(255, 255, 255, 0),
+        offset=ivec2(0, 0),
+    ):
+        self.imgs = imgs
+        self.text = text
+        self.pos = pos
+        self.color = color
+        self.offset = offset
 
 class Terminal(Entity):
     def __init__(self, app, scene):
@@ -16,7 +33,8 @@ class Terminal(Entity):
         self.scene = scene
 
         self.font_size = ivec2(24, 24)
-        font_fn = "data/PressStart2P-Regular.ttf"
+        self.spacing = ivec2(0, 0)
+        font_fn = path.join(FONTS_DIR, 'PressStart2P-Regular.ttf')
 
         # load the font if its not already loaded (cacheble)
         # we're appending :16 to cache name since we may need to cache
@@ -27,16 +45,18 @@ class Terminal(Entity):
         )
 
         # terminal size in characters
-        self.size = app.size / self.font_size
+        self.size = app.size / (self.font_size + self.spacing)
 
         # dirty flags for lazy redrawing
         self.dirty = True
         self.dirty_line = [True] * self.size.y  # dirty flags per line
+        
+        self._offset = ivec2(0,0)
 
         # 2d array of pygame text objects
-        self.terminal = []
+        self.chars = []
         for y in range(self.size.y):
-            self.terminal.append([None] * self.size.x)
+            self.chars.append([None] * self.size.x)
 
         self.surface = pygame.Surface(
             self.app.size, pygame.SRCALPHA, 32
@@ -68,11 +88,49 @@ class Terminal(Entity):
 
         # clear the character at pos (x,y)
         # we use indices instead of .x .y since pos could be tuple/list
-        self.terminal[pos[1]][pos[0]] = None
+        self.chars[pos[1]][pos[0]] = None
         self.dirty_line[pos[1]] = True
         self.dirty = True
 
-    def write(self, text, pos=(0, 0), color=(255, 255, 255, 0), align=-1, length=0):
+    def offset(self, pos=(0, 0), offset=None):
+        
+        if offset is None:
+            # no ofs parameter? move entire terminal by offset (stored in pos now)
+            self._offset = pos
+            self.dirty = True
+            return
+
+        if isinstance(pos, int): # row
+            for i in range(self.size.x):
+                self.offset((pos, i), offset)
+            return
+            
+        # try:
+        ch = self.chars[pos[1]][pos[0]]
+        # except IndexError:
+        #     # outside of screen
+        #     return
+        
+        # offset char at position
+        if ch:
+            self.write(
+                ch.text,
+                ch.pos,
+                ch.color,
+                offset=offset,
+                align=-1,
+                length=0,
+            )
+
+    def write(
+        self,
+        text,
+        pos=(0, 0),
+        color=(255, 255, 255, 0),
+        offset=(0, 0),
+        align=-1,
+        length=0,
+    ):
 
         if isinstance(pos, (int, float)):
             pos = ivec2(0, pos)
@@ -90,9 +148,11 @@ class Terminal(Entity):
 
         # Do alignment (-1, 0, 1)
         if align == 0:  # center
-            return self.write(text, (pos[0] - length / 2, pos[1]), color, align=-1)
+            return self.write(
+                text, (pos[0] - length / 2, pos[1]), color, offset, align=-1
+            )
         elif align == 1:  # right
-            return self.write(text, (pos[0] + length, pos[1]), color, align=-1)
+            return self.write(text, (pos[0] + length, pos[1]), color, offset, align=-1)
 
         assert align == -1  # left
 
@@ -105,30 +165,35 @@ class Terminal(Entity):
 
         if len(text) > 1:  # write more than 1 char? write chars 1 by 1
             for i in range(len(text)):
-                self.write(
-                    text[i], (pos[0] + i, pos[1]), color, align=-1, length=length
-                )
+                self.write(text[i], (pos[0] + i, pos[1]), color, offset, -1, length)
             return
 
         # color string name
         if isinstance(color, str):
             color = pygame.Color(color)
 
-        try:
-            self.terminal[pos[1]][pos[0]]
-        except IndexError:
-            # outside of screen
-            return
+        # note that this allows negative positioning
+        # try:
+        #     self.chars[pos[1]][pos[0]]
+        # except IndexError:
+        #     # outside of screen
+        #     return
 
-        self.terminal[pos[1]][pos[0]] = (
-            self.font.render(text, True, color),
-            self.font.render(text, True, self.shadow_color),
-            self.font.render(text, True, self.shadow2_color),
+        self.chars[pos[1]][pos[0]] = Char(
+            text,
+            [
+                self.font.render(text, True, color),
+                self.font.render(text, True, self.shadow_color),
+                self.font.render(text, True, self.shadow2_color)
+            ],
+            ivec2(*pos),
+            color,
+            ivec2(*offset)
         )
         self.dirty_line[pos[1]] = True
         self.dirty = True
 
-    def write_center(self, text, pos=0, color=(255, 255, 255, 0)):
+    def write_center(self, text, pos=0, color=(255, 255, 255, 0), offset=(0,0), length=0):
         """
         write() to screen center X on row `pos`
         """
@@ -140,9 +205,9 @@ class Terminal(Entity):
 
         # print(pos)
         pos.x -= self.size.x / 2 + 1
-        return self.write(text, pos, color, align=0)
+        return self.write(text, pos, color, offset, 0, length)
 
-    def write_right(self, text, pos=0, color=(255, 255, 255, 0)):
+    def write_right(self, text, pos=0, color=(255, 255, 255, 0), offset=(0,0), length=0):
         """
         write() to screen right side
         """
@@ -154,15 +219,15 @@ class Terminal(Entity):
             pos = ivec2(pos[0], pos[1])
 
         pos.x = self.size.x - 1
-        return self.write(text, pos, color, align=1)
+        return self.write(text, pos, color, offset, 1, length)
 
     def scramble(self):
         """
         Randomly sets every character in terminal to random character and color
         """
 
-        for y in range(len(self.terminal)):
-            for x in range(len(self.terminal[y])):
+        for y in range(self.size.y):
+            for x in range(self.size.x):
                 col = (
                     random.randint(0, 255),
                     random.randint(0, 255),
@@ -180,7 +245,7 @@ class Terminal(Entity):
 
             # self.surface.fill((255,255,255,0), (0, 0, *self.app.size))
 
-            for y in range(len(self.terminal)):
+            for y in range(len(self.chars)):
 
                 if not self.dirty_line[y]:
                     continue
@@ -196,21 +261,22 @@ class Terminal(Entity):
                     ),
                 )
 
-                for x in range(len(self.terminal[y])):
-                    text = self.terminal[y][x]
-                    if text:
-                        # shadow
+                for x in range(len(self.chars[y])):
+                    ch = self.chars[y][x]
+                    if ch:
+                        ofs = self._offset + ch.offset + self.spacing / 2
+                        pos = ivec2(x, y) * self.font_size + ofs
+                        pos.x = max(0,min(self.app.size.x, pos.x))
+                        pos.y = max(0,min(self.app.size.y, pos.y))
                         self.surface.blit(
-                            text[1],
-                            ivec2(x, y) * self.font_size + ivec2(2, -2),  # offset
+                            ch.imgs[1], pos + ivec2(2, -2),
                         )
                         self.surface.blit(
-                            text[2],
-                            ivec2(x, y) * self.font_size + ivec2(-3, 3),  # offset
+                            ch.imgs[2], pos + ivec2(-3, 3),
                         )
                         # text
                         self.surface.blit(
-                            text[0], (x * self.font_size.x, y * self.font_size.y)
+                            ch.imgs[0], pos
                         )
                     self.dirty_line[y] = False
 

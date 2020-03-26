@@ -9,6 +9,7 @@ from game.constants import *
 from glm import vec3, vec4, ivec4
 import math
 import importlib
+import traceback
 
 
 class Script:
@@ -161,9 +162,10 @@ class Script:
 
             except StopIteration as e:
                 print("Script Finished")
-                print(e)
+                traceback.print_exc()
                 self._script = None
             except Exception as e:
+                traceback.print_exc()
                 print(e)
                 self._script = None
 

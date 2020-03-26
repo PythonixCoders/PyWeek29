@@ -44,3 +44,4 @@ class Message(Entity):
     def update(self, t):
         self.position = self.app.state.player.position + Z * 100
         pass
+

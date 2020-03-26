@@ -68,12 +68,13 @@ class Player(Entity):
         direction = aim - start
 
         self.scene.add(Bullet(self.app, self.scene, self, start, direction))
+        self.play_sound('shoot.wav')
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
             for i, key in enumerate(self.dirkeys):
                 if key == event.key:
-                    self.dir[i] = event.type == pygame.KEYDOWN
+                    self.dir[i] = (event.type == pygame.KEYDOWN)
             for i, key in enumerate(self.actionkeys):
                 if key == event.key:
                     if event.type == pygame.KEYDOWN:

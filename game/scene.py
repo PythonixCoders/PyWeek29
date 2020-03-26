@@ -19,7 +19,7 @@ class Scene(Signal):
     def __init__(self, app, script=None):
         super().__init__()
         self.app = app
-        self.when = When()
+        self._when = When()
         if script:
             self._script = Script(app, self, script)
 
@@ -42,6 +42,15 @@ class Scene(Signal):
         self.on_collision.once = self.on_collision_once
         self.on_collision.enter = self.on_collision_enter
         self.on_collision.leave = self.on_collision_leave
+    
+    @property
+    def when(self):
+        if self._script.running():
+            # Sanity Check:
+            # Don't use scene.when() when inside a script.
+            # Use script.when()
+            assert not self._script.inside
+        return self._when
 
     @property
     def script(self):

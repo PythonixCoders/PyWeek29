@@ -11,7 +11,7 @@ from game.util import *
 
 class Entity:
     """
-    A basic component of the game.
+    A basic component of the game scene.
     An Entity represents something that will be draw on the screen.
     """
 
@@ -28,6 +28,7 @@ class Entity:
         self._surface = None
         self.removed = False
         self.parent = kwargs.get("parent")
+        self.sounds = {}
 
         self._script_func = False
 
@@ -126,6 +127,32 @@ class Entity:
 
     #     return False
 
+    def play_sound(self, filename, callback=None, *args):
+        """
+        Play sound with filename.
+        Triggers callback when sound is done
+        Forwards *args to channel.play()
+        """
+        if filename in self.sounds:
+            self.sounds[filename][1].stop()
+            del self.sounds[filename]
+        
+        filename = path.join(SOUNDS_DIR, filename)
+        sound = self.app.load(filename, lambda: pygame.mixer.Sound(filename))
+        assert not isinstance(sound, str)
+        channel = pygame.mixer.find_channel()
+        assert not isinstance(channel, str)
+        if callback:
+            slot = self.scene.when.once(
+                self.sounds[0].get_length(), callback
+            )
+            self.slots.add(slot)
+        else:
+            slot = None
+        self.sounds[filename] = (sound, channel, slot)
+        channel.play(sound, *args)
+        return sound, channel, slot
+        
     def update(self, dt):
         if self.acceleration != vec3(0):
             self.velocity += self.acceleration * dt
@@ -140,6 +167,10 @@ class Entity:
 
         if self._script:  # Script object
             self._script.update(dt)
+
+        # clear sounds that are done playing
+        # if self.sounds:
+        #     self.sounds = list(filter(lambda snd: snd[1].is_playing(), self.sounds))
 
     def render(self, camera, surf=None):
         """
@@ -182,7 +213,6 @@ class Entity:
     def __del__(self):
         for slot in self.slots:
             slot.disconnect()
-        self.slots = []
 
     # NOTE: Implementing the below method automatically sets up collisions
     # So it's commented out.

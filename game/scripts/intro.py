@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 import pygame.mixer
 import glm
+import math
 from glm import vec3, vec4
 
 
 def run(app, scene, script):
     when = script.when
     color = scene.color
-
-    # yield lambda: scene.key(' ')
-
     terminal = app.state.terminal
     keys = script.keys
 
@@ -32,7 +30,7 @@ def run(app, scene, script):
     msg = [
         "In the year, 20XX, the butterfly",
         "overpopulation problem has",
-        "reached critical mass",
+        "obviously reached critical mass.",
         "The military has decided to intervene.",
         "Your mission is simple: murder all the",
         "butterflies before the world ends.",
@@ -43,13 +41,22 @@ def run(app, scene, script):
             typ.play()
             yield script.sleep(0.05)
 
+    t = 0
     while True:
 
-        terminal.write("Press any key to continue", (0, 20), "green")
+        terminal.write_center("Press any key to continue", 20, "green")
+
+        # for x in range(terminal.size.x):
+        #     # print(math.sin(t*20)*20)
+        #     terminal.clear(19)
+        #     terminal.clear(21)
+        #     terminal.offset((x,20), (0, math.sin(t*math.tau*300)*4 - 2))
 
         yield script.sleep(0.2)
         if len(keys()):
             break
+        
+        # t += script.dt
 
         terminal.clear(20)
 

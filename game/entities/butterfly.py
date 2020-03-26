@@ -35,7 +35,7 @@ class Butterfly(Entity):
 
         self.time = 0
         self.frame = 0
-        self.explosion_snd = None
+        self.exploded = False
 
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -68,21 +68,16 @@ class Butterfly(Entity):
         self.life = 2
 
     def explode(self):
-        if not self.explosion_snd:
+        if not self.exploded:
             self.scene.add(
                 Entity(
                     self.app, self.scene, "bullet.png", position=self.position, life=1
                 )
             )
-            fn = path.join(SOUNDS_DIR, "hit.wav")
-            self.explosion_snd = self.app.load(fn, lambda: pygame.mixer.Sound(fn))
-            self.explosion_snd.play()
-            self.slots.append(
-                self.scene.when.once(
-                    self.explosion_snd.get_length(), lambda: self.fall()
-                )
-            )
-
+            self.play_sound('butterfly.wav')
+            self.fall()
+            self.exploded = True
+            
     def update(self, dt):
         super().update(dt)
         self.time += dt * 10

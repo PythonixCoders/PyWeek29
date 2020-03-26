@@ -87,10 +87,16 @@ class App:
         accum = 0
         self.fps = 0
         frames = 0
+        dt = 0
         while (not self.quit) and self.state:
 
             cur_t = time.time_ns()
-            dt = (cur_t - last_t) / (1000 * 1000 * 1000)
+            dt += (cur_t - last_t) / (1000 * 1000 * 1000)
+            
+            if dt < 0.001:
+                time.sleep(1 / 300)
+                continue # accumulate dt for skipped frames
+            
             last_t = cur_t
             accum += dt
             frames += 1
@@ -98,9 +104,11 @@ class App:
                 self.fps = frames
                 frames = 0
                 accum -= 1
-            dt = self.clock.tick(0) / 1000
+        
+            # dt = self.clock.tick(0) / 1000
             # print(t)
-            time.sleep(0.0001)
+            
+            # time.sleep(0.0001)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
@@ -118,6 +126,8 @@ class App:
 
             if self.render() is False:
                 break
+            
+            dt = 0 # reset to accumulate
 
     def add_event_listener(self, obj):
         slot = self.on_event.connect(obj.event, weak=True)
