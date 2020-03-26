@@ -7,6 +7,7 @@ from game.base.entity import Entity
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
+import weakref
 
 
 class Player(Entity):
@@ -27,11 +28,16 @@ class Player(Entity):
 
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE]
         self.dir = [False] * len(self.dirkeys)
+        self.actions = [False] * len(self.actionkeys)
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)
 
+        self.alive = True
         self.solid = True
+        self.fire_cooldown = False  # True if firing is blocked
+        self.fire_delay = 0.1
+        self.firing = False
 
     def collision(self, other, dt):
         if isinstance(other, Butterfly):
@@ -54,7 +60,16 @@ class Player(Entity):
                 ):
                     return entity
 
+    def reset_fire_cooldown(self):
+        self.fire_cooldown = False
+
     def action(self, btn):
+        pass
+
+    def fire(self):
+
+        if self.fire_cooldown:
+            return False
 
         # Assuming state is Game
         camera = self.app.state.camera
@@ -69,6 +84,14 @@ class Player(Entity):
 
         self.scene.add(Bullet(self.app, self.scene, self, start, direction))
         self.play_sound("shoot.wav")
+        self.fire_cooldown = True
+
+        # One-time event slots are removed automatically by Entity.update()
+        self.slots.append(
+            self.scene.when.once(self.fire_delay, self.reset_fire_cooldown)
+        )
+
+        return True
 
     def event(self, event):
         if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
@@ -77,8 +100,8 @@ class Player(Entity):
                     self.dir[i] = event.type == pygame.KEYDOWN
             for i, key in enumerate(self.actionkeys):
                 if key == event.key:
-                    if event.type == pygame.KEYDOWN:
-                        self.action(0)
+                    self.actions[i] = event.type == pygame.KEYDOWN
+                    self.action(event.key)
 
     @property
     def horiz_direction(self):
@@ -95,6 +118,9 @@ class Player(Entity):
             )
             * self.speed
         )
+
+        if self.actions[0] or self.actions[1]:
+            self.fire()
 
         super().update(dt)
 

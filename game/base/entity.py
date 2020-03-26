@@ -68,6 +68,17 @@ class Entity:
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"
 
+    # def once(self, duration, func)
+    #     """
+    #     A weakref version of scene.when.once.
+    #     Used for safely triggering temp one-time events w/o holding the slot.
+    #     """
+    #     return self.scene.when.once(
+    #         duration,
+    #         lambda wself=weakref.ref(self): func(wself),
+    #         weak=False
+    #     )
+
     @property
     def position(self):
         return self._position
@@ -166,9 +177,10 @@ class Entity:
         if self._script:  # Script object
             self._script.update(dt)
 
-        # clear sounds that are done playing
-        # if self.sounds:
-        #     self.sounds = list(filter(lambda snd: snd[1].is_playing(), self.sounds))
+        # clear temp one-time when/event slots
+        self.slots = list(
+            filter(lambda slot: not slot.once or not slot.count, self.slots)
+        )
 
     def render(self, camera, surf=None):
         """
