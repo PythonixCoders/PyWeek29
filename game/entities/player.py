@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from typing import List
+
 import pygame
 from glm import vec3, sign, length
 from pygame.surface import SurfaceType
@@ -13,28 +15,10 @@ from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
 from game.base.enemy import Enemy
-
-
-class Weapon:
-    def __init__(self, letter, filename, color, ammo, speed, damage):
-        self.letter = letter
-        self.filename = filename
-        self.color = color
-        self.max_ammo = ammo  # max ammo
-        self.ammo = 0  # current ammo
-        self.speed = float(speed)
-        self.damage = damage
-        self.img = None
+from game.entities.weapons import Weapon, Pistol, MachineGun, LaserGun
 
 
 class Player(Being):
-
-    Weapons = [
-        Weapon("P", "bullet.png", "yellow", -1, 10, 1),
-        Weapon("M", "machinegun.png", "orange", 25, 5, 1),
-        Weapon("L", "laser.png", "red", 20, 2, 2),
-    ]
-
     def __init__(self, app, scene, speed=PLAYER_SPEED):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
         self.game_state = self.scene.state
@@ -44,21 +28,11 @@ class Player(Being):
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
-        self.dirkeys = [
-            # directions
-            pygame.K_LEFT,
-            pygame.K_RIGHT,
-            pygame.K_UP,
-            pygame.K_DOWN,
-        ]
-
-        self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE, pygame.K_LSHIFT]
-        self.dir = [False] * len(self.dirkeys)
-        self.actions = [False] * len(self.actionkeys)
         self.slots += [
             self.app.inputs["hmove"].always_call(self.set_vel_x),
             self.app.inputs["vmove"].always_call(self.set_vel_y),
-            self.app.inputs["fire"].while_pressed(self.fire),
+            self.app.inputs["fire"].always_call(self.fire),
+            self.app.inputs["switch-gun"].on_press_repeated(self.next_gun, 0.5),
         ]
 
         self.position = vec3(0, 0, 0)
@@ -67,28 +41,16 @@ class Player(Being):
 
         self.alive = True
         self.solid = True
-        self.fire_cooldown = False  # True if firing is blocked
-        self.firing = False
-        self.fire_offset = Z * 400
-        self.fire_slot = None
 
-        self.weapons = list(map(lambda w: copy(w), self.Weapons))
+        self.weapons: List[Weapon] = [
+            self.scene.add(gun(app, scene, self))
+            for gun in (Pistol, MachineGun, LaserGun)
+        ]
         self.current_weapon = 0
-        self.update_stats()
 
-        # load images
-        for weapon in self.weapons:
-            # weapon.img = app.load_img(weapon.filename) #FIXME more gfx
-            weapon.img = app.load_img("bullet.png")
-
-            # temp: give player all ammo
-            weapon.ammo = weapon.max_ammo
-
-        wpn = self.weapons[self.current_weapon]
-        # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
-
-        # self.smoke_event = scene.when.every(1, self.smoke)
-        self.fire_slot = self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
+    @property
+    def weapon(self):
+        return self.weapons[self.current_weapon % len(self.weapons)]
 
     def kill(self, damage, bullet, enemy):
         # TODO: player death
@@ -130,16 +92,13 @@ class Player(Being):
                 ):
                     return entity
 
-    def reset_fire_cooldown(self):
-        self.fire_cooldown = False
-
-    def update_stats(self):
+    def write_weapon_stats(self):
         wpn = self.weapons[self.current_weapon]
         # extra space here to clear terminal
-        if wpn.max_ammo == -1:
+        if wpn.max_ammo < 0:
             ammo = " " * 5  # spacing
         else:
-            ammo = str(wpn.ammo) + "/" + str(wpn.max_ammo) + " " * 3  # spacing
+            ammo = f"{wpn.ammo}/{wpn.max_ammo}   "
 
         self.game_state.terminal.write(wpn.letter + " " + ammo, (0, 21), wpn.color)
 
@@ -151,13 +110,10 @@ class Player(Being):
         # else:
         #     self.game_state.terminal.write("AMMO n/a  ", (0,21), wpn.color)
 
-    def action(self, btn):
-        if btn == 2:
-            # switch weapon
-            self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
-            wpn = self.weapons[self.current_weapon]
-            self.update_stats()
-            self.play_sound("powerup.wav")
+    def next_gun(self, btn):  # FIXME
+        # switch weapon
+        self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
+        self.play_sound("powerup.wav")
 
     def set_vel_x(self, axis: Axis):
         self.velocity.x = axis.value * self.speed.x
@@ -165,109 +121,28 @@ class Player(Being):
     def set_vel_y(self, axis: Axis):
         self.velocity.y = axis.value * self.speed.y
 
-    def fire(self, btn):
+    def find_aim(self):
+        camera = self.app.state.camera
+        butt = self.find_enemy_in_crosshair()
+        if butt is None:
+            aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
+        else:
+            aim = butt.position
 
-        if self.fire_cooldown:
-            return False
+        return aim
 
-        wpn = self.weapons[self.current_weapon]
+    def fire(self, button):
+        if not button.pressed:
+            return
 
         # no ammo? switch to default
-        if not wpn.ammo:
-            self.current_weapon = 0
-            wpn = self.weapons[0]
-            self.update_stats()
-
-        start, aim, direction = self.heading()
-
-        # weapon logic
-        if wpn.letter == "P":
-            self.scene.add(
-                Bullet(
-                    self.app, self.scene, self, start, direction, wpn.damage, wpn.img
-                )
-            )
-        elif wpn.letter == "M":
-            self.scene.add(
-                Bullet(
-                    self.app,
-                    self.scene,
-                    self,
-                    start - X * 8,
-                    direction,
-                    wpn.damage,
-                    wpn.img,
-                )
-            )
-            self.scene.add(
-                Bullet(
-                    self.app,
-                    self.scene,
-                    self,
-                    start + X * 8,
-                    direction,
-                    wpn.damage,
-                    wpn.img,
-                )
-            )
-        if wpn.letter == "L":
-            for i in range(5):
-                self.scene.add(
-                    Bullet(
-                        self.app,
-                        self.scene,
-                        self,
-                        start - Z * 100 * i,
-                        direction,
-                        wpn.damage / 5,
-                        wpn.img,
-                    )
-                )
-
-        self.play_sound("shoot.wav")
-
-        self.fire_cooldown = True
-
-        # Weapon fire delay
-        # One-time event slots are removed automatically by Entity.update()
-        self.fire_slot = self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
-        # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
-
-        wpn.ammo -= 1
-        if not wpn.ammo:
+        if not self.weapon.ammo:
             self.current_weapon = 0
 
-        self.update_stats()
-
-        return True
-
-    def event(self, event):
-        if event.type == pygame.KEYUP or event.type == pygame.KEYDOWN:
-            for i, key in enumerate(self.dirkeys):
-                if key == event.key:
-                    self.dir[i] = event.type == pygame.KEYDOWN
-            for i, key in enumerate(self.actionkeys):
-                if key == event.key:
-                    b = event.type == pygame.KEYDOWN
-                    self.actions[i] = b
-                    if b:
-                        self.action(i)
-
-    @property
-    def horiz_direction(self):
-        """Return which direction the player is moving along the X axis"""
-        return -self.dir[0] + self.dir[1]
+        if self.weapon.fire(self.find_aim()):
+            self.play_sound("shoot.wav")
 
     def update(self, dt):
-
-        # self.velocity = (
-        #     vec3(
-        #         self.horiz_direction,
-        #         -self.dir[3] + self.dir[2],
-        #         -1,  # always going forwards
-        #     )
-        #     * self.speed
-        # )
 
         if self.position.y <= -299:
             # too low ?
@@ -277,9 +152,6 @@ class Player(Being):
             # too high ?
             self.velocity.y = min(0, self.velocity.y)
             self.position.y = 300
-
-        # if self.actions[0] or self.actions[1]:
-        #     self.fire()
 
         super().update(dt)
 
@@ -315,6 +187,7 @@ class Player(Being):
     #     )
 
     def render(self, camera):
+        self.write_weapon_stats()
 
         # Ship
         rect = self._surface.get_rect()

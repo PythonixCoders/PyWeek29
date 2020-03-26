@@ -1,4 +1,6 @@
 #!/usr/bin/python
+from typing import TYPE_CHECKING
+
 from glm import ivec2
 from pygame.surface import SurfaceType
 
@@ -7,6 +9,9 @@ from game.base.signal import Signal, SlotList
 from game.constants import *
 from os import path
 from game.util import *
+
+if TYPE_CHECKING:
+    from game.base.app import App
 
 
 class Entity:
@@ -17,7 +22,7 @@ class Entity:
 
     def __init__(self, app, scene, filename=None, **kwargs):
         # print(type(self))
-        self.app = app
+        self.app: "App" = app
         self.scene = scene
         self.slot = None  # weakref
         self.slots = SlotList()
