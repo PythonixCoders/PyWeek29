@@ -12,7 +12,7 @@ class SlotList:
 
     def __bool__(self):
         return bool(self._slots)
-        
+
     def __iadd__(self, func):
         assert func is not None
         self._slots.append(func)
