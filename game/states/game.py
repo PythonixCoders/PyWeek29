@@ -8,6 +8,7 @@ from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player
+from game.entities.cloud import Cloud
 from game.entities.terminal import Terminal
 from game.scene import Scene
 from game.scripts.level1 import Level1
@@ -28,6 +29,7 @@ class Game(State):
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
+        self.cloud = self.scene.add(Cloud(app, self.scene, self.player))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
         self.scene.script = Level1

@@ -20,6 +20,7 @@ SHIP_IMAGE_PATH = "ship.png"
 CROSSHAIR_IMAGE_PATH = "crosshair.png"
 CROSSHAIR_GREEN_IMAGE_PATH = "crosshair_green.png"
 BULLET_IMAGE_PATH = "bullet.png"
+CLOUD_IMAGE_PATH = "cloud.png"
 
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)
