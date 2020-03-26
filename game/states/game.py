@@ -49,6 +49,8 @@ class Game(State):
         :param dt: time since last frame in seconds
         """
 
+        super().update(dt)  # needed for state script (unused)
+
         if not self.scene.script or self.scene.script.done():
             self.scene.script = Level1  # restart
 

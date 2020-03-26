@@ -38,6 +38,7 @@ class Player(Entity):
         self.fire_cooldown = False  # True if firing is blocked
         self.fire_delay = 0.1
         self.firing = False
+        self.fire_offset = Z * 400
 
     def collision(self, other, dt):
         if isinstance(other, Butterfly):
@@ -79,7 +80,7 @@ class Player(Entity):
         else:
             aim = butt.position
 
-        start = camera.rel_to_world(BULLET_OFFSET)
+        start = camera.rel_to_world(BULLET_OFFSET) - Z * self.fire_offset
         direction = aim - start
 
         self.scene.add(Bullet(self.app, self.scene, self, start, direction))

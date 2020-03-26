@@ -41,7 +41,7 @@ class Terminal(Entity):
         # we're appending :16 to cache name since we may need to cache
         # different sizes in the future
         self.font = self.app.load(
-            font_fn + ":" + str(self.font_size.y),
+            (font_fn, self.font_size.y),
             lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
         )
 

@@ -35,9 +35,9 @@ class Entity:
         self._script = None
         script = kwargs.get("script")
 
-        if hasattr(self, "__call__"):
+        if callable(self):
             # use __call__ as script
-            self._script = Script(self.app, self, self.__call__)
+            self._script = Script(self.app, self, self, use_input=False)
             assert not isinstance(script, str)  # only one script allowed
         elif isinstance(script, str):
             # load script from string 'scripts/' folder
@@ -62,7 +62,7 @@ class Entity:
             self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.size = vec3(0)
-        self.render_size = None
+        self.render_size = vec3(0)
         """Should hold the size in pixel at which the entity was last rendered"""
 
     def __str__(self):
@@ -225,8 +225,12 @@ class Entity:
         for slot in self.slots:
             slot.disconnect()
 
-    # NOTE: Implementing the below method automatically sets up collisions
-    # So it's commented out.
+    # NOTE: Implementing the below method automatically sets up Script
+
+    # def __call__(self):
+    #     pass
+
+    # NOTE: Implementing the below method automatically sets up collisions.
 
     # def collision(self, other,  dt):
     #      pass

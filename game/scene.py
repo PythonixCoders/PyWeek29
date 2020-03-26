@@ -16,12 +16,10 @@ z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().posit
 
 
 class Scene(Signal):
-    def __init__(self, app, script=None):
+    def __init__(self, app, script=None, script_args=None):
         super().__init__()
         self.app = app
         self._when = When()
-        if script:
-            self._script = Script(app, self, script)
 
         # self.script_paused = False
         # self.script_slots = []
@@ -43,9 +41,14 @@ class Scene(Signal):
         self.on_collision.enter = self.on_collision_enter
         self.on_collision.leave = self.on_collision_leave
 
+        if script:
+            self.script = script  # trigger setter
+        else:
+            self._script = None
+
     @property
     def when(self):
-        if self._script.running():
+        if self._script and self._script.running():
             # Sanity Check:
             # Don't use scene.when() when inside a script.
             # Use script.when()
@@ -58,7 +61,11 @@ class Scene(Signal):
 
     @script.setter
     def script(self, fn):
-        self._script = Script(self.app, self, fn) if fn else None
+        self._script = (
+            Script(self.app, self, fn, use_input=True, script_args=(self.app, self))
+            if fn
+            else None
+        )
 
     def color(self, c):
         """
@@ -234,7 +241,8 @@ class Scene(Signal):
         self.update_collisions(dt)
         self.refresh()
 
-        self._script.update(dt)
+        if self._script:
+            self._script.update(dt)
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)

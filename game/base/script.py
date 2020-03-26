@@ -13,16 +13,18 @@ import traceback
 
 
 class Script:
-    def __init__(self, app, ctx, script, use_input=True):
+    def __init__(self, app, ctx, script, use_input=True, script_args=None):
         self.app = app
-        self.when = When()
         self.ctx = ctx
+        self.when = When()
         self.slots = []
 
         self.paused = False
         self.dt = 0
         self.fn = script
         self.resume_condition = None
+
+        self.script_args = script_args
 
         # these are accumulated between yields
         # this is different from get_pressed()
@@ -102,14 +104,17 @@ class Script:
 
     @script.setter
     def script(self, script=None):
-        print("Script:", script)
+        print("Script:", script, self.script_args)
         self.slots = []
         self.paused = False
 
         if isinstance(script, str):
             run = importlib.import_module("game.scripts." + script).run
             self.inside = True
-            self._script = run(self.app, self.ctx, self)
+            if self.script_args:
+                self._script = run(*self.script_args, self)
+            else:
+                self._script = run(self)
             self.inside = False
             # self.locals = {}
             # exec(open(path.join(SCRIPTS_DIR, script + ".py")).read(), globals(), self.locals)
@@ -120,7 +125,15 @@ class Script:
             # self._script = self.locals["run"](self.app, self.ctx, self)
         elif isinstance(script, type):
             # So we can pass a Level class
-            self._script = iter(script(self.app, self.ctx, self))
+            if self.script_args:
+                self._script = iter(script(*self.script_args, self))
+            else:
+                self._script = iter(script(self))
+        elif callable(script):  # function
+            if self.script_args:
+                self._script = script(*self.script_args, self)
+            else:
+                self._script = script(self)
         elif script is None:
             self._script = None
         else:

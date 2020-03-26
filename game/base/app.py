@@ -9,12 +9,13 @@ from game.constants import SPRITES_DIR
 
 from game.states.game import Game
 from game.states.intro import Intro
+from game.states.menu import Menu
 import time
 
 
 class App:
 
-    STATES = {"intro": Intro, "game": Game}
+    STATES = {"intro": Intro, "game": Game, "menu": Menu}
     # MAX_KEYS = 512
 
     def __init__(self, initial_state):
