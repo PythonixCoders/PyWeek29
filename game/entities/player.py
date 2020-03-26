@@ -3,6 +3,7 @@ import pygame
 from glm import vec3, sign, length
 from pygame.surface import SurfaceType
 from copy import copy
+import random
 import weakref
 
 from game.base.entity import Entity
@@ -57,7 +58,7 @@ class Player(Being):
         self.slots += [
             self.app.inputs["hmove"].always_call(self.set_vel_x),
             self.app.inputs["vmove"].always_call(self.set_vel_y),
-            self.app.inputs["fire"].on_press_repeated(self.fire, 0.15),
+            self.app.inputs["fire"].always_call(self.fire),
         ]
 
         self.position = vec3(0, 0, 0)
@@ -69,6 +70,7 @@ class Player(Being):
         self.fire_cooldown = False  # True if firing is blocked
         self.firing = False
         self.fire_offset = Z * 400
+        self.fire_slot = None
 
         self.weapons = list(map(lambda w: copy(w), self.Weapons))
         self.current_weapon = 0
@@ -85,6 +87,9 @@ class Player(Being):
         wpn = self.weapons[self.current_weapon]
         # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
 
+        # self.smoke_event = scene.when.every(1, self.smoke)
+        self.fire_slot = self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
+
     def kill(self, damage, bullet, enemy):
         # TODO: player death
         return False
@@ -100,6 +105,8 @@ class Player(Being):
         self.hp -= damage
         if self.hp <= 0:
             self.kill(damage, bullet, enemy)
+        # if self.hp < 3:
+        # self.smoke_event = scene.when.every(1, self.smoke)
         return damage
 
     def collision(self, other, dt):
@@ -107,7 +114,7 @@ class Player(Being):
             self.score += other.hp
             other.kill(other.hp, None, self)
 
-    def find_butterfly_in_crosshair(self):
+    def find_enemy_in_crosshair(self):
         # Assuming state is Game
         camera = self.app.state.camera
         screen_center = camera.screen_size / 2
@@ -158,10 +165,13 @@ class Player(Being):
     def set_vel_y(self, axis: Axis):
         self.velocity.y = axis.value * self.speed.y
 
-    def fire(self, *args):
+    def fire(self, btn):
 
-        # if self.fire_cooldown:
-        #     return False
+        if not btn._pressed:
+            return
+        
+        if self.fire_cooldown:
+            return False
 
         wpn = self.weapons[self.current_weapon]
 
@@ -171,41 +181,59 @@ class Player(Being):
             wpn = self.weapons[0]
             self.update_stats()
 
-        camera = self.app.state.camera
-        butt = self.find_butterfly_in_crosshair()
-        if butt is None:
-            aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
-        else:
-            aim = butt.position
-
-        start = camera.rel_to_world(BULLET_OFFSET) - Z * self.fire_offset
-        direction = aim - start
+        start, aim, direction = self.heading()
 
         # weapon logic
-        if wpn.letter == 'P':
+        if wpn.letter == "P":
             self.scene.add(
-                Bullet(self.app, self.scene, self, start, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app, self.scene, self, start, direction, wpn.damage, wpn.img
+                )
             )
-        elif wpn.letter == 'M':
+        elif wpn.letter == "M":
             self.scene.add(
-                Bullet(self.app, self.scene, self, start - X*8, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app,
+                    self.scene,
+                    self,
+                    start - X * 5,
+                    direction,
+                    wpn.damage,
+                    wpn.img,
+                )
             )
             self.scene.add(
-                Bullet(self.app, self.scene, self, start + X*8, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app,
+                    self.scene,
+                    self,
+                    start + X * 5,
+                    direction,
+                    wpn.damage,
+                    wpn.img,
+                )
             )
-        if wpn.letter == 'L':
-            for x in range(5):
+        if wpn.letter == "L":
+            for i in range(5):
                 self.scene.add(
-                    Bullet(self.app, self.scene, self, start - Z*100*x, direction, wpn.damage/5, wpn.img)
+                    Bullet(
+                        self.app,
+                        self.scene,
+                        self,
+                        start - Z * 100 * i,
+                        direction,
+                        wpn.damage / 5,
+                        wpn.img,
+                    )
                 )
 
         self.play_sound("shoot.wav")
 
-        # self.fire_cooldown = True
+        self.fire_cooldown = True
 
         # Weapon fire delay
         # One-time event slots are removed automatically by Entity.update()
-        self.slots += self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
+        self.fire_slot = self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
         # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
 
         wpn.ammo -= 1
@@ -258,6 +286,37 @@ class Player(Being):
 
         super().update(dt)
 
+    def heading(self):
+
+        camera = self.app.state.camera
+        butt = self.find_enemy_in_crosshair()
+        if butt is None:
+            aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
+        else:
+            aim = butt.position
+
+        start = camera.rel_to_world(BULLET_OFFSET) - Z * self.fire_offset
+        direction = aim - start
+        return start, aim, direction
+
+    # def smoke(self):
+
+    #     start, aim, direction = self.heading()
+
+    #     self.scene.add(
+    #         Entity(
+    #             self.app,
+    #             self.scene,
+    #             "bullet.png",
+    #             position=self.position - start,
+    #             # velocity=(
+    #             #     vec3(*(random.random() for r in range(3))) - vec3(0.5)
+    #             # ) * 10,
+    #             life=1,
+    #             particle=True,
+    #         )
+    #     )
+
     def render(self, camera):
 
         # Ship
@@ -272,7 +331,7 @@ class Player(Being):
         rect = self.crosshair_surf.get_rect()
         rect.center = self.app.size / 2
 
-        if self.find_butterfly_in_crosshair():
+        if self.find_enemy_in_crosshair():
             self.app.screen.blit(self.crosshair_surf_green, rect)
         else:
             self.app.screen.blit(self.crosshair_surf, rect)
