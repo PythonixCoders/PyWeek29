@@ -7,12 +7,15 @@ from game.entities.butterfly import Butterfly
 
 
 class Bullet(Entity):
-    def __init__(self, app, scene, parent, position, direction):
+    def __init__(
+        self, app, scene, parent, position, direction, damage, img=BULLET_IMAGE_PATH
+    ):
 
         velocity = normalize(direction) * BULLET_SPEED
         super().__init__(
             app, scene, BULLET_IMAGE_PATH, position=position, velocity=velocity, life=1,
         )
+        self.damage = damage
         self.solid = True
         self.size.z = 1000  # to prevent tunneling
         self.parent = parent

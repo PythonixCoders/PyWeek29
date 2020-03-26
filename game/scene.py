@@ -16,9 +16,10 @@ z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().posit
 
 
 class Scene(Signal):
-    def __init__(self, app, script=None, script_args=None):
+    def __init__(self, app, state, script=None, script_args=None):
         super().__init__()
         self.app = app
+        self.state = state
         self._when = When()
 
         # self.script_paused = False
@@ -32,14 +33,14 @@ class Scene(Signal):
 
         # The below wrapper is just to keep the interface the same with signal
         # on_collision.connect -> on_collision_connect
-        class CollisionSignal:
-            pass
+        # class CollisionSignal:
+        #     pass
 
-        self.on_collision = CollisionSignal()
-        self.on_collision.connect = self.on_collision_connect
-        self.on_collision.once = self.on_collision_once
-        self.on_collision.enter = self.on_collision_enter
-        self.on_collision.leave = self.on_collision_leave
+        # self.on_collision = CollisionSignal()
+        # self.on_collision.connect = self.on_collision_connect
+        # self.on_collision.once = self.on_collision_once
+        # self.on_collision.enter = self.on_collision_enter
+        # self.on_collision.leave = self.on_collision_leave
 
         if script:
             self.script = script  # trigger setter

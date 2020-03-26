@@ -17,12 +17,15 @@ class Game(State):
 
         super().__init__(app, state)
 
-        self.scene = Scene(self.app)
+        self.scene = Scene(self.app, self)
+        self.gui = Scene(self.app, self)
+
+        # create terminal first since player init() writes to it
+        self.terminal = self.scene.add(Terminal(self.app, self.scene))
 
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
-        self.terminal = self.scene.add(Terminal(self.app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
         # control the camera
         # self.app.add_event_listener(self.player) # don't need this anymore
@@ -55,6 +58,7 @@ class Game(State):
             self.scene.script = Level1  # restart
 
         self.scene.update(dt)
+        self.gui.update(dt)
 
         # Update the camera according to the player position
         # And movement
@@ -86,10 +90,11 @@ class Game(State):
         )
         self.terminal.write(score_display, score_pos)
 
-        self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
-        self.terminal.write("FPS: " + str(self.app.fps), 21)
+        # self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
+        # self.terminal.write("FPS: " + str(self.app.fps), 21)
 
         self.scene.render(self.camera)
+        # self.gui.render(self.camera)
 
         assert self.scene.blocked == 0
 

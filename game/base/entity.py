@@ -150,9 +150,11 @@ class Entity:
 
         filename = path.join(SOUNDS_DIR, filename)
         sound = self.app.load(filename, lambda: pygame.mixer.Sound(filename))
-        assert not isinstance(sound, str)
+        if not sound:
+            return None, None, None
         channel = pygame.mixer.find_channel()
-        assert not isinstance(channel, str)
+        if not channel:
+            return None, None, None
         if callback:
             slot = self.scene.when.once(self.sounds[0].get_length(), callback)
             self.slots.add(slot)
