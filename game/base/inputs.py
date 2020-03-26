@@ -56,7 +56,7 @@ class Button:
 
         if self.pressed:
             for c, pair in self._repeat.items():
-                if pair[0] * pair[1] >= self.press_time:
+                if pair[0] * pair[1] <= self.press_time:
                     pair[1] += 1
                     c(self)
 
@@ -109,12 +109,12 @@ class Button:
     def on_double_press(self, callback):
         self._on_double_press.add(callback)
 
-    def on_press_repeated(self, callback, delay_ms):
+    def on_press_repeated(self, callback, delay):
         """
         Call `callback` when the button is pressed and
-        every `delay` milliseconds while it is pressed.
+        every `delay` seconds while it is pressed.
         """
-        self._repeat[callback] = [delay_ms, 0]
+        self._repeat[callback] = [delay, 0]
 
     def remove(self, callback):
         """Remove a callback from all types if present."""
@@ -148,16 +148,20 @@ class Axis:
 
         self._value = 0
 
+    def __str__(self):
+        return f"Axis({self.value})"
+
     @property
     def value(self):
         return clamp(self._value, -1, 1)
 
     def __iadd__(self, callback):
-        assert callable(callback)
         self._callbacks.add(callback)
+        return self
 
     def __isub__(self, callback):
         self._callbacks.remove(callback)
+        return self
 
     def update(self, dt):
         """Trigger all callbacks and updates times"""
@@ -175,9 +179,9 @@ class Axis:
 
             if event.type == pygame.KEYUP:
                 if event.key in self._left:
-                    self._value -= 1
-                if event.key in self._right:
                     self._value += 1
+                if event.key in self._right:
+                    self._value -= 1
 
             # TODO: Implement joystick axis
 

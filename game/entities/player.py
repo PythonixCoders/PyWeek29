@@ -11,21 +11,20 @@ from game.entities.butterfly import Butterfly
 
 
 class Player(Entity):
-    def __init__(self, app, scene, speed=PLAYER_SPEED, inputs: Inputs = None):
+    def __init__(self, app, scene, speed=PLAYER_SPEED):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
 
         self.score = 0
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
-        if inputs is not None:
-            inputs["fire"].on_press_repeated(self.fire, 100)
-            inputs["hmove"] += self.set_vel_x
-            inputs["vmove"] += self.set_vel_y
+        self.app.inputs["fire"].on_press_repeated(self.fire, 0.15)
+        self.app.inputs["hmove"] += self.set_vel_x
+        self.app.inputs["vmove"] += self.set_vel_y
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)
-        self.velocity = self.speed
+        self.velocity = vec3(self.speed)
 
         self.solid = True
 
@@ -74,19 +73,6 @@ class Player(Entity):
     def horiz_direction(self):
         """Return which direction the player is moving along the X axis"""
         return -self.dir[0] + self.dir[1]
-
-    def update(self, dt):
-
-        self.velocity = (
-            vec3(
-                self.horiz_direction,
-                -self.dir[3] + self.dir[2],
-                -1,  # always going forwards
-            )
-            * self.speed
-        )
-
-        super().update(dt)
 
     def render(self, camera):
 

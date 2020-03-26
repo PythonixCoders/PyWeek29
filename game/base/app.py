@@ -31,6 +31,7 @@ class App:
         self.cache = {}
         """Resources with filenames as keys"""
         self.screen = pygame.display.set_mode(self.size)
+        self.on_event = Signal()
         self.quit = False
         self.clock = pygame.time.Clock()
         self.inputs = Inputs()
@@ -103,20 +104,27 @@ class App:
             # print(t)
             time.sleep(0.0001)
 
-            events = pygame.event.get()
+            events = list(pygame.event.get())
             for event in events:
                 if event.type == pygame.QUIT:
                     return 0
+                self.on_event(event)
             self.inputs.event(events)
 
             if self.state is None:
                 break
 
+            self.inputs.update(dt)
             if self.update(dt) is False:
                 break
 
             if self.render() is False:
                 break
+
+    def add_event_listener(self, obj):
+        slot = self.on_event.connect(obj.event, weak=True)
+        obj.slots.append(slot)
+        return slot
 
     def update(self, dt):
         """
