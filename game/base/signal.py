@@ -13,21 +13,25 @@ class SlotList:
     def __bool__(self):
         return bool(self._slots)
 
-    def __iadd__(self, func):
-        assert func is not None
-        self._slots.append(func)
+    def __iadd__(self, slot):
+        assert slot is not None
+        if isinstance(slot, (tuple, list)):
+            self._slots += slot
+            return self
+        self._slots.append(slot)
         return self
 
-    def __isub__(self, func):
+    def __isub__(self, slot):
         for i, slot in enumerate(self._slots):
-            if slot is func:
+            if slot is slot:
                 del self._slots[i]
+                return self
         return self
 
     # backwards compat with list
-    def append(self, func):
-        assert func is not None
-        self._slots.append(func)
+    def append(self, slot):
+        assert slot is not None
+        self._slots.append(slot)
         return self
 
     def __iter__(self):

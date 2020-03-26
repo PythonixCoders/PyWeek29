@@ -24,7 +24,7 @@ class Scene(Signal):
 
         # self.script_paused = False
         # self.script_slots = []
-        self.sky_color = pygame.Color("black")
+        self.sky_color = None
         self.dt = 0
         # self.script_fn = script
         # self.event_slot = self.app.on_event.connect(self.event)
@@ -252,14 +252,15 @@ class Scene(Signal):
 
     def render(self, camera):
         # call render(camera) on all scene entities
-        self.app.screen.fill(
-            pygame.Color(
-                int(self._sky_color[0] * 255),
-                int(self._sky_color[1] * 255),
-                int(self._sky_color[2] * 255),
-                int(self._sky_color[3] * 255),
+        if self.sky_color:
+            self.app.screen.fill(
+                pygame.Color(
+                    int(self._sky_color[0] * 255),
+                    int(self._sky_color[1] * 255),
+                    int(self._sky_color[2] * 255),
+                    int(self._sky_color[3] * 255),
+                )
             )
-        )
 
         # call render on each entity
         self.each(lambda x: x.render(camera))

@@ -54,9 +54,11 @@ class Player(Being):
         self.actionkeys = [pygame.K_RETURN, pygame.K_SPACE, pygame.K_LSHIFT]
         self.dir = [False] * len(self.dirkeys)
         self.actions = [False] * len(self.actionkeys)
-        self.slots.append(self.app.inputs["fire"].on_press_repeated(self.fire, 0.15))
-        self.slots.append(self.app.inputs["hmove"].always_call(self.set_vel_x))
-        self.slots.append(self.app.inputs["vmove"].always_call(self.set_vel_y))
+        self.slots += [
+            self.app.inputs["hmove"].always_call(self.set_vel_x),
+            self.app.inputs["vmove"].always_call(self.set_vel_y),
+            self.app.inputs["fire"].on_press_repeated(self.fire, 0.15),
+        ]
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)
@@ -70,7 +72,7 @@ class Player(Being):
 
         self.weapons = list(map(lambda w: copy(w), self.Weapons))
         self.current_weapon = 0
-        self.update_weapon_stats()
+        self.update_stats()
 
         # load images
         for weapon in self.weapons:
@@ -79,6 +81,9 @@ class Player(Being):
 
             # temp: give player all ammo
             weapon.ammo = weapon.max_ammo
+
+        wpn = self.weapons[self.current_weapon]
+        # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
 
     def kill(self, damage, bullet, enemy):
         # TODO: player death
@@ -121,7 +126,7 @@ class Player(Being):
     def reset_fire_cooldown(self):
         self.fire_cooldown = False
 
-    def update_weapon_stats(self):
+    def update_stats(self):
         wpn = self.weapons[self.current_weapon]
         # extra space here to clear terminal
         if wpn.max_ammo == -1:
@@ -130,6 +135,9 @@ class Player(Being):
             ammo = str(wpn.ammo) + "/" + str(wpn.max_ammo) + " " * 3  # spacing
 
         self.game_state.terminal.write(wpn.letter + " " + ammo, (0, 21), wpn.color)
+
+        self.game_state.terminal.write_right("|" * (self.hp // 10), 0, "red")
+
         # self.game_state.terminal.write("WPN " + wpn.letter, (0,20), wpn.color)
         # if wpn.max_ammo == -1:
         #     self.game_state.terminal.write("AMMO " + str(wpn.ammo) + "  ", (0,21), wpn.color)
@@ -141,7 +149,7 @@ class Player(Being):
             # switch weapon
             self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
             wpn = self.weapons[self.current_weapon]
-            self.update_weapon_stats()
+            self.update_stats()
             self.play_sound("powerup.wav")
 
     def set_vel_x(self, axis: Axis):
@@ -152,8 +160,8 @@ class Player(Being):
 
     def fire(self, *args):
 
-        if self.fire_cooldown:
-            return False
+        # if self.fire_cooldown:
+        #     return False
 
         wpn = self.weapons[self.current_weapon]
 
@@ -161,7 +169,7 @@ class Player(Being):
         if not wpn.ammo:
             self.current_weapon = 0
             wpn = self.weapons[0]
-            self.update_weapon_stats()
+            self.update_stats()
 
         camera = self.app.state.camera
         butt = self.find_butterfly_in_crosshair()
@@ -181,17 +189,18 @@ class Player(Being):
 
         self.play_sound("shoot.wav")
 
-        self.fire_cooldown = True
+        # self.fire_cooldown = True
 
         # Weapon fire delay
         # One-time event slots are removed automatically by Entity.update()
-        self.slots.append(self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown))
+        self.slots += self.scene.when.once(1 / wpn.speed, self.reset_fire_cooldown)
+        # self.fire_slot = self.app.inputs["fire"].on_press_repeated(self.fire, 1 / wpn.speed)
 
         wpn.ammo -= 1
         if not wpn.ammo:
             self.current_weapon = 0
 
-        self.update_weapon_stats()
+        self.update_stats()
 
         return True
 

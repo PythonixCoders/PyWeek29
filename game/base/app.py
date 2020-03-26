@@ -91,6 +91,9 @@ class App:
         self.fps = 0
         frames = 0
         dt = 0
+        
+        self.inputs.event([])
+        
         while (not self.quit) and self.state:
 
             cur_t = time.time_ns()

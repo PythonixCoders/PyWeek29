@@ -33,8 +33,8 @@ class Terminal(Entity):
         self.app = app
         self.scene = scene
 
-        self.font_size = ivec2(24, 24)
-        self.spacing = ivec2(0, 0)
+        self.font_size = ivec2(24)
+        self.spacing = ivec2(0)
         font_fn = path.join(FONTS_DIR, "PressStart2P-Regular.ttf")
 
         # load the font if its not already loaded (cacheble)
@@ -106,11 +106,12 @@ class Terminal(Entity):
                 self.offset((pos, i), offset)
             return
 
-        # try:
-        ch = self.chars[pos[1]][pos[0]]
-        # except IndexError:
-        #     # outside of screen
-        #     return
+        try:
+            ch = self.chars[pos[1]][pos[0]]
+        except IndexError:
+            # outside of screen
+            # print(pos)
+            return
 
         # offset char at position
         if ch:
@@ -145,18 +146,21 @@ class Terminal(Entity):
         # Do alignment (-1, 0, 1)
         if align == 0:  # center
             return self.write(
-                text, (pos[0] - length / 2, pos[1]), color, offset, align=-1
+                text, (pos[0] - length / 2, pos[1]), color, offset, -1, length
             )
         elif align == 1:  # right
-            return self.write(text, (pos[0] + length, pos[1]), color, offset, align=-1)
+            return self.write(
+                text, (pos[0] + length, pos[1]), color, offset, -1, length
+            )
 
         assert align == -1  # left
 
         if "\n" in text:
             lines = text.split("\n")
             for i, line in enumerate(lines):
-                self.write(text, ivec2(pos[0], pos[1] + i), color, align)
-                pos += i
+                self.write(
+                    text, ivec2(pos[0], pos[1] + i), color, offset, align, length
+                )
             return
 
         if len(text) > 1:  # write more than 1 char? write chars 1 by 1
@@ -169,11 +173,12 @@ class Terminal(Entity):
             color = pygame.Color(color)
 
         # note that this allows negative positioning
-        # try:
-        #     self.chars[pos[1]][pos[0]]
-        # except IndexError:
-        #     # outside of screen
-        #     return
+        try:
+            self.chars[pos[1]][pos[0]]
+        except IndexError:
+            # outside of screen
+            # print(pos)
+            return
 
         self.chars[pos[1]][pos[0]] = Char(
             text,
@@ -213,13 +218,13 @@ class Terminal(Entity):
         """
 
         if isinstance(pos, (int, float)):
-            # if pos is int, set col number
+            # if pos is int, set row number
             pos = ivec2(0, pos)
         else:
             pos = ivec2(pos[0], pos[1])
 
-        pos.x = self.size.x - 1
-        return self.write(text, pos, color, offset, 1, length)
+        pos.x += self.size.x - 1
+        return self.write(text, pos, color, offset, 1, len(text))
 
     def scramble(self):
         """

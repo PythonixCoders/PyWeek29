@@ -72,6 +72,8 @@ class Intro(State):
             "The military has decided to intervene.",
             "Your mission is simple: murder all the",
             "butterflies before the world ends.",
+            "But look out for Big Butta, king of",
+            "the butterflies.",
         ]
         for y, line in enumerate(msg):
             for x, m in enumerate(line):

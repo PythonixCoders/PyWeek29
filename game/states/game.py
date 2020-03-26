@@ -11,6 +11,7 @@ from game.entities.player import Player
 from game.entities.terminal import Terminal
 from game.scene import Scene
 from game.scripts.level1 import Level1
+from game.base.signal import SlotList
 
 
 class Game(State):
@@ -20,9 +21,10 @@ class Game(State):
 
         self.scene = Scene(self.app, self)
         self.gui = Scene(self.app, self)
+        self.slots = SlotList()
 
         # create terminal first since player init() writes to it
-        self.terminal = self.scene.add(Terminal(self.app, self.scene))
+        self.terminal = self.gui.add(Terminal(self.app, self.scene))
 
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
@@ -36,7 +38,20 @@ class Game(State):
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
         # )
 
+        self.debug = False
+        self.slots += [
+            app.inputs['debug'].on_press(lambda _: self.debug_mode(True)),
+            app.inputs['debug'].on_release(lambda _: self.debug_mode(False))
+        ]
+
         self.time = 0
+
+    def debug_mode(self, b):
+        self.debug = b
+        self.terminal.clear(20)
+        self.terminal.clear(21)
+        if not b:
+            self.player.update_stats()
 
     def pend(self):
 
@@ -75,23 +90,24 @@ class Game(State):
         """
 
         # Render Player's Position
-        pos_display = "Position: {}".format(self.player.position)
-        pos_pos = (self.terminal.size.x - len(pos_display), 0)
-        self.terminal.write(pos_display, pos_pos)
+        # pos_display = "Position: {}".format(self.player.position)
+        # pos_pos = (self.terminal.size.x - len(pos_display), 0)
+        # self.terminal.write(pos_display, pos_pos)
 
         # Render Player's Score
         score_display = "Score: {}".format(self.player.score)
         score_pos = (
             self.terminal.size.x - len(score_display),
-            self.terminal.size.y - 1,
+            0,
         )
         self.terminal.write(score_display, score_pos)
 
-        # self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
-        # self.terminal.write("FPS: " + str(self.app.fps), 21)
+        if self.debug:
+            self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
+            self.terminal.write("FPS: " + str(self.app.fps), 21)
 
         self.scene.render(self.camera)
-        # self.gui.render(self.camera)
+        self.gui.render(self.camera)
 
         assert self.scene.blocked == 0
 
@@ -102,4 +118,5 @@ class Game(State):
         inputs["hmove"] = Axis((pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d))
         inputs["vmove"] = Axis((pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w))
         inputs["fire"] = Button(pg.K_SPACE, pg.K_RETURN)
+        inputs["debug"] = Button(pg.K_TAB)
         return inputs
