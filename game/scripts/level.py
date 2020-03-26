@@ -1,9 +1,11 @@
 import pygame
 from glm import vec3, ivec2
 from pygame.camera import Camera
+from random import randint
 
 from game.entities.butterfly import Butterfly
 from game.entities.camera import Camera
+from game.entities.cloud import Cloud
 from game.util import random_color
 
 
@@ -47,6 +49,8 @@ class Level:
 
     def __call__(self):
         self.scene.sky_color = self.sky
+        self.cloudy()
+        
         if self.name:
             terminal = self.app.state.terminal
             typ = pygame.mixer.Sound("data/sounds/type.wav")
@@ -74,6 +78,14 @@ class Level:
             for i in range(len(self.name)):
                 terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
+
+    def cloudy(self):
+        for i in range(20):
+            x = randint(-2000, 2000)
+            y = randint(300, 600)
+            z = randint(-7000, -3000)
+            pos = vec3(x, y, z)
+            self.scene.add(Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z))
 
     def __iter__(self):
         return self()
