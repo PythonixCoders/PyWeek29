@@ -13,6 +13,7 @@ ASSETS_DIR = os.path.join(TOP_LEVEL_DIR, "data")
 SPRITES_DIR = os.path.join(ASSETS_DIR, "sprites")
 SCRIPTS_DIR = os.path.join(TOP_LEVEL_DIR, "game", "scripts")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
+MUSIC_DIR = os.path.join(ASSETS_DIR, "music")
 FONTS_DIR = ASSETS_DIR
 
 # Images should all be in the SPRITES_DIR

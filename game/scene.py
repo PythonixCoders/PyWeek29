@@ -44,6 +44,8 @@ class Scene(Signal):
         # self.on_collision.enter = self.on_collision_enter
         # self.on_collision.leave = self.on_collision_leave
 
+        self._music = None
+
         if script:
             self.script = script  # trigger setter
         else:
@@ -69,6 +71,17 @@ class Scene(Signal):
             if fn
             else None
         )
+
+    @property
+    def music(self):
+        return self._music
+
+    @music.setter
+    def music(self, filename):
+        self._music = filename
+        if self._music:
+            pygame.mixer.music.load(path.join(MUSIC_DIR, filename))
+            pygame.mixer.music.play(-1)
 
     def color(self, c):
         """
