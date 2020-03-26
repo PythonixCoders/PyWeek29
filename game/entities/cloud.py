@@ -1,8 +1,9 @@
-from game.base.entity import Entity
-from game.constants import SPRITES_DIR, CLOUD_IMAGE_PATH, SHIP_IMAGE_PATH
+from random import randint, choice
+
 from glm import vec3
-from random import randint
-import os
+
+from game.base.entity import Entity
+from game.constants import CLOUD_IMAGE_PATHS
 
 
 class Cloud(Entity):
@@ -14,4 +15,6 @@ class Cloud(Entity):
     def __init__(self, app, scene, pos: vec3, z_vel: float):
         vel = vec3(randint(0, 15) * Cloud.hdg, 0, z_vel)
 
-        super().__init__(app, scene, SHIP_IMAGE_PATH, position=pos, velocity=vel)
+        super().__init__(
+            app, scene, choice(CLOUD_IMAGE_PATHS), position=pos, velocity=vel, scale=4
+        )

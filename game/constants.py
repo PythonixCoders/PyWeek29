@@ -21,12 +21,12 @@ SHIP_IMAGE_PATH = "ship.png"
 CROSSHAIR_IMAGE_PATH = "crosshair.png"
 CROSSHAIR_GREEN_IMAGE_PATH = "crosshair_green.png"
 BULLET_IMAGE_PATH = "bullet.png"
-CLOUD_IMAGE_PATH = "cloud.png"
+CLOUD_IMAGE_PATHS = [f"cloud{i}.png" for i in range(8)]
 
 ORANGE = (255, 165, 0)
 GREEN = (141, 178, 85)
 GRAY = (100, 100, 100)
-BACKGROUND = pygame.Color("lightblue")
+BACKGROUND = (77, 143, 172)
 
 # we're in "2d" so X and Y basis vectors should be 2d
 # 3d is optional in positions and velocities

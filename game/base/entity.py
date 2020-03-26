@@ -64,7 +64,7 @@ class Entity:
 
         self.filename = filename
         if filename:
-            self._surface = self.app.load_img(filename)
+            self._surface = self.app.load_img(filename, kwargs.get("scale", 1))
             self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.size = vec3(0)
