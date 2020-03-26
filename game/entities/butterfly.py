@@ -33,7 +33,6 @@ class Butterfly(Enemy):
 
         self.time = 0
         self.frame = 0
-        self.exploded = False
 
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -65,22 +64,19 @@ class Butterfly(Enemy):
         self.velocity = -Y * 100
         self.life = 2
 
-    def explode(self):
-        if not self.exploded:
-            self.scene.add(
-                Entity(
-                    self.app, self.scene, "bullet.png", position=self.position, life=1
-                )
+    def kill(self, damage, bullet, player):
+        
+        # TODO: This is supposed to be an explosion
+        self.scene.add(
+            Entity(
+                self.app, self.scene, "bullet.png", position=self.position, life=1
             )
-            self.play_sound("butterfly.wav")
-            self.fall()
-            self.exploded = True
+        )
+        self.play_sound("butterfly.wav")
+        self.fall()
 
-    def hurt(self, damage, bullet, player):
-        dmg = super().hurt(damage, bullet, player)
-        if self.hp <= 0:
-            self.explode()
-        return dmg
+    # def hurt(self, damage, bullet, player):
+    #     return super().hurt(damage, bullet, player)
 
     def update(self, dt):
         super().update(dt)

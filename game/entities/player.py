@@ -13,16 +13,15 @@ from game.base.enemy import Enemy
 
 
 class Weapon:
-    def __init__(self, letter, filename, color, ammo, speed, dmg):
+    def __init__(self, letter, filename, color, ammo, speed, damage):
         self.letter = letter
         self.filename = filename
         self.color = color
         self.max_ammo = ammo  # max ammo
         self.ammo = 0  # current ammo
         self.speed = float(speed)
-        self.damage = dmg
+        self.damage = damage
         self.img = None
-
 
 class Player(Entity):
 
@@ -37,6 +36,7 @@ class Player(Entity):
         self.game_state = self.scene.state
 
         self.score = 0
+        self.hp = 100
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
@@ -73,10 +73,27 @@ class Player(Entity):
             # temp: give player all ammo
             weapon.ammo = weapon.max_ammo
 
+    def kill(self, damage, bullet, enemy):
+        # TODO: player death
+        return False
+
+    def hurt(self, damage, bullet, enemy):
+        """
+        Take damage from an object `bullet` shot by enemy
+        """
+        if self.hp <= 0:
+            return 0
+        
+        damage = min(self.hp, damage) # calc effective damage (not more than hp)
+        self.hp -= damage
+        if self.hp <= 0:
+            self.kill(damage, bullet, enemy)
+        return damage
+    
     def collision(self, other, dt):
         if isinstance(other, Enemy):
             self.score += other.hp
-            other.explode()
+            other.kill(other.hp, None, self)
 
     def find_butterfly_in_crosshair(self):
         # Assuming state is Game
