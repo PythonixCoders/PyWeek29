@@ -6,7 +6,7 @@ from glm import ivec2
 from game.base.enemy import Enemy
 from game.base.entity import Entity
 
-from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE
+from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE, GRAY
 from game.entities.camera import Camera
 from game.util import *
 
@@ -65,6 +65,8 @@ class Butterfly(Enemy):
         self.life = 2
 
     def kill(self, damage, bullet, player):
+        # Butterfly will turn gray when killed
+        self.frames = self.get_animation(GRAY)
         
         # TODO: This is supposed to be an explosion
         self.scene.add(
