@@ -165,7 +165,7 @@ class Player(Being):
     def set_vel_y(self, axis: Axis):
         self.velocity.y = axis.value * self.speed.y
 
-    def fire(self, btn, dt):
+    def fire(self, btn):
 
         if self.fire_cooldown:
             return False

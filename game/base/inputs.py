@@ -30,6 +30,7 @@ class Button:
         self.last_press = float("-inf")
         """Time since last release of the button"""
         self.press_time = 0
+        self.dt = 0  # time since last frame
         """
         Time the button has been pressed.
         If it isn't pressed, it is the duration of the last press.
@@ -42,15 +43,17 @@ class Button:
         if self.pressed:
             self.press_time += dt
 
+        self.dt = dt
+
         self._always(self)
 
         if self._while_pressed:
             if self._pressed:
-                self._while_pressed(self, dt)
+                self._while_pressed(self)
 
         if self._while_released:
             if not self._pressed:
-                self._while_pressed(self, dt)
+                self._while_released(self)
 
         if self.just_pressed:
             self._on_press(self)
