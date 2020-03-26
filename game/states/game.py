@@ -41,9 +41,9 @@ class Game(State):
         self.time = 0
 
         for i in range(20):
-            x = randint(-1000, 1000)
+            x = randint(-2000, 2000)
             y = randint(300, 600)
-            z = randint(-6000, -3000)
+            z = randint(-7000, -3000)
             pos = vec3(x, y, z)
             self.scene.add(Cloud(self.app, self.scene, pos, self.player.velocity.z))
 
