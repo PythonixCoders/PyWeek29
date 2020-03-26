@@ -169,7 +169,7 @@ class Player(Being):
 
         if not btn._pressed:
             return
-        
+
         if self.fire_cooldown:
             return False
 
