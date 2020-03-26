@@ -19,8 +19,8 @@ class Player(Entity):
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
         self.app.inputs["fire"].on_press_repeated(self.fire, 0.15)
-        self.app.inputs["hmove"] += self.set_vel_x
-        self.app.inputs["vmove"] += self.set_vel_y
+        self.app.inputs["hmove"].always_call(self.set_vel_x)
+        self.app.inputs["vmove"].always_call(self.set_vel_y)
 
         self.position = vec3(0, 0, 0)
         self.speed = vec3(speed)

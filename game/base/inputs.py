@@ -155,7 +155,7 @@ class Axis:
     def value(self):
         return clamp(self._value, -1, 1)
 
-    def __iadd__(self, callback):
+    def always_call(self, callback):
         self._callbacks.add(callback)
         return self
 
