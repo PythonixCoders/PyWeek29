@@ -52,7 +52,7 @@ class Game(State):
         self.terminal.clear(20)
         self.terminal.clear(21)
         if not b:
-            self.player.update_stats()
+            self.player.write_weapon_stats()
 
     def pend(self):
 
@@ -120,4 +120,5 @@ class Game(State):
         inputs["vmove"] = Axis((pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w))
         inputs["fire"] = Button(pg.K_SPACE, pg.K_RETURN)
         inputs["debug"] = Button(pg.K_TAB)
+        inputs["switch-gun"] = Button(pg.K_RSHIFT, pg.K_LSHIFT)
         return inputs
