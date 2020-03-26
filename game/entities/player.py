@@ -182,21 +182,47 @@ class Player(Being):
         direction = aim - start
 
         # weapon logic
-        if wpn.letter == 'P':
+        if wpn.letter == "P":
             self.scene.add(
-                Bullet(self.app, self.scene, self, start, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app, self.scene, self, start, direction, wpn.damage, wpn.img
+                )
             )
-        elif wpn.letter == 'M':
+        elif wpn.letter == "M":
             self.scene.add(
-                Bullet(self.app, self.scene, self, start - X*8, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app,
+                    self.scene,
+                    self,
+                    start - X * 8,
+                    direction,
+                    wpn.damage,
+                    wpn.img,
+                )
             )
             self.scene.add(
-                Bullet(self.app, self.scene, self, start + X*8, direction, wpn.damage, wpn.img)
+                Bullet(
+                    self.app,
+                    self.scene,
+                    self,
+                    start + X * 8,
+                    direction,
+                    wpn.damage,
+                    wpn.img,
+                )
             )
-        if wpn.letter == 'L':
+        if wpn.letter == "L":
             for x in range(5):
                 self.scene.add(
-                    Bullet(self.app, self.scene, self, start - Z*100*x, direction, wpn.damage/5, wpn.img)
+                    Bullet(
+                        self.app,
+                        self.scene,
+                        self,
+                        start - Z * 100 * x,
+                        direction,
+                        wpn.damage / 5,
+                        wpn.img,
+                    )
                 )
 
         self.play_sound("shoot.wav")
