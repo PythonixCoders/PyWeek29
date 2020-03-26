@@ -6,6 +6,7 @@ from copy import copy
 import weakref
 
 from game.base.entity import Entity
+from game.base.being import Being
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
@@ -23,7 +24,7 @@ class Weapon:
         self.damage = damage
         self.img = None
 
-class Player(Entity):
+class Player(Being):
 
     Weapons = [
         Weapon("P", "bullet.png", "yellow", -1, 10, 1),

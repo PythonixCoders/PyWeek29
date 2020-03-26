@@ -23,8 +23,9 @@ class Butterfly(Enemy):
         :param scale:
         """
 
-        super().__init__(app, scene, pos, color, scale, num, hp=1)
+        super().__init__(app, scene)
 
+        self.num = num
         self.frames = self.get_animation(color)
 
         size = self.frames[0].get_size()
