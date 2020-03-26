@@ -128,7 +128,11 @@ class Script:
             if not hasattr(lib, "run"):
                 # no run method? look for cls
                 for name, cls in lib.__dict__.items():
-                    if name != "Level" and name.startswith("Level"):
+                    if name.startswith("Level"):
+                        try:
+                            num = int(name[len("Level") :])
+                        except ValueError:
+                            continue  # not a level number
                         if self.script_args:
                             self._script = iter(cls(*self.script_args, self))
                         else:
