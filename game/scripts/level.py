@@ -50,7 +50,7 @@ class Level:
     def __call__(self):
         self.scene.sky_color = self.sky
         self.cloudy()
-        
+
         if self.name:
             terminal = self.app.state.terminal
             typ = pygame.mixer.Sound("data/sounds/type.wav")
@@ -85,7 +85,9 @@ class Level:
             y = randint(300, 600)
             z = randint(-7000, -3000)
             pos = vec3(x, y, z)
-            self.scene.add(Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z))
+            self.scene.add(
+                Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z)
+            )
 
     def __iter__(self):
         return self()

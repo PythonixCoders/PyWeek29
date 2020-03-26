@@ -9,7 +9,6 @@ from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player
-from game.entities.cloud import Cloud
 from game.entities.terminal import Terminal
 from game.scene import Scene
 from game.scripts.level1 import Level1
@@ -42,19 +41,12 @@ class Game(State):
 
         self.debug = False
         self.slots += [
-            app.inputs['debug'].on_press(lambda _: self.debug_mode(True)),
-            app.inputs['debug'].on_release(lambda _: self.debug_mode(False))
+            app.inputs["debug"].on_press(lambda _: self.debug_mode(True)),
+            app.inputs["debug"].on_release(lambda _: self.debug_mode(False)),
         ]
-        
-        for i in range(20):
-            x = randint(-2000, 2000)
-            y = randint(300, 600)
-            z = randint(-7000, -3000)
-            pos = vec3(x, y, z)
-            self.scene.add(Cloud(self.app, self.scene, pos, self.player.velocity.z))
 
         self.time = 0
-        
+
     def debug_mode(self, b):
         self.debug = b
         self.terminal.clear(20)
