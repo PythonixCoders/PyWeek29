@@ -31,10 +31,9 @@ class Level:
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
-        pos = camera.rel_to_world(
-            vec3(x, y, -camera.screen_dist * FULL_FOG_DISTANCE)
-            * vec3(*camera.screen_size / 2, 1)
-        )
+        pos = vec3(
+            x, y, camera.position.z - camera.screen_dist * FULL_FOG_DISTANCE
+        ) * vec3(*camera.screen_size / 2, 1)
 
         self.scene.add(Powerup(self.app, self.scene, letter, position=pos))
 
@@ -47,10 +46,8 @@ class Level:
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
-        player = self.app.state.player
-
         pos = vec3(
-            x, y, player.position.z - camera.screen_dist * FULL_FOG_DISTANCE
+            x, y, camera.position.z - camera.screen_dist * FULL_FOG_DISTANCE
         ) * vec3(*camera.screen_size / 2, 1)
 
         self.scene.add(
