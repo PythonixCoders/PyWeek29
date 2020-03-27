@@ -13,7 +13,6 @@ class Level3(Level):
         self.cloudy()
 
         yield from super().__call__()
-        yield from self.spawn_powerup(0, 0, letter="heart")
 
         yield from self.v_shape(5)
         yield from self.v_shape(5, dir=(0, 1))
@@ -57,7 +56,7 @@ class Level3(Level):
         yield self.pause(7)
 
         for i in range(5):
-            yield from self.circle((i + 1) * 2, i / 5 * 0.7, ai=AvoidAi())
+            yield from self.circle(i*2, i / 5 * 0.7, ai=AvoidAi())
             yield self.pause(5)
 
         # TODO: Check for level clear ?
