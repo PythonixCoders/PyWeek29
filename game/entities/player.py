@@ -78,7 +78,7 @@ class Player(Being):
     def kill(self, damage, bullet, enemy):
         # TODO: player death
         # self.scene.play_sound('explosion.wav')
-        self.acceleration = -Y * 100
+        # self.acceleration = -Y * 100
         self.explode()
         self.remove()
         self.alive = False
