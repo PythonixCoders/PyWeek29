@@ -44,7 +44,7 @@ class Entity:
 
         script = kwargs.get("script")
         self.script = None  # main script
-        self.scripts = Signal()
+        self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
 
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
@@ -82,13 +82,12 @@ class Entity:
         ai = kwargs.get("ai")
         self.ai: AI = ai(self) if ai else None
 
-    def add_script(self, fn):
-        """
-        :param fn: add script `fn` (cls, func, or filename)
-        """
-        script = Script(self.app, self, fn, use_input=False)
-        self.scripts += script
-        return script
+    # def add_script(self, fn):
+    #     """
+    #     :param fn: add script `fn` (cls, func, or filename)
+    #     """
+    #     self.scripts += script
+    #     return script
 
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"

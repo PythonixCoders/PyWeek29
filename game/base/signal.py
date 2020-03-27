@@ -92,6 +92,10 @@ class Slot:
 
 class Signal:
     def __init__(self, *args, **kwargs):
+        def noop(s):
+            return s
+
+        self.adapter = args[0] if args else noop
         self.slots = []
         self.blocked = 0
         self.queued = []
@@ -166,17 +170,23 @@ class Signal:
         return self
 
     def __isub__(self, func):
-        self.disconnect(func, weak=False)
+        self.disconnect(func)
         return self
 
     def connect(self, func, weak=True, once=False):
+
+        if isinstance(func, (list, tuple)):
+            r = []
+            for f in func:
+                r.append(self.connect(f, weak, once))
+            return r
 
         if self.blocked:
             # if we're blocked, then queue the call
             if isinstance(func, Slot):
                 slot = func
             else:
-                slot = Slot(func, self)
+                slot = Slot(self.adapter(func), self)
             slot.once = once
             wslot = weakref.ref(slot) if weak else slot
             self.queued.append(lambda wslot=wslot: self.slots.append(wslot))
@@ -190,7 +200,7 @@ class Signal:
             return slot
 
         # make slot from func
-        slot = Slot(func, self)
+        slot = Slot(self.adapter(func), self)
         slot.once = once
         wslot = weakref.ref(slot) if weak else slot
         self.slots.append(wslot)

@@ -54,8 +54,7 @@ class Player(Being):
         ]
         self.current_weapon = 0
 
-        self.add_script(self.blink)
-        self.add_script(self.smoke)
+        self.scripts += [self.blink, self.smoke]
 
     @property
     def weapon(self):
@@ -187,7 +186,7 @@ class Player(Being):
         super().update(dt)
 
     def smoke(self, script):
-        while True:
+        while self.alive:
             if self.hp < 3:
                 self.scene.add(
                     Entity(
@@ -204,17 +203,17 @@ class Player(Being):
                         particle=True,
                     )
                 )
-                yield script.sleep(self.hp / 5)
+                yield script.sleep(self.hp)
             yield
 
     def blink(self, script):
         self.blinking = False
-        while True:
+        while self.alive:
             if self.blinking:
                 for i in range(10):
-                    yield script.sleep(0.2)
+                    yield script.sleep(0.1)
                     self.visible = False
-                    yield script.sleep(0.2)
+                    yield script.sleep(0.1)
                     self.visible = True
                 self.blinking = False
             yield

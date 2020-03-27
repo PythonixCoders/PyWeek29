@@ -45,8 +45,7 @@ class Butterfly(Enemy):
             vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
         )
 
-        self.add_script(self.randomly_fire)
-        self.add_script(self.randomly_charge)
+        self.scripts += [self.randomly_fire, self.randomly_charge]
 
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -136,19 +135,18 @@ class Butterfly(Enemy):
         yield  # no call during entity ctor
 
         while True:
-            yield script.sleep(random.random() * 10)
+            yield script.sleep(random.random() * 5)
 
             player = self.app.state.player
-            if self.position.z < player.position.z:
-                break
-
             if player and player.alive:
+                if self.position.z > player.position.z:
+                    break
                 # print('sometimes crazy')
                 to_player = player.position - self.position
-                if glm.length(to_player) < 2000:  # wihin range
+                if glm.length(to_player) < 3000:  # wihin range
                     to_player = player.position - self.position
                     self.play_sound("squeak.wav")
-                    self.acceleration = glm.normalize(to_player)
+                    self.acceleration = glm.normalize(to_player) * 100
                     break  # only do this once
 
     def render(self, camera: Camera):
