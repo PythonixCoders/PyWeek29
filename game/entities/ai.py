@@ -1,6 +1,11 @@
 from math import cos, sin, pi
+from random import uniform
 
+import glm
 from glm import vec3, normalize, length
+
+from game.constants import BUTTERFLY_MIN_SHOOT_DIST, BULLET_IMAGE_PATH
+from game.entities.bullet import Bullet
 
 
 class AI:
@@ -74,4 +79,38 @@ class AvoidAi(AI):
             entity.position -= normalize(dir) * self.speed * dt
 
 
-#
+class RandomFireAi(AI):
+    def __init__(self, min_delay=1, max_delay=5):
+        self.min_delay = min_delay
+        self.max_delay = max_delay
+
+    def __call__(self, entity):
+        entity.ai_next_fire = uniform(self.min_delay, self.max_delay)
+
+    def update(self, entity, dt):
+        entity.ai_next_fire -= dt
+
+        if entity.ai_next_fire > 0:
+            return
+
+        entity.ai_next_fire = uniform(self.min_delay, self.max_delay)
+
+        player = entity.app.state.player
+        if player and player.alive:
+            # print('randomly fire')
+            to_player = player.position - entity.position
+            if BUTTERFLY_MIN_SHOOT_DIST < glm.length(to_player):
+                entity.play_sound("squeak.wav")
+                entity.scene.add(
+                    Bullet(
+                        entity.app,
+                        entity.scene,
+                        entity,
+                        entity.position,
+                        to_player,
+                        entity.damage,
+                        BULLET_IMAGE_PATH,
+                        3,
+                        300,
+                    )
+                )
