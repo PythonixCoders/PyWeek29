@@ -40,12 +40,12 @@ Z = glm.vec3(0, 0, 1)
 EPSILON = 0.0001  # for floating point comparisons
 GROUND_HEIGHT = -300
 PLAYER_SPEED = glm.vec3(80, 80, -200)
-BULLET_SPEED = 4000
+BULLET_SPEED = 6000
 BULLET_SIZE = 200
 BULLET_OFFSET = glm.vec3(0, -20, -300)
 CAMERA_OFFSET = glm.vec3(0, 0, 300)
 SCREEN_DIST = 3000
-AIM_MAX_DIST = 3000
+AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_DISTANCE
 FULL_FOG_DISTANCE = 1.5
 """
 Distance at which we see nothing behing the screen camera.
