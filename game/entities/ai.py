@@ -13,9 +13,12 @@ class AI:
 
 
 class CircleAi(AI):
-    def __init__(self, radius, speed=100, start_angle=0):
+    def __init__(self, radius, speed=100, start_angle=0, angular_speed=None):
         self.radius = radius
-        self.angular_speed = speed / radius / 2 / pi
+        if angular_speed:
+            self.angular_speed = angular_speed
+        else:
+            self.angular_speed = speed / radius / 2 / pi
         self.start_pos = vec3(0)
         self.angle = start_angle
 

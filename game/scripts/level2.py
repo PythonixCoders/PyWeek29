@@ -36,8 +36,16 @@ class Level2(Level):
         yield from self.rotating_circle(3, 30)
         yield self.pause(4)
 
-        self.spawn(0, 0)
-        yield from self.rotating_circle(5, -40)
+        yield from self.v_shape(5)
+        yield self.pause(5)
+
+        yield from self.rotating_v_shape(4, delay=1.5)
+        yield self.pause(5)
+
+        for i in range(3):
+            self.spawn(0, 0)
+            yield from self.rotating_circle(5, -40)
+            yield self.pause(3)
 
         # TODO: Check for level clear ?
         yield self.pause(10)

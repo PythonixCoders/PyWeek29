@@ -1,6 +1,7 @@
+from contextlib import contextmanager
 from math import cos, sin, pi
 
-from glm import vec3, ivec2
+from glm import vec3, ivec2, normalize, vec2
 from pygame.camera import Camera
 from random import randint
 
@@ -23,10 +24,31 @@ class Level:
         self.scene = scene
         self.script = script
         self.spawned = 0
+        self._skip = False
 
     @property
     def terminal(self):
         return self.app.state.terminal
+
+    @contextmanager
+    def skip(self):
+        """
+        Use this as a context manager to skip parts of a level with creating it.
+
+        Exemple:
+
+        self.pause(5)  # This will happen
+        with self.skip():
+            # This will not happen
+            self.circle(100, 100, delay=1)
+            # This neither
+            self.pause(1000)
+        self.spawn(0, 0)  # This will happen
+
+        """
+        self._skip += 1
+        yield
+        self._skip -= 1
 
     def spawn_powerup(self, x: float, y: float, letter: str = None):
         """
@@ -44,12 +66,15 @@ class Level:
 
         self.scene.add(Powerup(self.app, self.scene, letter, position=pos))
 
-    def spawn(self, x: float, y: float, ai=None):
+    def spawn(self, x: float = 0, y: float = 0, ai=None):
         """
         Spawn a butterfly at position (x, y) at the current max depth
         :param x: float between -1 and 1. 0 is horizontal center of the screen
         :param y: float between -1 and 1. 0 is vertical center of the screen
         """
+
+        if self._skip:
+            return
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
@@ -57,13 +82,14 @@ class Level:
             x, y, camera.position.z - camera.screen_dist * FULL_FOG_DISTANCE
         ) * vec3(*camera.screen_size / 2, 1)
 
-        self.scene.add(
+        butt = self.scene.add(
             Butterfly(
                 self.app, self.scene, pos, random_color(), num=self.spawned, ai=ai
             )
         )
 
         self.spawned += 1
+        return butt
 
     def pause(self, duration):
         """
@@ -71,6 +97,9 @@ class Level:
 
         Next spawn will be exactly after `duration` seconds.
         """
+
+        if self._skip:
+            duration = 0
 
         return self.script.sleep(duration)
 
@@ -93,6 +122,31 @@ class Level:
             angle = i / n * 2 * pi
 
             self.spawn(center[0], center[1], CircleAi(radius, speed, angle))
+            yield self.pause(delay)
+
+    def v_shape(self, n, delay=1, dir=(1, 0), ai=None):
+        dir = normalize(vec2(dir)) * 0.4  # *0.4 so it isn't too spread out
+
+        self.spawn(0, 0)
+        yield self.pause(1)
+        for i in range(1, n):
+            self.spawn(*dir * i / n, ai)
+            self.spawn(*dir * -i / n, ai)
+            yield self.pause(delay)
+
+    def rotating_v_shape(self, n, delay=1, angular_speed=0.5):
+        ai = CircleAi(0, angular_speed=angular_speed)
+
+        self.spawn(0, 0, ai)
+        yield self.pause(2)
+        for i in range(1, n):
+            # We sync the ai angles
+            ai1 = CircleAi(i * 20, start_angle=ai.angle, angular_speed=angular_speed)
+            ai2 = CircleAi(
+                i * 20, start_angle=ai.angle + pi, angular_speed=angular_speed
+            )
+            self.spawn(0, 0, ai1)
+            self.spawn(0, 0, ai2)
             yield self.pause(delay)
 
     def slow_type(self, text, line, color="white", delay=0.1, clear=False):

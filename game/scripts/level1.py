@@ -38,13 +38,7 @@ class Level1(Level):
             "Destroy them while we still can !", 5, "red", 0.08, True
         )
 
-        self.spawn(0, 0)
-        yield self.pause(1)
-        for i in range(1, 5):
-            self.spawn(i / 14, 0)
-            self.spawn(-i / 14, 0)
-            yield self.pause(1)
-
+        yield from self.v_shape(5)
         yield self.pause(3)
 
         self.spawn(0, 0)
