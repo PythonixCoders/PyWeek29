@@ -47,10 +47,11 @@ class Level:
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
-        pos = camera.rel_to_world(
-            vec3(x, y, -camera.screen_dist * FULL_FOG_DISTANCE)
-            * vec3(*camera.screen_size / 2, 1)
-        )
+        player = self.app.state.player
+
+        pos = vec3(
+            x, y, player.position.z - camera.screen_dist * FULL_FOG_DISTANCE
+        ) * vec3(*camera.screen_size / 2, 1)
 
         self.scene.add(
             Butterfly(self.app, self.scene, pos, random_color(), num=self.spawned,)
@@ -70,7 +71,7 @@ class Level:
     def __call__(self):
         self.scene.sky_color = self.sky
         self.scene.ground_color = self.ground
-        self.scene.music = self.music
+        # self.scene.music = self.music
 
         if self.name:
             terminal = self.app.state.terminal
