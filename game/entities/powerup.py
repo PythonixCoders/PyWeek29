@@ -59,5 +59,5 @@ class Powerup(Message):
         self.time += dt
         self.offset.y = math.sin(self.time * math.tau)
 
-    def render(self):
-        super().render(dt, self.position)
+    def render(self, camera):
+        super().render(camera)

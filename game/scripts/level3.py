@@ -50,15 +50,16 @@ class Level3(Level):
         )
         yield from self.slow_type("...But some remain", 5, delay=0.05, clear=True)
         yield self.pause(1)
-        yield from self.slow_type("Take this, you'll need it!", 5, color="green", clear=False)
+        yield from self.slow_type("Take this, you'll need it!", 5, color="green", clear=True)
 
-        yield from self.spawn_powerup(0, 0, letter="heart")
+        for i in range(3):
+            self.spawn_powerup(0, 0, letter="heart")
         yield self.pause(7)
 
-        for i in range(5):
-            yield from self.circle(i*2, i / 5 * 0.7, ai=AvoidAi())
+        for i in range(1, 5):
+            yield from self.circle(i*2, i / 5 * 0.7)
             yield self.pause(5)
 
         # TODO: Check for level clear ?
-        yield self.pause(10)
+        yield self.pause(5)
         yield from self.slow_type("Well Done!", 5, color="green", clear=True)
