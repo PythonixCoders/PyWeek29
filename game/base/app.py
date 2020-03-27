@@ -38,6 +38,7 @@ class App:
         self.inputs = Inputs()
         self.time = 0
         self.dirty = True
+        self.data = {}  # data persisting between modes
         # self.keys = [False] * self.MAX_KEYS
 
         self._state = None

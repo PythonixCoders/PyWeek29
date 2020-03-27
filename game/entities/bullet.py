@@ -4,6 +4,7 @@ from game.constants import *
 from game.base.entity import Entity
 from glm import vec3, normalize
 from game.base.enemy import Enemy
+from game.base.being import Being
 
 
 class Bullet(Entity):
@@ -17,10 +18,11 @@ class Bullet(Entity):
         damage,
         img=BULLET_IMAGE_PATH,
         life=1,
+        speed=BULLET_SPEED,
         **kwargs
     ):
 
-        velocity = normalize(direction) * BULLET_SPEED
+        velocity = normalize(direction) * speed
         super().__init__(
             app,
             scene,
@@ -36,6 +38,8 @@ class Bullet(Entity):
         self.parent = parent  # whoever shot the bullet
 
     def collision(self, other, dt):
-        if isinstance(other, Enemy):
-            other.hurt(self.damage, self, self.parent)  # apply dmg
-            self.remove()  # remove the bullet
+        # enemy vs player or player vs enemy?
+        if isinstance(other, Being):
+            if self.parent.friendly != other.friendly:
+                other.hurt(self.damage, self, self.parent)  # apply dmg
+                self.remove()  # remove the bullet

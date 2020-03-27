@@ -44,7 +44,7 @@ class Entity:
 
         script = kwargs.get("script")
         self.script = None  # main script
-        self.script = Signal()
+        self.scripts = Signal()
 
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
@@ -87,7 +87,7 @@ class Entity:
         :param fn: add script `fn` (cls, func, or filename)
         """
         script = Script(self.app, self, fn, use_input=False)
-        self.script += script
+        self.scripts += script
         return script
 
     def __str__(self):
@@ -207,9 +207,9 @@ class Entity:
                 return
 
         if self.script:
-            self.script.each(lambda x, dt: x.update(dt), dt)
-            self.script.slots = list(
-                filter(lambda x: not x.get().done(), self.script.slots)
+            self.scripts.each(lambda x, dt: x.update(dt), dt)
+            self.scripts.slots = list(
+                filter(lambda x: not x.get().done(), self.scripts.slots)
             )
 
         if self.slots:

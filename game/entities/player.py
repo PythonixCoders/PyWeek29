@@ -28,6 +28,7 @@ class Player(Being):
 
         self.score = 0
         self.hp = 3
+        self.friendly = True  # determines what Beings you can damage
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
 
@@ -36,7 +37,7 @@ class Player(Being):
             self.app.inputs["vmove"].always_call(self.set_vel_y),
             self.app.inputs["fire"].always_call(self.fire),
             self.app.inputs["switch-gun"].on_press_repeated(self.next_gun, 0.5),
-            self.app.inputs["test"].on_press(self.explode),
+            # self.app.inputs["test"].on_press(self.explode),
         ]
 
         self.position = vec3(0, 0, 0)
@@ -46,6 +47,7 @@ class Player(Being):
 
         self.alive = True
         self.solid = True
+        self.blinking = False
 
         self.weapons: List[Weapon] = [
             self.scene.add(gun(app, scene, self)) for gun in WEAPONS

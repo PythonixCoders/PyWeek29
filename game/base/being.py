@@ -16,6 +16,7 @@ class Being(Entity):
         self.hp = 1
         self.score = 0
         self.alive = True  # prevent mutliple kill()
+        self.friendly = False
 
     def hurt(self, dmg, bullet, damager):
         """

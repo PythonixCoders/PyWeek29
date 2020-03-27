@@ -1,13 +1,16 @@
 from os import path
 
 import pygame
+import glm
 
 from game.base.enemy import Enemy
 from game.base.entity import Entity
 from game.constants import Y, SPRITES_DIR, ORANGE, GRAY
 from game.entities.ai import AI
+from game.entities.bullet import Bullet
 from game.entities.camera import Camera
 from game.util import *
+from game.constants import *
 
 
 class Butterfly(Enemy):
@@ -35,6 +38,7 @@ class Butterfly(Enemy):
 
         self.time = 0
         self.frame = 0
+        self.damage = 1
 
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -86,6 +90,30 @@ class Butterfly(Enemy):
     def update(self, dt):
         self.time += dt * 10
         super().update(dt)
+
+    def __call__(self, script):
+        yield  # no call during entity ctor
+
+        while True:
+            player = self.app.state.player
+            if player and player.alive:
+                to_player = player.position - self.position
+                if glm.length(to_player) < 2000:  # wihin range
+                    self.play_sound("squeak.wav")
+                    self.scene.add(
+                        Bullet(
+                            self.app,
+                            self.scene,
+                            self,
+                            self.position,
+                            glm.normalize(to_player),
+                            self.damage,
+                            BULLET_IMAGE_PATH,
+                            20,  # speed
+                        )
+                    )
+
+            yield script.sleep(max(1, random.random() * 5))
 
     def render(self, camera: Camera):
 

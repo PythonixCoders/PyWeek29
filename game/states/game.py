@@ -23,6 +23,7 @@ class Game(State):
         self.scene = Scene(self.app, self)
         self.gui = Scene(self.app, self)
         self.slots = SlotList()
+        self.paused = False
 
         # create terminal first since player init() writes to it
         self.terminal = self.gui.add(Terminal(self.app, self.scene))
@@ -41,11 +42,25 @@ class Game(State):
 
         self.debug = False
         self.slots += [
-            app.inputs["debug"].on_press(lambda _: self.debug_mode(True)),
-            app.inputs["debug"].on_release(lambda _: self.debug_mode(False)),
+            app.inputs["debug"].on_press(lambda _: self.pause(True)),
+            app.inputs["debug"].on_release(lambda _: self.paused(False)),
+        ]
+        self.slots += [
+            app.inputs["pause"].on_press(self.toggle_pause),
         ]
 
         self.time = 0
+
+    def toggle_pause(self):
+        self.paused = not self.paused
+        if self.paused:
+            self.terminal.write_center(
+                "PAUSED", 10,
+            )
+            # self.scene.play_sound('pause.wav')
+        else:
+            self.terminal.clear(10)
+            # self.scene.play_sound('pause.wav')
 
     def level(self, num):
         self.scene.script = "level" + str(num)
@@ -67,6 +82,8 @@ class Game(State):
         Called every frame by App as long as Game is the current app.state
         :param dt: time since last frame in seconds
         """
+        if self.paused:
+            return
 
         super().update(dt)  # needed for state script (unused)
 
@@ -141,5 +158,6 @@ class Game(State):
         inputs["switch-gun"] = Button(
             pg.K_RSHIFT, pg.K_LSHIFT, JoyButton(0, 3), JoyButton(0, 2)
         )
-        inputs["test"] = Button(pg.K_p)
+        # inputs["test"] = Button(pg.K_p)
+        inputs["pause"] = Button(pg.K_ESCAPE)
         return inputs
