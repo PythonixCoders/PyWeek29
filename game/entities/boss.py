@@ -1,12 +1,19 @@
 from os import path
 
+import pygame
+import glm
+
 from game.base.enemy import Enemy
-from game.constants import *
+from game.base.entity import Entity
+from game.constants import Y, SPRITES_DIR, ORANGE, GRAY
+from game.entities.ai import AI
+from game.entities.bullet import Bullet
 from game.entities.camera import Camera
 from game.util import *
+from game.constants import *
 
 
-class Butterfly(Enemy):
+class Boss(Enemy):
     NB_FRAMES = 4
     DEFAULT_SCALE = 5
 
@@ -21,6 +28,8 @@ class Butterfly(Enemy):
         """
         super().__init__(app, scene, position=pos, ai=ai)
 
+        self.scene.music = "butterfly2.mp3"
+
         self.num = num
         self.frames = self.get_animation(color)
 
@@ -29,6 +38,7 @@ class Butterfly(Enemy):
 
         self.time = 0
         self.frame = 0
+        self.hp = 100
         self.damage = 1
 
         # drift slightly in X/Y plane
@@ -36,16 +46,15 @@ class Butterfly(Enemy):
             vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
         )
 
-        self.scripts += []
+        self.scripts += [self.randomly_fire, self.randomly_charge]
 
     def get_animation(self, color):
-
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
 
         # load an image if its not already in the cache, otherwise grab it
         image: pygame.SurfaceType = self.app.load_img(filename)
 
-        h, s, v = rgb2hsv(color[0], color[1], color[2])
+        h, s, v = rgb2hsv(*color)
         brighter = hsv2rgb(h + 0.03, s + 0.1, v + 0.1)
         darker = hsv2rgb(h - 0.06, s - 0.1, v - 0.1)
         very_darker = hsv2rgb(h + 0.2, 0.5, 0.2)
@@ -75,7 +84,7 @@ class Butterfly(Enemy):
         if not self.alive:
             return False
 
-        # Butterfly will turn gray when killed
+        # Boss will turn gray when killed
         self.frames = self.get_animation(GRAY)
 
         self.scripts = []
@@ -98,4 +107,4 @@ class Butterfly(Enemy):
             return
 
         surf = self.frames[int(self.time + self.num) % self.NB_FRAMES]
-        super(Butterfly, self).render(camera, surf)
+        super(Boss, self).render(camera, surf)

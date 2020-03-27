@@ -2,9 +2,10 @@ from colorsys import rgb_to_hsv, hsv_to_rgb
 import random
 from typing import Union, Optional
 
-from glm import vec3, normalize, cross, dot, vec2
+from glm import vec3, vec4, normalize, cross, dot, vec2
 
 from game.constants import EPSILON
+import pygame
 
 
 def map_range(val, r1, r2):
@@ -142,3 +143,62 @@ def estimate_3d_size(size_2d):
     """
 
     return vec3(*size_2d, min(size_2d))
+
+
+def pg_color(c):
+    if isinstance(c, vec3):
+        c = vec4(c, 0)
+    elif isinstance(c, str):
+        return pygame.Color(c)
+    c = [int(clamp(x * 255, 0, 255)) for x in c]
+    pgc = pygame.Color(*c)
+    return pgc
+
+
+def ncolor(c):
+    """
+    Normalize color based on type.
+    Given a color string, a pygame color, or vec3,
+    return that as a normalized vec4 color
+    """
+    if isinstance(c, str):
+        c = vec4(*pygame.Color(c)) / 255.0
+    elif isinstance(c, tuple):
+        c = vec4(*c, 0) / 255.0
+    elif isinstance(c, pygame.Color):
+        c = vec4(*c) / 255.0
+    elif isinstance(c, vec3):
+        c = vec4(*c, 0)
+    elif isinstance(c, (float, int)):
+        c = vec4(c, c, c, 0)
+    elif c is None:
+        c = vec4(0)
+    return c
+
+
+def mix(a, b, t):
+    """
+    interpolate a -> b @ t
+    Returns a vec4
+    Supports color names and pygame colors
+    """
+    if isinstance(a, vec3):
+        return glm.mix(a, b, t)
+
+    # this works for vec4 as well
+    return glm.mix(self.color(a), self.color(b), t)
+
+
+def random_vec3():
+    return vec3(random.random(), random.random(), random.random())
+
+
+def random_rgb():
+    return vec4(random.random(), random.random(), random.random(), 0)
+
+
+def random_char():
+    """
+    Random human-readable char
+    """
+    return chr(random.randint(32, 126))

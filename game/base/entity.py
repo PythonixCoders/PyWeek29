@@ -28,6 +28,7 @@ class Entity:
         self.scene = scene
         self.slot = None  # weakref
         self.slots = SlotList()
+        self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
         self._life = kwargs.pop("life", None)  # particle life (length of time to exist)
         self.on_move = Signal()
         self.on_update = Signal()
@@ -39,12 +40,10 @@ class Entity:
         self.sounds = {}
         self.particle = kwargs.pop("particle", None)
         self.visible = True
-
         self._script_func = False
 
         script = kwargs.pop("script", None)
         self.script = None  # main script
-        self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
 
         self._position = kwargs.pop("position", vec3(0))
         self.velocity = kwargs.pop("velocity", vec3(0))

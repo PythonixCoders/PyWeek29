@@ -7,7 +7,7 @@ import random
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.camera import Camera
 from game.scene import Scene
-from game.util import clamp
+from game.util import clamp, ncolor
 
 from game.base.entity import Entity
 
@@ -27,7 +27,7 @@ class Ground(Entity):
         self._color = c
         self.texture = pygame.Surface(self.app.size / 8).convert()
         self.texture.fill(self.color)
-        sky_color = self.scene.sky_color or Scene.color(pygame.Color("blue"))
+        sky_color = self.scene.sky_color or ncolor("blue")
         for y in range(self.texture.get_height()):
             col = vec4(self.texture.get_at((0, y)).normalize())
             interp = (1 - y / self.texture.get_height()) * 2

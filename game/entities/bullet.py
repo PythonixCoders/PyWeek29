@@ -4,6 +4,7 @@ from glm import normalize
 
 from game.base.being import Being
 from game.base.entity import Entity
+from game.entities.message import Message
 from game.constants import *
 
 
@@ -41,5 +42,21 @@ class Bullet(Entity):
         # enemy vs player or player vs enemy?
         if isinstance(other, Being):
             if self.parent.friendly != other.friendly:
-                other.hurt(self.damage, self, self.parent)  # apply dmg
+                dmg = other.hurt(self.damage, self, self.parent)  # apply dmg
+                if not other.friendly:
+                    # damage indicator
+                    if not other.alive:
+                        pass
+                        # self.scene.add(
+                        #     Message(
+                        #         self.app,
+                        #         self.scene,
+                        #         "+" + str(dmg),
+                        #         "white",
+                        #         position=other.position,
+                        #         life=1,
+                        #         velocity=Y * 100,
+                        #     )
+                        # )
+                    # self.register_hit(dmg)
                 self.remove()  # remove the bullet

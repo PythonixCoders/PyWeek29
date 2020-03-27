@@ -13,6 +13,7 @@ from game.base.entity import Entity
 from game.base.being import Being
 from game.base.inputs import Inputs, Axis
 from game.base.script import Script
+from game.util import ncolor
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
@@ -54,13 +55,17 @@ class Player(Being):
         self.solid = True
         self.blinking = False
         self.targeting = False
+        self.hide_stats = 0
+        self.score_flash = 0.0
+        self.weapon_flash = 0.0
+        self.health_flash = 0.0
 
         self.weapons: List[Weapon] = [
             self.scene.add(gun(app, scene, self)) for gun in WEAPONS
         ]
         self.current_weapon = 0
 
-        self.scripts += [self.blink, self.smoke]
+        self.scripts += [self.blink, self.smoke, self.engine]
 
     @property
     def targeting(self):
@@ -74,6 +79,27 @@ class Player(Being):
     @property
     def weapon(self):
         return self.weapons[self.current_weapon % len(self.weapons)]
+
+    @property
+    def score(self):
+        return self.stats.score
+
+    @score.setter
+    def score(self, s):
+        self.stats.score = s
+        self.score_flash = 1
+
+    # def flash_score(self, script):
+    #     yield
+    #     while True:
+    #         if self.score_flash:
+    #             for x in range(50):
+    #                 self.score_light = True
+    #                 yield script.sleep(.2)
+    #                 self.score_light = False
+    #                 yield script.sleep(.2)
+    #             self.score_light = False
+    #         yield
 
     def kill(self, damage, bullet, enemy):
         # TODO: player death
@@ -97,8 +123,10 @@ class Player(Being):
             return 0
 
         dmg = super().hurt(damage, bullet, enemy)
+        self.scene.add(Message(self.app, self.scene, letter, position=pos))
         if dmg:
             self.blinking = True
+            self.health_flash = 1
         return dmg
 
         # damage = min(self.hp, damage)  # calc effective damage (not more than hp)
@@ -123,8 +151,9 @@ class Player(Being):
                     if wpn.letter == other.letter:
                         wpn.ammo = wpn.max_ammo
                         break
-            print("powerup")
+            # print("powerup")
             self.play_sound("powerup.wav")
+            other.solid = False
             other.remove()
 
     def find_enemy_in_crosshair(self):
@@ -147,22 +176,41 @@ class Player(Being):
                     return entity
 
     def write_weapon_stats(self):
-        wpn = self.weapons[self.current_weapon]
-        # extra space here to clear terminal
-        if wpn.max_ammo < 0:
-            ammo = " " * 5  # spacing
+        if not self.hide_stats:
+            terminal = self.app.state.terminal
+
+            wpn = self.weapons[self.current_weapon]
+            # extra space here to clear terminal
+            if wpn.max_ammo < 0:
+                ammo = " " * 5  # spacing
+            else:
+                ammo = f"{wpn.ammo}/{wpn.max_ammo}   "
+
+            col = glm.mix(ncolor(wpn.color), ncolor("white"), self.weapon_flash)
+            self.game_state.terminal.write(" " + wpn.letter + " " + ammo, (1, 21), col)
+
+            col = glm.mix(ncolor("red"), ncolor("white"), self.health_flash)
+            self.game_state.terminal.write(
+                " " + "♥" * self.hp + " " * (3 - self.hp), 1, "red"
+            )
+
+            # Render Player's Score
+            score_display = "Score: {} ".format(self.stats.score)
+            score_pos = (
+                terminal.size.x - len(score_display) - 1,
+                1,
+            )
+            col = glm.mix(ncolor("white"), ncolor("yellow"), self.score_flash)
+            self.game_state.terminal.write(score_display, score_pos, col)
+
+            # self.game_state.terminal.write("WPN " + wpn.letter, (0,20), wpn.color)
+            # if wpn.max_ammo == -1:
+            #     self.game_state.terminal.write("AMMO " + str(wpn.ammo) + "  ", (0,21), wpn.color)
+            # else:
+            #     self.game_state.terminal.write("AMMO n/a  ", (0,21), wpn.color)
         else:
-            ammo = f"{wpn.ammo}/{wpn.max_ammo}   "
-
-        self.game_state.terminal.write(wpn.letter + " " + ammo, (0, 21), wpn.color)
-
-        self.game_state.terminal.write("♥ " * self.hp + "  " * (3 - self.hp), 0, "red")
-
-        # self.game_state.terminal.write("WPN " + wpn.letter, (0,20), wpn.color)
-        # if wpn.max_ammo == -1:
-        #     self.game_state.terminal.write("AMMO " + str(wpn.ammo) + "  ", (0,21), wpn.color)
-        # else:
-        #     self.game_state.terminal.write("AMMO n/a  ", (0,21), wpn.color)
+            self.game_state.terminal.clear(1)
+            self.game_state.terminal.clear(21)
 
     def next_gun(self, btn):  # FIXME
         # switch weapon
@@ -194,6 +242,7 @@ class Player(Being):
             self.current_weapon = 0
 
         if self.weapon.fire(self.find_aim()):
+            self.weapon_flash = 1
             self.play_sound(self.weapon.sound)
 
     def update(self, dt):
@@ -210,6 +259,10 @@ class Player(Being):
         if self.targeting:
             self.crosshair_t = (self.crosshair_t + dt) % 1
             self.crosshair_scale = 1 + 0.05 * math.sin(self.crosshair_t * math.tau * 2)
+
+        self.score_flash = self.score_flash - dt
+        self.weapon_flash = self.weapon_flash - dt
+        self.health_flash = self.health_flash - dt
 
         super().update(dt)
 
@@ -234,6 +287,26 @@ class Player(Being):
                 yield script.sleep(self.hp)
             yield
 
+    def engine(self, script):
+        while self.alive:
+            self.scene.add(
+                Entity(
+                    self.app,
+                    self.scene,
+                    "smoke.png",
+                    position=self.position + vec3(0, -20, 0),
+                    velocity=(
+                        vec3(random.random(), random.random(), random.random())
+                        - vec3(0.5)
+                    )
+                    * 2,
+                    life=0.2,
+                    scale=0.1,
+                    particle=True,
+                )
+            )
+            yield script.sleep(0.2)
+
     def blink(self, script):
         self.blinking = False
         while self.alive:
@@ -244,6 +317,13 @@ class Player(Being):
                 self.visible = True
                 self.blinking = False
             yield
+
+    # def flash_stats(self, script):
+    #     self.stats_visible = True
+    #     for x in range(10):
+    #         self.stats_visible = not self.stats_visible
+    #         yield script.sleep(.1)
+    #     self.stats_visible = True
 
     def heading(self):
 
@@ -269,7 +349,13 @@ class Player(Being):
         rect.center += direction * (10, -10)
 
         if self.visible:
-            self.app.screen.blit(self._surface, rect)
+            # stretch player graphic
+            sz = ivec2(*self._surface.get_size())
+            if self.velocity.y:
+                sz.y += self.velocity.y / self.speed.y * 10
+            img = pygame.transform.scale(self._surface, sz)
+            nrect = (rect[0], rect[1], *sz)
+            self.app.screen.blit(img, nrect)
 
         # Crosshair
         rect = self.crosshair_surf.get_rect()

@@ -8,7 +8,8 @@ from pygame import Color
 from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
-from game.util import clamp
+from game import util
+from game.util import clamp, ncolor
 from game.entities.cloud import Cloud
 from game.entities.star import Star
 
@@ -96,7 +97,7 @@ class Scene(Signal):
 
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()
-        sky_color = self.sky_color or Scene.color(pygame.Color("blue"))
+        sky_color = self.sky_color or ncolor(pygame.Color("blue"))
 
         self.sky.fill((0, 0, 0))
 
@@ -193,7 +194,7 @@ class Scene(Signal):
     def ground_color(self, color):
         self._ground_color = color
         if color:
-            c = self.color(color)
+            c = ncolor(color)
             self.app.state.ground.color = pygame.Color(
                 int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
             )
@@ -204,38 +205,6 @@ class Scene(Signal):
         if self._music:
             pygame.mixer.music.load(path.join(MUSIC_DIR, filename))
             pygame.mixer.music.play(-1)
-
-    @classmethod
-    def color(self, c):
-        """
-        Given a color string, a pygame color, or vec3,
-        return that as a normalized vec4 color
-        """
-        if isinstance(c, str):
-            c = vec4(*pygame.Color(c)) / 255.0
-        elif isinstance(c, tuple):
-            c = vec4(*c, 0) / 255.0
-        elif isinstance(c, pygame.Color):
-            c = vec4(*c) / 255.0
-        elif isinstance(c, vec3):
-            c = vec4(*c, 0)
-        elif isinstance(c, (float, int)):
-            c = vec4(c, c, c, 0)
-        elif c is None:
-            c = vec4(0)
-        return c
-
-    def mix(self, a, b, t):
-        """
-        interpolate a -> b @ t
-        Returns a vec4
-        Supports color names and pygame colors
-        """
-        if isinstance(a, vec3):
-            return glm.mix(a, b, t)
-
-        # this works for vec4 as well
-        return glm.mix(self.color(a), self.color(b), t)
 
     def on_collision_connect(self, A, B, func, once=True):
         """
@@ -296,17 +265,17 @@ class Scene(Signal):
 
     @sky_color.setter
     def sky_color(self, c):
-        self._sky_color = self.color(c) if c else None
+        self._sky_color = ncolor(c) if c else None
         self.draw_sky()
         # reset ground gradient (depend on sky color)
         self.ground_color = self.ground_color
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):
-        self.sky_color = self.color(c) if c else None
+        self.sky_color = ncolor(c) if c else None
 
     def set_ground_color(self, c):
-        self.ground_color = self.color(c) if c else None
+        self.ground_color = ncolor(c) if c else None
 
     def remove(self, entity):
         super().disconnect(entity)

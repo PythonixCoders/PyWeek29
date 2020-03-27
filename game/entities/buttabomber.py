@@ -31,7 +31,7 @@ class ButtaBomber(Enemy):
 
         self.time = 0
         self.frame = 0
-        self.damage = 1
+        self.damage = 3
 
         # drift slightly in X/Y plane
         self.velocity = (

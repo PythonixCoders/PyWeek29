@@ -3,10 +3,11 @@
 import random
 
 import pygame
-from glm import ivec2, ivec4
+from glm import ivec2, ivec4, vec4
 
 from game.base.entity import Entity
 from game.constants import FONTS_DIR
+from game.util import ncolor, pg_color
 from os import path
 
 
@@ -120,13 +121,7 @@ class Terminal(Entity):
             )
 
     def write(
-        self,
-        text,
-        pos=(0, 0),
-        color=(255, 255, 255, 0),
-        offset=(0, 0),
-        align=-1,
-        length=0,
+        self, text, pos=(0, 0), color=(1, 1, 1, 0), offset=(0, 0), align=-1, length=0,
     ):
 
         if isinstance(pos, (int, float)):
@@ -169,8 +164,8 @@ class Terminal(Entity):
             return
 
         # color string name
-        if isinstance(color, str):
-            color = pygame.Color(color)
+        if color is not None:
+            color = pg_color(color)
 
         # note that this allows negative positioning
         try:
@@ -195,7 +190,7 @@ class Terminal(Entity):
         self.dirty = True
 
     def write_center(
-        self, text, pos=0, color=(255, 255, 255, 0), offset=(0, 0), length=0
+        self, text, pos=0, color=vec4(1, 1, 1, 0), offset=(0, 0), length=0
     ):
         """
         write() to screen center X on row `pos`
@@ -210,9 +205,7 @@ class Terminal(Entity):
         pos.x -= self.size.x / 2 + 1
         return self.write(text, pos, color, offset, 0, length)
 
-    def write_right(
-        self, text, pos=0, color=(255, 255, 255, 0), offset=(0, 0), length=0
-    ):
+    def write_right(self, text, pos=0, color=vec4(1, 1, 1, 0), offset=(0, 0), length=0):
         """
         write() to screen right side
         """

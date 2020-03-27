@@ -72,7 +72,7 @@ class App:
             img = pygame.image.load(os.path.join(SPRITES_DIR, filename))
             if scale != 1:
                 w, h = img.get_size()
-                img = pygame.transform.scale(img, (w * scale, h * scale))
+                img = pygame.transform.scale(img, ivec2(vec2(w, h) * scale))
             return img
 
         return self.load((filename, scale), load_fn)

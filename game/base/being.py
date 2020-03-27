@@ -35,7 +35,7 @@ class Being(Entity):
             if damager.stats:
                 damager.stats.kills = int(killed)
                 damager.stats.damage_done += dmg_taken
-                damager.stats.score += max(int(dmg_taken), 1)
+                damager.score += max(int(dmg_taken), 1)
         return dmg_taken
 
     def explode(self):

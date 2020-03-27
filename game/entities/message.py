@@ -6,6 +6,7 @@ import pygame
 from glm import ivec2, ivec4, vec3
 
 from game.base.entity import Entity
+from game.util import *
 from game.constants import *
 
 
@@ -37,7 +38,7 @@ class Message(Entity):
     def set(self, text, color):
         self.text = text
         self.size = vec3(24 * len(text), 24, 24)
-        self.color = pygame.Color(color) if isinstance(color, str) else color
+        self.color = pg_color(color)
 
         self.surfaces = [
             self.font.render(text, True, self.shadow2_color),
