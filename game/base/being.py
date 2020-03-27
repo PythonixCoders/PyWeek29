@@ -8,8 +8,8 @@ class Being(Entity):
     An entity with HP
     """
 
-    def __init__(self, app, scene, filename=None):
-        super().__init__(app, scene, filename)
+    def __init__(self, app, scene, filename=None, **kwargs):
+        super().__init__(app, scene, filename, **kwargs)
         self.solid = True
         self.hp = 1.0
         self.score = 0

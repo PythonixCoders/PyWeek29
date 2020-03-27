@@ -7,6 +7,7 @@
 # This is a generator.  Using a busy loop will halt the game.
 from random import uniform
 
+from game.entities.ai import CircleAi
 from game.scripts.level import Level
 from game.constants import GREEN
 
@@ -20,7 +21,7 @@ class Level1(Level):
 
         yield from super().__call__()
 
-        self.spawn(0, 0)
+        self.spawn(0, 0, CircleAi(100))
         yield self.pause(2)
         self.spawn(0, 0)
         yield self.pause(3)
@@ -31,7 +32,7 @@ class Level1(Level):
         self.square(0.25)
         yield self.pause(2)
 
-        self.square(0.4)
+        self.square(0.4, CircleAi(100))
         yield self.pause(5)
 
         self.spawn(0, 0)

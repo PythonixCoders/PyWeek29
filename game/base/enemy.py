@@ -4,5 +4,5 @@ from game.base.being import Being
 
 
 class Enemy(Being):
-    def __init__(self, app, scene):
-        super().__init__(app, scene)
+    def __init__(self, app, scene, **kwargs):
+        super().__init__(app, scene, **kwargs)

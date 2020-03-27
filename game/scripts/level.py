@@ -38,7 +38,7 @@ class Level:
 
         self.scene.add(Powerup(self.app, self.scene, letter, position=pos))
 
-    def spawn(self, x: float, y: float):
+    def spawn(self, x: float, y: float, ai=None):
         """
         Spawn a butterfly at position (x, y) at the current max depth
         :param x: float between -1 and 1. 0 is horizontal center of the screen
@@ -52,7 +52,9 @@ class Level:
         ) * vec3(*camera.screen_size / 2, 1)
 
         self.scene.add(
-            Butterfly(self.app, self.scene, pos, random_color(), num=self.spawned,)
+            Butterfly(
+                self.app, self.scene, pos, random_color(), num=self.spawned, ai=ai
+            )
         )
 
         self.spawned += 1
@@ -66,18 +68,18 @@ class Level:
 
         return self.script.sleep(duration)
 
-    def square(self, c):
-        self.spawn(c, c)
-        self.spawn(c, -c)
-        self.spawn(-c, c)
-        self.spawn(-c, -c)
+    def square(self, c, ai=None):
+        self.spawn(c, c, ai)
+        self.spawn(c, -c, ai)
+        self.spawn(-c, c, ai)
+        self.spawn(-c, -c, ai)
 
-    def circle(self, n, radius, delay):
+    def circle(self, n, radius, delay, ai=None):
         """Spawn n butterflies in a centered circle of given radius"""
 
         for i in range(n):
             angle = i / n
-            self.spawn(radius * cos(angle), radius * sin(angle))
+            self.spawn(radius * cos(angle), radius * sin(angle), ai)
             yield self.pause(delay)
 
     def __call__(self):

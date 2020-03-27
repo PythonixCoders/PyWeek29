@@ -8,6 +8,8 @@ from game.base.script import Script
 from game.base.signal import Signal, SlotList
 from game.constants import *
 from os import path
+
+from game.entities.ai import AI
 from game.util import *
 
 if TYPE_CHECKING:
@@ -35,6 +37,9 @@ class Entity:
         self.parent = kwargs.get("parent")
         self.sounds = {}
         self.particle = kwargs.get("particle")
+
+        ai = kwargs.get("ai")
+        self.ai: AI = ai(self) if ai else None
 
         self._script_func = False
 

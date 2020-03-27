@@ -1,5 +1,5 @@
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from random import random
+import random
 from typing import Union, Optional
 
 from glm import vec3, normalize, cross, dot, vec2
@@ -53,7 +53,7 @@ def hsv2rgb(h, s, v):
 
 def random_color():
     """Random RGB color of the rainbow"""
-    return hsv2rgb(random(), 1, 1)
+    return hsv2rgb(random.random(), 1, 1)
 
 
 def plane_intersection(p1: vec3, d1: vec3, p2: vec3, d2: vec3):

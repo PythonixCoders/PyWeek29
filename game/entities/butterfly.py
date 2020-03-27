@@ -1,22 +1,22 @@
 from os import path
 
 import pygame
-from glm import ivec2
 
 from game.base.enemy import Enemy
 from game.base.entity import Entity
-
-from game.constants import Y, SOUNDS_DIR, SPRITES_DIR, ORANGE, FULL_FOG_DISTANCE, GRAY
+from game.constants import Y, SPRITES_DIR, ORANGE, GRAY
+from game.entities.ai import AI
 from game.entities.camera import Camera
 from game.util import *
-import random
 
 
 class Butterfly(Enemy):
     NB_FRAMES = 4
     DEFAULT_SCALE = 5
 
-    def __init__(self, app, scene, pos, color=ORANGE, scale=DEFAULT_SCALE, num=0):
+    def __init__(
+        self, app, scene, pos, color=ORANGE, scale=DEFAULT_SCALE, num=0, ai=None
+    ):
         """
         :param app: our main App object
         :param scene: Current scene (probably Game)
@@ -24,7 +24,7 @@ class Butterfly(Enemy):
         :param scale:
         """
 
-        super().__init__(app, scene)
+        super().__init__(app, scene, ia=ia)
 
         self.num = num
         self.frames = self.get_animation(color)
@@ -102,8 +102,10 @@ class Butterfly(Enemy):
     #     return super().hurt(damage, bullet, player)
 
     def update(self, dt):
-        super().update(dt)
         self.time += dt * 10
+        if self.ai:
+            self.ai.update(self, dt)
+        super().update(dt)
 
     def render(self, camera: Camera):
 
