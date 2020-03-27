@@ -5,11 +5,9 @@
 # Use scene.when to schedule events.
 # Yield when you want to wait until the next event.
 # This is a generator.  Using a busy loop will halt the game.
-from random import uniform
 
-from game.entities.ai import CircleAi, ChasingAi
-from game.scripts.level import Level
 from game.constants import GREEN
+from game.scripts.level import Level
 
 
 class Level1(Level):
@@ -51,7 +49,7 @@ class Level1(Level):
 
         self.spawn(0, 0)
         yield self.pause(1)
-        for i in range(1, 5):
+        for i in range(1, 4):
             self.spawn(i / 14, 0)
             self.spawn(-i / 14, 0)
             self.spawn(0, i / 14)
