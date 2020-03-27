@@ -1,4 +1,5 @@
-import pygame
+from math import cos, sin
+
 from glm import vec3, ivec2
 from pygame.camera import Camera
 from random import randint
@@ -12,7 +13,7 @@ from game.util import random_color
 
 
 class Level:
-    sky = "blue"
+    sky = "#59ABE3"
     name = "A Level"
 
     def __init__(self, app, scene, script):
@@ -64,6 +65,20 @@ class Level:
         """
 
         return self.script.sleep(duration)
+
+    def square(self, c):
+        self.spawn(c, c)
+        self.spawn(c, -c)
+        self.spawn(-c, c)
+        self.spawn(-c, -c)
+
+    def circle(self, n, radius, delay):
+        """Spawn n butterflies in a centered circle of given radius"""
+
+        for i in range(n):
+            angle = i / n
+            self.spawn(radius * cos(angle), radius * sin(angle))
+            yield self.pause(delay)
 
     def __call__(self):
         self.scene.sky_color = self.sky
