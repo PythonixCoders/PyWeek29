@@ -213,7 +213,7 @@ class Level:
     def stars(self):
         for i in range(50):
             x = randint(-500, 500)
-            y = 100 + (random.random() * 400)
+            y = -200 + (random.random() ** 0.5 * 800)
             z = -3000
             pos = vec3(x, y, z)
             self.scene.add(
