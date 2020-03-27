@@ -14,10 +14,11 @@ class Level1(Level):
     number = 1
     name = "The Butterflies Awaken"
     ground = GREEN
+    sky = Level.night_sky
     music = "butterfly.ogg"
 
     def __call__(self):
-        self.cloudy()
+        self.stars()
 
         yield from super().__call__()
 

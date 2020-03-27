@@ -3,6 +3,7 @@ from math import cos, sin, pi
 
 from glm import vec3, ivec2, normalize, vec2
 from pygame.camera import Camera
+import random
 from random import randint
 
 from game.constants import FULL_FOG_DISTANCE
@@ -11,6 +12,7 @@ from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.entities.camera import Camera
 from game.entities.cloud import Cloud
+from game.entities.star import Star
 from game.util import random_color
 
 
@@ -206,6 +208,16 @@ class Level:
             pos = vec3(x, y, z)
             self.scene.add(
                 Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z)
+            )
+
+    def stars(self):
+        for i in range(50):
+            x = randint(-500, 500)
+            y = 100 + (random.random() * 400)
+            z = -3000
+            pos = vec3(x, y, z)
+            self.scene.add(
+                Star(self.app, self.scene, pos, self.app.state.player.velocity.z)
             )
 
     def __iter__(self):

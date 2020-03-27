@@ -260,8 +260,9 @@ class Entity:
         max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
         fade = surf_fader(max_fade_dist, camera.distance(pos))
 
-        if 400 > size.x > 0:
+        if not scale or 400 > size.x > 0:
             if scale:
+                # print(ivec2(size))
                 surf = pygame.transform.scale(surf, ivec2(size))
 
             surf.set_alpha(fade)
