@@ -188,7 +188,7 @@ class Game(State):
             pg.K_RSHIFT, pg.K_LSHIFT, JoyButton(0, 3), JoyButton(0, 2)
         )
         # inputs["test"] = Button(pg.K_p)
-        inputs["pause"] = Button(pg.K_ESCAPE)
+        inputs["pause"] = Button(pg.K_ESCAPE, JoyButton(0, 6), JoyButton(0, 7))
         return inputs
 
     def restart(self):

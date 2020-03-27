@@ -114,3 +114,42 @@ class RandomFireAi(AI):
                         300,
                     )
                 )
+
+
+class RandomChargeAI(AI):
+    def __init__(self, aggressivity=3):
+        """
+        The entity charges randomly at the player.
+        :param aggressivity: Aggressivity between 1 and 10
+
+        Please don't do 10 of aggressivity ;p
+        """
+        self.aggressivity = aggressivity
+
+    def random_charge(self):
+        d = (4 / self.aggressivity) ** 2
+        return uniform(d * 0.5, d * 1.5)
+
+    def __call__(self, entity):
+        entity.ia_next_charge = self.random_charge()
+        entity.ai_charge_time = 0
+
+    def update(self, entity, dt):
+        if entity.ai_charge_time > 0:
+            entity.ai_charge_time -= dt
+            player = entity.app.state.player
+            to_player = player.position - entity.position
+
+            if to_player.z > 0:
+                # Butterfly is behind the player
+                return
+
+            entity.play_sound("squeak.wav")
+            entity.velocity = glm.normalize(to_player) * 30 * self.aggressivity
+            entity.ia_next_charge = self.random_charge()
+        else:
+            entity.ia_next_charge -= dt
+            entity.velocity = vec3(0)
+
+            if entity.ia_next_charge < 0:
+                entity.ai_charge_time = self.aggressivity ** 2 / 15 + 1

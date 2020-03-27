@@ -5,6 +5,8 @@ whether they are path, names, colors, gravity constants...
 """
 
 import os
+import sys
+
 import glm
 import pygame
 
@@ -53,3 +55,4 @@ be completely transparent.
 """
 AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_DISTANCE
 BUTTERFLY_MIN_SHOOT_DIST = 1500
+DEBUG = False
