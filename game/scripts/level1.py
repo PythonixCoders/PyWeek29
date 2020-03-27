@@ -16,7 +16,7 @@ class Level1(Level):
     number = 1
     name = "The Butterflies Awaken"
     ground = GREEN
-    music = "butterfly.mp3"
+    music = "butterfly.ogg"
 
     def __call__(self):
         self.cloudy()
