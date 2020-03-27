@@ -36,6 +36,7 @@ class Player(Being):
             self.app.inputs["vmove"].always_call(self.set_vel_y),
             self.app.inputs["fire"].always_call(self.fire),
             self.app.inputs["switch-gun"].on_press_repeated(self.next_gun, 0.5),
+            self.app.inputs["test"].on_press(self.explode),
         ]
 
         self.position = vec3(0, 0, 0)
@@ -61,7 +62,9 @@ class Player(Being):
     def kill(self, damage, bullet, enemy):
         # TODO: player death
         # self.scene.play_sound('explosion.wav')
-        self.remove()
+        self.acceleration = -Y * 100
+        self.explode()
+        self.alive = False
         return False
 
     def hurt(self, damage, bullet, enemy):
@@ -188,7 +191,7 @@ class Player(Being):
                     Entity(
                         self.app,
                         self.scene,
-                        "bullet.png",
+                        "smoke.png",
                         position=self.position + vec3(0, -20, 0),
                         velocity=(
                             vec3(random.random(), random.random(), random.random())

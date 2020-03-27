@@ -65,6 +65,7 @@ class Butterfly(Enemy):
     def fall(self):
         self.velocity = -Y * 100
         self.life = 2  # remove in 2 seconds
+        self.alive = False
 
     def kill(self, damage, bullet, player):
 
@@ -74,28 +75,9 @@ class Butterfly(Enemy):
         # Butterfly will turn gray when killed
         self.frames = self.get_animation(GRAY)
 
-        # TODO: This is supposed to be an explosion
-        for x in range(10):
-            self.scene.add(
-                Entity(
-                    self.app,
-                    self.scene,
-                    "bullet.png",
-                    position=self.position,
-                    velocity=self.velocity
-                    + (
-                        vec3(random.random(), random.random(), random.random())
-                        - vec3(0.5)
-                    )
-                    * 100,
-                    life=1,
-                    particle=True,
-                ),
-            )
+        self.explode()
         self.play_sound("butterfly.wav")
         self.fall()
-
-        self.alive = False
         return True
 
     # def hurt(self, damage, bullet, player):

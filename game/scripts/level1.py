@@ -13,7 +13,8 @@ from game.constants import GREEN
 
 
 class Level1(Level):
-    name = "The Butterflies awakens"
+    number = 1
+    name = "The Butterflies Awaken"
     ground = GREEN
     music = "butterfly.mp3"
 

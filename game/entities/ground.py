@@ -1,8 +1,13 @@
 import pygame
-from glm import vec3
+import pygame.gfxdraw
+from glm import vec3, vec4
+import glm
+import random
 
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.camera import Camera
+from game.scene import Scene
+from game.util import clamp
 
 from game.base.entity import Entity
 
@@ -12,6 +17,30 @@ class Ground(Entity):
         super().__init__(app, scene)
         self.position = vec3(0, height, float("-inf"))
         self.color = GREEN
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, c):
+        self._color = c
+        self.texture = pygame.Surface(self.app.size / 8).convert()
+        self.texture.fill(GREEN)
+        sky_color = self.scene.sky_color or Scene.color(pygame.Color("blue"))
+        for y in range(self.texture.get_height()):
+            col = vec4(self.texture.get_at((0, y)).normalize())
+            interp = (1 - y / self.texture.get_height()) * 2
+            col = glm.mix(col, sky_color, interp)
+
+            for x in range(self.texture.get_width()):
+                randvec = vec4(vec3(random.random()), 0)
+                c = col
+                c = glm.mix(col, randvec, 0.02)
+                c = [int(clamp(x * 255, 0, 255)) for x in c]
+                pgc = pygame.Color(*c)
+                self.texture.set_at((x, y), pgc)
+        self.texture = pygame.transform.scale(self.texture, self.app.size)
 
     def render(self, camera: Camera):
         super().render(camera)
@@ -54,4 +83,4 @@ class Ground(Entity):
 
         if len(poly) > 2:
             poly = [tuple(camera.world_to_screen(p)) for p in poly]
-            pygame.draw.polygon(self.app.screen, self.color, poly)
+            pygame.gfxdraw.textured_polygon(self.app.screen, poly, self.texture, 0, 0)

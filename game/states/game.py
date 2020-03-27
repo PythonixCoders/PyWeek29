@@ -141,4 +141,5 @@ class Game(State):
         inputs["switch-gun"] = Button(
             pg.K_RSHIFT, pg.K_LSHIFT, JoyButton(0, 3), JoyButton(0, 2)
         )
+        inputs["test"] = Button(pg.K_p)
         return inputs

@@ -8,8 +8,10 @@ from pygame import Color
 from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
+from game.util import clamp
 import math
 import weakref
+import random
 
 # key function to do depth sort
 z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().position.z)
@@ -53,6 +55,22 @@ class Scene(Signal):
             self.script = script  # trigger setter
         else:
             self._script = None
+
+    def draw_sky(self):
+        self.sky = pygame.Surface(self.app.size / 8).convert()
+        sky_color = self.sky_color or Scene.color(pygame.Color("blue"))
+        self.sky.fill((0, 0, 0))
+        for y in range(self.sky.get_height()):
+            interp = (1 - y / self.sky.get_height()) * 2
+            for x in range(self.sky.get_width()):
+                randvec = vec4(vec3(random.random()), 0)
+                col = sky_color
+                c = glm.mix(col, randvec, 0.02)
+                c /= interp ** 1.1
+                c = [int(clamp(x * 255, 0, 255)) for x in c]
+                pgc = pygame.Color(*c)
+                self.sky.set_at((x, y), pgc)
+        self.sky = pygame.transform.scale(self.sky, self.app.size)
 
     def remove_sound(self, filename):
         if filename in self.sounds:
@@ -133,6 +151,7 @@ class Scene(Signal):
             pygame.mixer.music.load(path.join(MUSIC_DIR, filename))
             pygame.mixer.music.play(-1)
 
+    @classmethod
     def color(self, c):
         """
         Given a color string, a pygame color, or vec3,
@@ -143,7 +162,7 @@ class Scene(Signal):
         elif isinstance(c, tuple):
             c = vec4(*c, 0) / 255.0
         elif isinstance(c, pygame.Color):
-            c = vec4(*c, 0) / 255.0
+            c = vec4(*c) / 255.0
         elif isinstance(c, vec3):
             c = vec4(*c, 0)
         elif isinstance(c, (float, int)):
@@ -224,6 +243,7 @@ class Scene(Signal):
     @sky_color.setter
     def sky_color(self, c):
         self._sky_color = self.color(c) if c else None
+        self.draw_sky()
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):
@@ -335,15 +355,17 @@ class Scene(Signal):
 
     def render(self, camera):
         # call render(camera) on all scene entities
-        if self.sky_color:
-            self.app.screen.fill(
-                pygame.Color(
-                    int(self._sky_color[0] * 255),
-                    int(self._sky_color[1] * 255),
-                    int(self._sky_color[2] * 255),
-                    int(self._sky_color[3] * 255),
-                )
-            )
+
+        if self.sky_color is not None:
+            self.app.screen.blit(self.sky, (0, 0))
+            # self.app.screen.fill(
+            #     pygame.Color(
+            #         int(self._sky_color[0] * 255),
+            #         int(self._sky_color[1] * 255),
+            #         int(self._sky_color[2] * 255),
+            #         int(self._sky_color[3] * 255),
+            #     )
+            # )
 
         # call render on each entity
         self.each(lambda x: x.render(camera))

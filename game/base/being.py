@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from game.base.entity import Entity
+import random
+from glm import vec3
 
 
 class Being(Entity):
@@ -30,3 +32,23 @@ class Being(Entity):
                 self.kill(dmg_taken, bullet, damager)
             damager.score += max(int(dmg_taken), 1)
         return dmg_taken
+
+    def explode(self):
+        # TODO: This is supposed to be an explosion
+        for x in range(10):
+            self.scene.add(
+                Entity(
+                    self.app,
+                    self.scene,
+                    "bullet.png",
+                    position=self.position,
+                    velocity=self.velocity
+                    + (
+                        vec3(random.random(), random.random(), random.random())
+                        - vec3(0.5)
+                    )
+                    * 100,
+                    life=1,
+                    particle=True,
+                ),
+            )

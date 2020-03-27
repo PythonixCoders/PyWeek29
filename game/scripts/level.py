@@ -91,7 +91,7 @@ class Level:
 
         left = ivec2((terminal.size.x - len(text)) / 2, line)
         for i, letter in enumerate(text):
-            terminal.write(letter, left + (i, 0), color)
+            terminal.write(letter, left + (i - 1, 0), color)
             self.scene.play_sound("type.wav")
             yield self.pause(delay)
 
@@ -106,25 +106,29 @@ class Level:
     def __call__(self):
         self.scene.sky_color = self.sky
         self.scene.ground_color = self.ground
-        # self.scene.music = self.music
+        self.scene.music = self.music
 
         if self.name:
-            yield from self.slow_type(self.name, 5, "white", 0.1)
+            yield from self.slow_type(self.name, 6, "white", 0.1)
 
             terminal = self.app.state.terminal
-            terminal.clear(5)
+            terminal.clear(6)
+
+            self.scene.play_sound("message.wav")
 
             # blink
             for i in range(10):
                 # terminal.write(self.name, left, "green")
-                terminal.write_center(self.name, 5, "green")
-                terminal.write_center("Go!", 7, "white")
+                terminal.write_center("Level " + str(self.number), 4, "white")
+                terminal.write_center(self.name, 6, "green")
+                terminal.write_center("Go!", 8, "white")
                 yield self.pause(0.1)
 
-                terminal.clear(5)
+                terminal.clear(8)
                 yield self.pause(0.1)
 
-            terminal.clear(7)
+            for line in (4, 6, 8):
+                terminal.clear(line)
 
             left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
             for i in range(len(self.name)):
