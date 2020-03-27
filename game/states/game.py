@@ -3,7 +3,7 @@ import pygame
 from glm import vec3, sign
 from random import randint
 
-from game.base.inputs import Inputs, Axis, Button, JoyAxis
+from game.base.inputs import Inputs, Axis, Button, JoyAxis, JoyButton, JoyAxisTrigger
 from game.base.state import State
 from game.constants import GROUND_HEIGHT
 from game.entities.camera import Camera
@@ -125,16 +125,20 @@ class Game(State):
             j.init()
 
         inputs = Inputs()
-        inputs["hmove"] = Axis(
-            (pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d), JoyAxis(0, 0), JoyAxis(0, 3)
-        )
+        inputs["hmove"] = Axis((pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d), JoyAxis(0, 0))
         inputs["vmove"] = Axis(
-            (pg.K_DOWN, pg.K_s),
-            (pg.K_UP, pg.K_w),
-            JoyAxis(0, 1, True),
-            JoyAxis(0, 4, True),
+            (pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w), JoyAxis(0, 1, True),
         )
-        inputs["fire"] = Button(pg.K_SPACE, pg.K_RETURN)
+        inputs["fire"] = Button(
+            pg.K_SPACE,
+            pg.K_RETURN,
+            JoyButton(0, 1),
+            JoyButton(0, 0),
+            JoyAxisTrigger(0, 2, 0),
+            JoyAxisTrigger(0, 5, 0),
+        )
         inputs["debug"] = Button(pg.K_TAB)
-        inputs["switch-gun"] = Button(pg.K_RSHIFT, pg.K_LSHIFT)
+        inputs["switch-gun"] = Button(
+            pg.K_RSHIFT, pg.K_LSHIFT, JoyButton(0, 3), JoyButton(0, 2)
+        )
         return inputs

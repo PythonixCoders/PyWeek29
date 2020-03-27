@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Union
+from typing import Dict, Union, Set
 
 import pygame
 
@@ -7,15 +7,108 @@ from game.util import clamp
 from game.base.signal import Signal
 
 
+class ButtonInput:
+    def match(self, event) -> bool:
+        return False
+
+    def update(self, event):
+        if self.match(event):
+            return self.pressed(event)
+        return None
+
+    def pressed(self, event) -> bool:
+        """Whether a matching event is a press or a release"""
+        return False
+
+
+@dataclass(frozen=True)
+class KeyPress(ButtonInput):
+    key: int
+
+    def match(self, event):
+        return event.type in (pygame.KEYDOWN, pygame.KEYUP) and event.key == self.key
+
+    def pressed(self, event) -> bool:
+        """Whether a matching event is a press or a release"""
+        return event.type == pygame.KEYDOWN
+
+
+@dataclass(frozen=True)
+class JoyButton(ButtonInput):
+    joy_id: int
+    button: int
+
+    def match(self, event):
+        return (
+            event.type in (pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP)
+            and event.joy == self.joy_id
+            and event.button == self.button
+        )
+
+    def pressed(self, event):
+        """Whether a matching event is a press or a release"""
+        return event.type == pygame.JOYBUTTONDOWN
+
+
+@dataclass(frozen=True)
+class JoyAxisTrigger(ButtonInput):
+    joy_id: int
+    axis: int
+    threshold: int = 0.5
+    above: bool = True
+    """Whether the button is pressed when the value is above or below the threshold"""
+
+    def match(self, event) -> bool:
+        return (
+            event.type == pygame.JOYAXISMOTION
+            and event.joy == self.joy_id
+            and event.axis == self.axis
+        )
+
+    def pressed(self, event) -> bool:
+        return self.above == (event.value > self.threshold)
+
+
+@dataclass(frozen=True)
+class JoyAxis:
+    joy_id: int
+    axis: int
+    reversed: bool = False
+    sensibility: float = 1.0
+    threshold: float = 0.2
+
+    def match(self, event):
+        return (
+            event.type == pygame.JOYAXISMOTION
+            and event.joy == self.joy_id
+            and event.axis == self.axis
+        )
+
+    def value(self, event):
+        """The value of a matching event."""
+
+        if abs(event.value) < self.threshold:
+            return 0
+
+        scaled = event.value * self.sensibility
+        if self.reversed:
+            return -scaled
+        else:
+            return scaled
+
+
 class Button:
     def __init__(self, *keys):
         """
         A boolean input.
 
-        :param keys: keycodes of the button
+        :param keys: any number of keycodes or ButtonInputs
         """
-        self._keys = set(keys)
-        self._pressed = 0
+
+        self._keys: Set[ButtonInput] = {
+            KeyPress(key) if isinstance(key, int) else key for key in keys
+        }
+        self._pressed = {}
         self.just_released = False
         self.just_pressed = False
         self.just_double_pressed = False
@@ -73,35 +166,33 @@ class Button:
         self.just_double_pressed = False
         self.just_released = False
 
+        old_pressed = self.pressed
         for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key in self._keys:
-                    self._pressed += 1
+            for key in self._keys:
+                if key.match(event):
+                    self._pressed[key] = key.pressed(event)
 
-                    if self._pressed == 1:
-                        self.press_time = 0
-                        self.just_pressed = True
-                    if self.double_pressed:
-                        self.just_double_pressed = True
-
-            if event.type == pygame.KEYUP:
-                if event.key in self._keys:
-                    self._pressed -= 1
-
-                    if not self.pressed:
-                        # All keys were just released
-                        self.last_press = 0
-                        self.just_released = True
-                        for wref in self._repeat.slots:
-                            c = wref()
-                            if not c:
-                                continue
-                            c.repetitions = 0
+        if not old_pressed:
+            if self.pressed:
+                self.press_time = 0
+                self.just_pressed = True
+            if self.double_pressed:
+                self.just_double_pressed = True
+        else:
+            if not self.pressed:
+                # All keys were just released
+                self.last_press = 0
+                self.just_released = True
+                for wref in self._repeat.slots:
+                    c = wref()
+                    if not c:
+                        continue
+                    c.repetitions = 0
 
     @property
     def pressed(self):
         """Whether the button is actually pressed."""
-        return self._pressed > 0
+        return sum(self._pressed.values(), 0) > 0
 
     @property
     def double_pressed(self):
@@ -128,8 +219,6 @@ class Button:
         for two different things.
         """
 
-        # It isn't possible to set it directly, I don't know why
-
         slot = self._repeat.connect(callback)
         slot.delay = delay
         slot.repetitions = 0
@@ -147,34 +236,6 @@ class Button:
             self._on_double_press.disconnect(callback)
         if callback in self._repeat:
             self._on_double_press.disconnect(callback)
-
-
-@dataclass(frozen=True)
-class JoyAxis:
-    joy_id: int
-    axis: int
-    reversed: bool = False
-    sensibility: float = 1.0
-    threshold: float = 0.0
-
-    def match(self, event):
-        return (
-            event.type == pygame.JOYAXISMOTION
-            and event.joy == self.joy_id
-            and event.axis == self.axis
-        )
-
-    def value(self, event):
-        """The value of a matching event."""
-
-        if abs(event.value) < self.threshold:
-            return 0
-
-        scaled = event.value * self.sensibility
-        if self.reversed:
-            return -scaled
-        else:
-            return scaled
 
 
 class Axis:
@@ -236,7 +297,10 @@ class Axis:
             if event.type == pygame.JOYAXISMOTION:
                 for axis in self._axis:
                     if axis.match(event):
-                        axis_value += axis.value(event)
+                        # We take the most extreme value
+                        val = axis.value(event)
+                        if abs(val) > abs(axis_value):
+                            axis_value = val
                         any_axis = True
 
         if any_axis:
@@ -253,4 +317,4 @@ class Inputs(dict, Dict[str, Union[Button, Axis]]):
         """Actualize buttons and axis."""
         for inp in self.values():
             inp.event(event)
-            # print(event)
+
