@@ -29,7 +29,7 @@ class Player(Being):
         self.game_state = self.scene.state
 
         # persistant stats for score screen
-        self.stats = self.app.data.get("stats", Stats())
+        self.stats = self.app.data["stats"] = self.app.data.get("stats", Stats())
 
         self.hp = 3
         self.friendly = True  # determines what Beings you can damage

@@ -15,8 +15,8 @@ from game.entities.ground import Ground
 from game.entities.player import Player
 from game.entities.terminal import Terminal
 from game.scene import Scene
-from game.scripts.level1 import Level1
 from game.base.signal import SlotList
+from game.base.stats import Stats
 
 
 class Game(State):
@@ -38,7 +38,8 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
-        self.level = 2
+        stats = self.app.data["stats"] = self.app.data.get("stats", Stats())
+        self.level = stats.level
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))

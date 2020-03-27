@@ -7,6 +7,7 @@ from glm import ivec2, vec2
 from game.base.inputs import Inputs
 from game.base.signal import Signal
 from game.constants import SPRITES_DIR
+from game.base.stats import Stats
 
 from game.states.game import Game
 from game.states.intro import Intro
@@ -189,6 +190,20 @@ class App:
         """
         Process pending state changes
         """
+        lvl = None
+
+        try:
+            lvl = int(self.next_state)
+            pass
+        except ValueError:
+            pass
+
+        if lvl:
+            stats = self.data["stats"] = self.data.get("stats", Stats())
+            stats.level = lvl
+            self.next_state = "game"
+
         if self.next_state:
             self._state = self.STATES[self.next_state.lower()](self)
+
         self.next_state = None
