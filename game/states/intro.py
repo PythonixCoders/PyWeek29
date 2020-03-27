@@ -83,13 +83,10 @@ class Intro(State):
         while True:
 
             terminal.write_center("Press any key to continue", 20, "green")
-
-            # for x in range(terminal.size.x):
-            #     # print(math.sin(t*20)*20)
-            #     terminal.clear(19)
-            #     terminal.clear(21)
-            #     terminal.offset((x,20), (0, math.sin(t*math.tau*300)*4 - 2))
-
+            yield script.sleep(0.2)
+            if script.keys_down:
+                break
+            terminal.clear(20)
             yield script.sleep(0.2)
             if script.keys_down:
                 break

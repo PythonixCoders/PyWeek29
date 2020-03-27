@@ -2,7 +2,7 @@
 from typing import List
 
 import pygame
-from glm import ivec2, vec3, sign, length
+from glm import ivec2, vec2, vec3, sign, length
 from pygame.surface import SurfaceType
 from copy import copy
 import random
@@ -35,6 +35,7 @@ class Player(Being):
         self.friendly = True  # determines what Beings you can damage
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
+        self.crosshair_scale = 1
 
         self.slots += [
             self.app.inputs["hmove"].always_call(self.set_vel_x),
@@ -86,19 +87,25 @@ class Player(Being):
         """
         Take damage from an object `bullet` shot by enemy
         """
+
         if self.hp <= 0:
             return 0
         if self.blinking:  # invulnerable
             return 0
 
-        damage = min(self.hp, damage)  # calc effective damage (not more than hp)
-        self.hp -= damage
-        self.blinking = True
-        if self.hp <= 0:
-            self.kill(damage, bullet, enemy)  # kill self
-        # if self.hp < 3:
-        # self.smoke_event = scene.when.every(1, self.smoke)
-        return damage
+        dmg = super().hurt(damage, bullet, enemy)
+        if dmg:
+            self.blinking = True
+        return dmg
+
+        # damage = min(self.hp, damage)  # calc effective damage (not more than hp)
+        # self.hp -= damage
+        # self.blinking = True
+        # if self.hp <= 0:
+        #     self.kill(damage, bullet, enemy)  # kill self
+        # # if self.hp < 3:
+        # # self.smoke_event = scene.when.every(1, self.smoke)
+        # return damage
 
     def collision(self, other, dt):
         if isinstance(other, Enemy):
@@ -197,8 +204,9 @@ class Player(Being):
             self.velocity.y = min(0, self.velocity.y)
             self.position.y = 300
 
-        self.crosshair_t %= 1.0
-        self.crosshair_scale = 1 + math.sin(self.crosshair_t * math.tau) * 0.1
+        if self.targeting:
+            self.crosshair_t = (self.crosshair_t + dt) % 1
+            self.crosshair_scale = 1 + 0.05 * math.sin(self.crosshair_t * math.tau * 2)
 
         super().update(dt)
 
@@ -266,10 +274,14 @@ class Player(Being):
         rect.center = self.app.size / 2
 
         if self.find_enemy_in_crosshair():
-            self.targeting = True
-            sz = ivec2(rect[1], rect[2]) * self.crosshair_scale
+            if not self.targeting:
+                self.targeting = True  # triggers
+            sz = ivec2(vec2(rect[2], rect[3]) * self.crosshair_scale)
             img = pygame.transform.scale(self.crosshair_surf_green, sz)
-            self.app.screen.blit(self.crosshair_surf_green, rect)
+            rect[2] -= sz.x / 2
+            rect[3] -= sz.y / 2
+            self.app.screen.blit(img, rect)
         else:
-            self.targeting = False
+            if self.targeting:
+                self.targeting = False  # triggers
             self.app.screen.blit(self.crosshair_surf, rect)

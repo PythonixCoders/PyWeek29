@@ -53,11 +53,6 @@ class Intermission(State):
         terminal = self.terminal
         self.scene.music = "intermission.ogg"
 
-        # temp
-        stats.damage_taken = 100
-        stats.damage_done = 100
-        stats.score = 100
-
         msg = [
             ("Damage Done", stats.damage_done),
             ("Damage Taken", stats.damage_taken),
@@ -98,9 +93,13 @@ class Intermission(State):
         while True:
 
             terminal.write_center("Press any key to continue", 20, "green")
+            yield script.sleep(0.2)
             if script.keys_down:
                 break
-            yield
+            terminal.clear(20)
+            yield script.sleep(0.2)
+            if script.keys_down:
+                break
 
         self.stats.level += 1
         self.app.state = "game"
