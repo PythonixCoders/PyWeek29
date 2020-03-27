@@ -30,7 +30,7 @@ class Level1(Level):
         yield self.pause(2)
 
         self.square(0.25)
-        yield self.pause(2)
+        yield self.pause(10)
 
         yield from self.slow_type("The butterflies are organising !", 5, delay=0.08)
         yield from self.slow_type(

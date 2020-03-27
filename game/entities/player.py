@@ -96,7 +96,10 @@ class Player(Being):
         crosshair_radius = self.crosshair_surf.get_width() / 2
         for entity in self.scene.slots:
             entity = entity.get()
-            if isinstance(entity, Butterfly):
+            if (
+                isinstance(entity, Butterfly)
+                and camera.distance(entity.position) < AIM_MAX_DIST
+            ):
                 center = camera.world_to_screen(entity.position)
                 if (
                     center
