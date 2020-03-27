@@ -1,27 +1,22 @@
 #!/usr/bin/python
+import math
+import random
 from typing import List
 
-import pygame
-from glm import ivec2, vec2, vec3, sign, length
+from glm import ivec2, vec2, length, vec3
 from pygame.surface import SurfaceType
-from copy import copy
-import random
-import weakref
-import math
 
-from game.base.entity import Entity
 from game.base.being import Being
-from game.base.inputs import Inputs, Axis
-from game.base.script import Script
-from game.util import ncolor
-from game.constants import *
-from game.entities.bullet import Bullet
-from game.entities.butterfly import Butterfly
-from game.entities.powerup import Powerup
 from game.base.enemy import Enemy
-from game.entities.weapons import Weapon, WEAPONS
+from game.base.entity import Entity
+from game.base.inputs import Axis
 from game.base.stats import Stats
-from glm import vec3
+from game.constants import *
+from game.entities.butterfly import Butterfly
+from game.entities.message import Message
+from game.entities.powerup import Powerup
+from game.entities.weapons import Weapon, WEAPONS
+from game.util import ncolor
 
 
 class Player(Being):
