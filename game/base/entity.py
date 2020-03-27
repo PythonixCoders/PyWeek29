@@ -73,11 +73,11 @@ class Entity:
 
         if isinstance(script, str):
             # load script from string 'scripts/' folder
-            self.script = self.add_script(script)
+            self.script += script
 
         if callable(self):
             # use __call__ as script
-            self.script = self.add_script(self)
+            self.script += self
 
         ai = kwargs.pop("ai", None)
         self.ai: AI = ai(self) if ai else None
@@ -225,7 +225,7 @@ class Entity:
         if self.ai:
             self.ai.update(self, dt)
 
-    def render(self, camera, surf=None, pos=None):
+    def render(self, camera, surf=None, pos=None, scale=True):
         """
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
@@ -259,7 +259,8 @@ class Entity:
         fade = surf_fader(max_fade_dist, camera.distance(pos))
 
         if 400 > size.x > 0:
-            surf = pygame.transform.scale(surf, ivec2(size))
+            if scale:
+                surf = pygame.transform.scale(surf, ivec2(size))
 
             surf.set_alpha(fade)
             surf.set_colorkey(0)

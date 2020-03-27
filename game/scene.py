@@ -33,12 +33,12 @@ class Scene(Signal):
 
         # self.script_paused = False
         # self.script_slots = []
-        self.stars_visible = 1
+        # self.stars_visible = 0
 
-        star_density = 80
-        self.star_pos = [
-            (randint(0, 200), randint(0, 200)) for i in range(star_density)
-        ]
+        # star_density = 80
+        # self.star_pos = [
+        #     (randint(0, 200), randint(0, 200)) for i in range(star_density)
+        # ]
 
         self.sky_color = None
         self.dt = 0
@@ -83,18 +83,18 @@ class Scene(Signal):
                 pgc = pygame.Color(*c)
                 self.sky.set_at((x, y), pgc)
 
-        if self.stars_visible:
-            self.draw_stars(self.sky, self.star_pos)
+        # if self.stars_visible:
+        #     self.draw_stars(self.sky, self.star_pos)
 
         self.sky = pygame.transform.scale(self.sky, self.app.size)
 
-    def draw_stars(self, surface, star_positions):
-        size = 1
-        for pos in star_positions:
-            star = pygame.Surface((size, size))
-            star.fill((255, 255, 255))
-            star.set_alpha(175)
-            surface.blit(star, pos)
+    # def draw_stars(self, surface, star_positions):
+    #     size = 1
+    #     for pos in star_positions:
+    #         star = pygame.Surface((size, size))
+    #         star.fill((255, 255, 255))
+    #         star.set_alpha(175)
+    #         surface.blit(star, pos)
 
     def remove_sound(self, filename):
         if filename in self.sounds:
