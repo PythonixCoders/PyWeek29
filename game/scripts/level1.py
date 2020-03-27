@@ -18,6 +18,7 @@ class Level1(Level):
     music = "butterfly.mp3"
 
     def __call__(self):
+        self.cloudy()
 
         yield from super().__call__()
 
