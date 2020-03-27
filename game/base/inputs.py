@@ -3,6 +3,7 @@ from typing import Dict, Union, Set
 
 import pygame
 
+from game.constants import DEBUG
 from game.util import clamp
 from game.base.signal import Signal
 
@@ -313,7 +314,11 @@ class Inputs(dict, Dict[str, Union[Button, Axis]]):
         for inp in self.values():
             inp.update(dt)
 
-    def event(self, event):
+    def event(self, events):
         """Actualize buttons and axis."""
         for inp in self.values():
-            inp.event(event)
+            inp.event(events)
+
+        if DEBUG:
+            for event in events:
+                print(event)
