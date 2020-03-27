@@ -43,21 +43,20 @@ class Level3(Level):
         yield self.pause(5)
 
         yield from self.slow_type(
-            "You defeated many of them...",
-            5,
-            delay=0.05,
-            clear=True,
+            "You defeated many of them...", 5, delay=0.05, clear=True,
         )
         yield from self.slow_type("...But some remain", 5, delay=0.05, clear=True)
         yield self.pause(1)
-        yield from self.slow_type("Take this, you'll need it!", 5, color="green", clear=True)
+        yield from self.slow_type(
+            "Take this, you'll need it!", 5, color="green", clear=True
+        )
 
         for i in range(3):
             self.spawn_powerup(0, 0, letter="heart")
         yield self.pause(7)
 
         for i in range(1, 5):
-            yield from self.circle(i*2, i / 5 * 0.7)
+            yield from self.circle(i * 2, i / 5 * 0.7)
             yield self.pause(5)
 
         # TODO: Check for level clear ?
