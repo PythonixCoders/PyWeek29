@@ -45,6 +45,7 @@ BULLET_SIZE = 200
 BULLET_OFFSET = glm.vec3(0, -20, -300)
 CAMERA_OFFSET = glm.vec3(0, 0, 300)
 SCREEN_DIST = 3000
+AIM_MAX_DIST = 3000
 FULL_FOG_DISTANCE = 1.5
 """
 Distance at which we see nothing behing the screen camera.

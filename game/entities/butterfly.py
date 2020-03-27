@@ -103,8 +103,6 @@ class Butterfly(Enemy):
 
     def update(self, dt):
         self.time += dt * 10
-        if self.ai:
-            self.ai.update(self, dt)
         super().update(dt)
 
     def render(self, camera: Camera):
