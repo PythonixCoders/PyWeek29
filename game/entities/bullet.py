@@ -32,7 +32,7 @@ class Bullet(Entity):
         )
         self.damage = damage
         self.solid = True
-        self.size.z = 1000  # to prevent tunneling
+        self.size.z = BULLET_SIZE  # to prevent tunneling
         self.parent = parent  # whoever shot the bullet
 
     def collision(self, other, dt):

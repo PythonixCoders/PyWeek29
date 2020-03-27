@@ -98,12 +98,12 @@ class Laser(Bullet):
     def __init__(self, app, scene, parent, position, direction, length, color, damage):
         super().__init__(app, scene, parent, position, direction, damage)
         self.color = pygame.Color(color)
-        self.length = length
+        self.size.z = length
 
     def render(self, camera):
         p1 = camera.world_to_screen(self.position)
         p2 = camera.world_to_screen(
-            self.position + normalize(self.velocity) * self.length
+            self.position + normalize(self.velocity) * self.size.z
         )
 
         pygame.draw.line(self.app.screen, self.color, p1, p2, 4)
@@ -118,14 +118,13 @@ class LaserGun(Weapon):
         start = camera.rel_to_world(BULLET_OFFSET)
         direction = aim - start
 
-        for x in range(5):
-            yield Laser(
-                self.app,
-                self.scene,
-                self.parent,
-                start + camera.direction * 100 * x,
-                direction,
-                100,
-                "red",
-                self.damage / 5,
-            )
+        yield Laser(
+            self.app,
+            self.scene,
+            self.parent,
+            start,
+            direction,
+            100,
+            "red",
+            self.damage / 5,
+        )
