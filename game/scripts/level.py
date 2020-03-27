@@ -22,6 +22,7 @@ class Level:
     ground = GREEN
     night_sky = "#00174A"
     name = "A Level"
+    default_ai = None
 
     def __init__(self, app, scene, script):
         self.app = app
@@ -79,6 +80,8 @@ class Level:
 
         if self._skip:
             return
+
+        ai = ai or self.default_ai
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
@@ -138,8 +141,8 @@ class Level:
             self.spawn(*dir * -i / n, ai)
             yield self.pause(delay)
 
-    def rotating_v_shape(self, n, delay=1, angular_speed=0.5):
-        ai = CircleAi(0, angular_speed=angular_speed)
+    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.5):
+        ai = CircleAi(0, start_angle=start_angle, angular_speed=angular_speed)
 
         self.spawn(0, 0, ai)
         yield self.pause(2)
@@ -183,6 +186,32 @@ class Level:
                     self.terminal.clear(left + (j, 0))
                     self.scene.play_sound("type.wav")
                     yield self.pause(delay / 4)
+
+    def combine(self, *gens):
+        """
+        Combine the generators so they run at the same time.
+        This assumes they only yield pauses and at least one.
+        """
+
+        infinity = float("inf")
+        pauses = [0] * len(gens)
+
+        while True:
+            for i, gen in enumerate(gens):
+                if pauses[i] == 0:
+                    try:
+                        pauses[i] = next(gen).t
+                    except StopIteration:
+                        pauses[i] = infinity
+
+            m = min(pauses)
+            if m == infinity:
+                # They have all finished
+                return
+
+            yield self.pause(m)
+            for i in range(len(pauses)):
+                pauses[i] -= m
 
     def __call__(self):
         self.scene.sky_color = self.sky
