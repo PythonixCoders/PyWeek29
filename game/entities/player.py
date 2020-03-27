@@ -82,6 +82,7 @@ class Player(Being):
         self.explode()
         self.remove()
         self.alive = False
+        self.scene.slotlist += self.scene.when.once(1, lambda: self.app.state.restart())
         return False
 
     def hurt(self, damage, bullet, enemy):
