@@ -73,11 +73,13 @@ class Entity:
 
         if isinstance(script, str):
             # load script from string 'scripts/' folder
-            self.script += script
+            self.script = script
+            self.scripts += self.script
 
         if callable(self):
             # use __call__ as script
-            self.script += self
+            self.script = self
+            self.scripts += self
 
         ai = kwargs.pop("ai", None)
         self.ai: AI = ai(self) if ai else None
