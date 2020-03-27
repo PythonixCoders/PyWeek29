@@ -240,7 +240,7 @@ class Button:
 
 
 class Axis:
-    def __init__(self, negative, positive, *axis):
+    def __init__(self, negative, positive, *axis, smooth=0.1):
         """
         An input axis taking values between -1 and 1.
 
@@ -248,14 +248,26 @@ class Axis:
         :param negative: keycode or list of keycodes
         :param positive: keycode or list of keycodes
         :param axis: any number of JoyAxis
+        :param smooth: Duration (s) to smooth values
         """
 
-        self._negative = {negative} if isinstance(negative, int) else set(negative)
-        self._positive = {positive} if isinstance(positive, int) else set(positive)
+        if isinstance(negative, int):
+            negative = [negative]
+        if isinstance(positive, int):
+            positive = [positive]
+
+        self._negative = {KeyPress(n): False for n in negative}
+        self._positive = {KeyPress(p): False for p in positive}
         self._axis = set(axis)
         self._callbacks = Signal()
+        self._smooth = smooth
+
+        self.non_zero_time = 0
+        self.zero_time = 0
 
         # Hold the number of keys pressed
+        self._int_value = 0
+        # Hold the smoothed number of keys pressed
         self._value = 0
         # Hold the total value of axis,
         # separately because of different tracking methods
@@ -276,6 +288,32 @@ class Axis:
 
     def update(self, dt):
         """Trigger all callbacks and updates times"""
+        if self._int_value != 0:
+            # Nonzero check is okay as JoyAxis already count the threshold
+            self.non_zero_time += dt
+            self.zero_time = 0
+        else:
+            self.non_zero_time = 0
+            self.zero_time += dt
+
+        if self._smooth <= 0:
+            self._value = self._int_value
+        else:
+            dv = dt / self._smooth
+            if self._int_value > 0:
+                self._value += dv
+            elif self._int_value < 0:
+                self._value -= dv
+            else:
+                if self._value > 0:
+                    self._value -= dv
+                else:
+                    self._value += dv
+
+                if abs(self._value) <= dv:
+                    # To have hard zeros
+                    self._value = 0
+        self._value = clamp(self._value, -1, 1)
 
         self._callbacks(self)
 
@@ -283,27 +321,22 @@ class Axis:
         axis_value = 0
         any_axis = False
         for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key in self._negative:
-                    self._value -= 1
-                if event.key in self._positive:
-                    self._value += 1
+            for pos in self._positive:
+                if pos.match(event):
+                    self._positive[pos] = pos.pressed(event)
+            for neg in self._negative:
+                if neg.match(event):
+                    self._negative[neg] = neg.pressed(event)
 
-            elif event.type == pygame.KEYUP:
-                if event.key in self._negative:
-                    self._value += 1
-                if event.key in self._positive:
-                    self._value -= 1
+            for axis in self._axis:
+                if axis.match(event):
+                    # We take the most extreme value
+                    val = axis.value(event)
+                    if abs(val) > abs(axis_value):
+                        axis_value = val
+                    any_axis = True
 
-            if event.type == pygame.JOYAXISMOTION:
-                for axis in self._axis:
-                    if axis.match(event):
-                        # We take the most extreme value
-                        val = axis.value(event)
-                        if abs(val) > abs(axis_value):
-                            axis_value = val
-                        any_axis = True
-
+        self._int_value = sum(self._positive.values()) - sum(self._negative.values())
         if any_axis:
             self._axis_value = axis_value
 
