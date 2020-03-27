@@ -2,7 +2,7 @@ from colorsys import rgb_to_hsv, hsv_to_rgb
 import random
 from typing import Union, Optional
 
-from glm import vec3, vec4, normalize, cross, dot, vec2
+from glm import vec3, vec4, normalize, cross, dot, vec2, mix
 
 from game.constants import EPSILON
 import pygame
@@ -183,10 +183,10 @@ def mix(a, b, t):
     Supports color names and pygame colors
     """
     if isinstance(a, vec3):
-        return glm.mix(a, b, t)
+        return mix(a, b, t)
 
     # this works for vec4 as well
-    return glm.mix(self.color(a), self.color(b), t)
+    return mix(ncolor(a), ncolor(b), t)
 
 
 def random_vec3():
