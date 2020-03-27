@@ -1,11 +1,11 @@
-import pygame
-from math import cos, sin
+from math import cos, sin, pi
 
 from glm import vec3, ivec2
 from pygame.camera import Camera
 from random import randint
 
 from game.constants import FULL_FOG_DISTANCE
+from game.entities.ai import CircleAi
 from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.entities.camera import Camera
@@ -80,12 +80,19 @@ class Level:
         self.spawn(-c, c, ai)
         self.spawn(-c, -c, ai)
 
-    def circle(self, n, radius, delay, ai=None):
+    def circle(self, n, radius, delay=0, ai=None):
         """Spawn n butterflies in a centered circle of given radius"""
 
         for i in range(n):
             angle = i / n
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
+            yield self.pause(delay)
+
+    def rotating_circle(self, n, radius, speed=60, delay=0, center=(0, 0)):
+        for i in range(n):
+            angle = i / n * 2 * pi
+
+            self.spawn(center[0], center[1], CircleAi(radius, speed, angle))
             yield self.pause(delay)
 
     def slow_type(self, text, line, color="white", delay=0.1, clear=False):

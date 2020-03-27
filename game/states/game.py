@@ -1,11 +1,15 @@
 #!/usr/bin/env python
+import os
+import re
+from functools import lru_cache
+
 import pygame
 from glm import vec3, sign
 from random import randint
 
 from game.base.inputs import Inputs, Axis, Button, JoyAxis, JoyButton, JoyAxisTrigger
 from game.base.state import State
-from game.constants import GROUND_HEIGHT, CAMERA_OFFSET
+from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player
@@ -34,8 +38,7 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
-        self.level = self.player.stats.level
-        self.scene.script = "level" + str(self.level)
+        self.level = 2
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
@@ -52,7 +55,7 @@ class Game(State):
 
         self.time = 0
 
-    def toggle_pause(self, btn):
+    def toggle_pause(self, *args):
         self.paused = not self.paused
         if self.paused:
             self.terminal.write_center(
@@ -63,8 +66,24 @@ class Game(State):
             self.terminal.clear(10)
             # self.scene.play_sound('pause.wav')
 
-    def level(self, num):
-        self.scene.script = "level" + str(num)
+    @staticmethod
+    @lru_cache(maxsize=1)
+    def level_count():
+        level_regex = re.compile("level(\d+).py")
+        count = 0
+        for path in os.listdir(SCRIPTS_DIR):
+            if re.match(level_regex, path):
+                count += 1
+        return count
+
+    @property
+    def level(self):
+        return self._level
+
+    @level.setter
+    def level(self, value):
+        self._level = value % self.level_count()
+        self.scene.script = f"level{self.level}"
 
     def debug_mode(self, b):
         self.debug = b
@@ -91,7 +110,7 @@ class Game(State):
         if self.scene.script and self.scene.script.done():
             self.app.state = "intermission"
             return
-            # self.scene.script = "level1"  # restart
+            self.level += 1
 
         self.scene.update(dt)
         self.gui.update(dt)

@@ -26,15 +26,13 @@ class Butterfly(Enemy):
         :param color: RGB tuple
         :param scale:
         """
-
-        super().__init__(app, scene, ai=ai)
+        super().__init__(app, scene, position=pos, ai=ai)
 
         self.num = num
         self.frames = self.get_animation(color)
 
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
-        self.position = pos
 
         self.time = 0
         self.frame = 0

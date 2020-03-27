@@ -28,27 +28,27 @@ class Entity:
         self.scene = scene
         self.slot = None  # weakref
         self.slots = SlotList()
-        self._life = kwargs.get("life")  # particle life (length of time to exist)
+        self._life = kwargs.pop("life", None)  # particle life (length of time to exist)
         self.on_move = Signal()
         self.on_update = Signal()
         self.on_remove = Signal()
         # self.dirty = True
         self._surface = None
         self.removed = False
-        self.parent = kwargs.get("parent")
+        self.parent = kwargs.pop("parent", None)
         self.sounds = {}
-        self.particle = kwargs.get("particle")
+        self.particle = kwargs.pop("particle", None)
         self.visible = True
 
         self._script_func = False
 
-        script = kwargs.get("script")
+        script = kwargs.pop("script", None)
         self.script = None  # main script
         self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
 
-        self._position = kwargs.get("position") or vec3(0)
-        self.velocity = kwargs.get("velocity") or vec3(0)
-        self.acceleration = kwargs.get("acceleration") or vec3(0)
+        self._position = kwargs.pop("position", vec3(0))
+        self.velocity = kwargs.pop("velocity", vec3(0))
+        self.acceleration = kwargs.pop("acceleration", vec3(0))
 
         # solid means its collision-checked against other things
         # has_collision means the entity has a collision() callback
@@ -61,7 +61,7 @@ class Entity:
 
         self.filename = filename
         if filename:
-            self._surface = self.app.load_img(filename, kwargs.get("scale", 1))
+            self._surface = self.app.load_img(filename, kwargs.pop("scale", 1))
             self.collision_size = self.size = estimate_3d_size(self._surface.get_size())
         else:
             self.collision_size = self.size = vec3(0)
@@ -79,8 +79,13 @@ class Entity:
             # use __call__ as script
             self.script = self.add_script(self)
 
-        ai = kwargs.get("ai")
+        ai = kwargs.pop("ai", None)
         self.ai: AI = ai(self) if ai else None
+
+        if kwargs:
+            raise ValueError(
+                "kwrgs for Entity have not all been consumed. Left:", kwargs
+            )
 
     # def add_script(self, fn):
     #     """
