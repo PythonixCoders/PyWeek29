@@ -9,6 +9,7 @@ from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
 from game.util import clamp
+from random import randint
 import math
 import weakref
 import random
@@ -29,15 +30,14 @@ class Scene(Signal):
 
         # self.script_paused = False
         # self.script_slots = []
+        self.stars_visible = 1
+
+        star_density = 80
+        self.star_pos = [(randint(0, 200), randint(0, 200)) for i in range(star_density)]
+
         self.sky_color = None
-        self.night_color = None
         self.dt = 0
         self.sounds = {}
-
-        self.stars_visible = True
-
-        star_density = vec3(1) - min(*self.sky_color)
-        self.star_pos = [(randint(-3000, 3000), randint(-200, 400)) for i in range(star_density)]
 
         # self.script_fn = script
         # self.event_slot = self.app.on_event.connect(self.event)
@@ -64,14 +64,10 @@ class Scene(Signal):
 
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()
+        sky_color = self.sky_color or Scene.color(pygame.Color("blue"))
+        
         self.sky.fill((0, 0, 0))
-
-        if not self.stars_visible:
-            sky_color = self.sky_color or Scene.color(pygame.Color("blue"))
-        else:
-            sky_color = self.night_color
-            self.draw_stars(self.sky, self.star_pos)
-
+            
         for y in range(self.sky.get_height()):
             interp = (1 - y / self.sky.get_height()) * 2
             for x in range(self.sky.get_width()):
@@ -82,11 +78,19 @@ class Scene(Signal):
                 c = [int(clamp(x * 255, 0, 255)) for x in c]
                 pgc = pygame.Color(*c)
                 self.sky.set_at((x, y), pgc)
+
+        if self.stars_visible:
+            self.draw_stars(self.sky, self.star_pos)
+
         self.sky = pygame.transform.scale(self.sky, self.app.size)
 
     def draw_stars(self, surface, star_positions):
+        size = 1
         for pos in star_positions:
-            pygame.draw.circle(surface, (255, 255, 255), pos, 3)
+            star = pygame.Surface((size, size))
+            star.fill((255, 255, 255))
+            star.set_alpha(175)
+            surface.blit(star, pos)
 
     def remove_sound(self, filename):
         if filename in self.sounds:
