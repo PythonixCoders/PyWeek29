@@ -22,6 +22,10 @@ class Level:
         self.script = script
         self.spawned = 0
 
+    @property
+    def terminal(self):
+        return self.app.state.terminal
+
     def spawn_powerup(self, x: float, y: float, letter: str = None):
         """
         Spawn a powerup at position (x, y) at the current max depth
@@ -82,21 +86,33 @@ class Level:
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
             yield self.pause(delay)
 
+    def slow_type(self, text, line, color="white", delay=0.1, clear=False):
+        terminal = self.terminal
+
+        left = ivec2((terminal.size.x - len(text)) / 2, line)
+        for i, letter in enumerate(text):
+            terminal.write(letter, left + (i, 0), color)
+            self.scene.play_sound("type.wav")
+            yield self.pause(delay)
+
+        yield self.pause(delay * 3)
+
+        if clear:
+            for i, letter in enumerate(text):
+                terminal.clear(left + (i, 0))
+                self.scene.play_sound("type.wav")
+                yield self.pause(delay / 4)
+
     def __call__(self):
         self.scene.sky_color = self.sky
         self.scene.ground_color = self.ground
         # self.scene.music = self.music
 
         if self.name:
+            yield from self.slow_type(self.name, 5, "white", 0.1)
+
             terminal = self.app.state.terminal
-
-            left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
-            for i, letter in enumerate(self.name):
-                terminal.write(letter, left + (i, 0), "white")
-                self.scene.play_sound("type.wav")
-                yield self.pause(0.1)
-
-            terminal.clear(left[1])
+            terminal.clear(5)
 
             # blink
             for i in range(10):
@@ -105,11 +121,12 @@ class Level:
                 terminal.write_center("Go!", 7, "white")
                 yield self.pause(0.1)
 
-                terminal.clear(left[1])
+                terminal.clear(5)
                 yield self.pause(0.1)
 
             terminal.clear(7)
 
+            left = ivec2((terminal.size.x - len(self.name)) / 2, 5)
             for i in range(len(self.name)):
                 terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
