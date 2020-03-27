@@ -101,7 +101,7 @@ class Level:
 
         if clear:
             for i, letter in enumerate(text):
-                terminal.clear(left + (i, 0))
+                terminal.clear(left + (i - 1, 0))
                 self.scene.play_sound("type.wav")
                 yield self.pause(delay / 4)
 

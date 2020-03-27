@@ -35,6 +35,7 @@ class Level1(Level):
         yield self.pause(10)
 
         yield from self.slow_type("The butterflies are organising !", 5, delay=0.08)
+        yield self.pause(2)
         yield from self.slow_type(
             "Destroy them while we still can !", 5, "red", 0.08, True
         )
