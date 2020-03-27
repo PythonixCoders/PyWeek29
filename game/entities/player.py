@@ -194,7 +194,7 @@ class Player(Being):
             self.current_weapon = 0
 
         if self.weapon.fire(self.find_aim()):
-            self.play_sound("shoot.wav")
+            self.play_sound(self.weapon.sound)
 
     def update(self, dt):
 
@@ -239,10 +239,9 @@ class Player(Being):
         while self.alive:
             if self.blinking:
                 for i in range(10):
+                    self.visible = not self.visible
                     yield script.sleep(0.1)
-                    self.visible = False
-                    yield script.sleep(0.1)
-                    self.visible = True
+                self.visible = True
                 self.blinking = False
             yield
 

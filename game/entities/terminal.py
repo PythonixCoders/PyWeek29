@@ -27,13 +27,13 @@ class Char:
 
 
 class Terminal(Entity):
-    def __init__(self, app, scene):
+    def __init__(self, app, scene, size=None):
         super().__init__(app, scene)
 
         self.app = app
         self.scene = scene
 
-        self.font_size = ivec2(24)
+        self.font_size = ivec2(size or 24)
         self.spacing = ivec2(0)
         font_fn = path.join(FONTS_DIR, "PressStart2P-Regular.ttf")
 

@@ -53,15 +53,30 @@ class Intro(State):
         self.scene.music = "butterfly2.ogg"
         self.scene.sky_color = "#4c0b6b"
         self.scene.ground_color = "#e08041"
-        self.scene.stars
+        self.scene.stars()
+        self.scene.cloudy()
 
-        a = when.fade(
-            10,
-            (0, 1),
-            lambda t: scene.set_sky_color(
-                glm.mix(color("#4c0b6b"), color("#e08041"), t)
+        fade = []
+        fades = [
+            when.fade(
+                10,
+                (0, 1),
+                lambda t: scene.set_sky_color(
+                    glm.mix(color("#4c0b6b"), color("#e08041"), t)
+                ),
             ),
-        )
+            when.fade(
+                10,
+                (0, 1),
+                lambda t: scene.set_ground_color(
+                    glm.mix(color("darkgreen"), color("yellow"), t)
+                ),
+                lambda: fades.append(
+                    when.every(0, lambda: scene.set_ground_color(scene.ground_color))
+                ),
+            ),
+        ]
+
         # self.scene.set_ground_color = "#e08041"
 
         # scene.sky_color = "black"
@@ -69,17 +84,17 @@ class Intro(State):
 
         self.scene.music = "butterfly2.ogg"
 
-        scene.ensure_sound("message.wav")
         for i in range(len(msg)):
-            terminal.write(msg[i], (len(msg) / 2 - 1 + i, 1), "#e08041")
-            yield script.sleep(0.01 if script.keys else 0.05)
+            terminal.write(msg[i], (len(msg) / 2 - 1 + i, 1), "gray")
+            # scene.ensure_sound("type.wav")
+            yield script.sleep(0.002)
 
         msg = [
             "In the year 20XX, the butterfly",
             "overpopulation problem has",
             "obviously reached critical mass.",
             "The military has decided to intervene.",
-            "Your mission is simple: murder all the",
+            "Your mission is simple: defeat all the",
             "butterflies before the world ends.",
             "But look out for Big Butta, king of",
             "the butterflies.",
@@ -88,7 +103,6 @@ class Intro(State):
             for x, m in enumerate(line):
                 terminal.write(m, (x, y * 2 + 4), "white")
                 # scene.ensure_sound("type.wav")
-                scene.ensure_sound("message.wav")
                 yield script.sleep(0.01 if script.keys else 0.05)
 
         t = 0

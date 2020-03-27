@@ -70,20 +70,29 @@ class Scene(Signal):
             self.script = script  # trigger setter
 
     def cloudy(self):
+        if hasattr(self.app.state, "player"):
+            velz = self.app.state.player.velocity.z
+        else:
+            velz = 0
         for i in range(30):
             x = randint(-3000, 3000)
-            y = randint(100, 300)
+            y = randint(0, 300)
             z = randint(-4000, -1300)
             pos = vec3(x, y, z)
-            self.add(Cloud(self.app, self, pos, self.app.state.player.velocity.z))
+            self.add(Cloud(self.app, self, pos, velz))
 
     def stars(self):
+        if hasattr(self.app.state, "player"):
+            velz = self.app.state.player.velocity.z
+        else:
+            velz = 0
+
         for i in range(50):
             x = randint(-500, 500)
             y = -200 + (random.random() ** 0.5 * 800)
             z = -3000
             pos = vec3(x, y, z)
-            self.add(Star(self.app, self, pos, self.app.state.player.velocity.z))
+            self.add(Star(self.app, self, pos, velz))
 
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()

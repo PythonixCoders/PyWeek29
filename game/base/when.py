@@ -43,6 +43,8 @@ class When(Signal):
                 )
             )
             if slot.t < EPSILON:
+                if slot.fade_end:
+                    slot.fade_end()
                 slot.disconnect()  # queued
                 return
         else:

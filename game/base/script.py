@@ -184,8 +184,8 @@ class Script:
 
     def update(self, dt):
 
-        # scripts needs this
-        self.dt = dt
+        # accumulate dt between yields
+        self.dt += dt
 
         self.when.update(dt)
 
@@ -234,5 +234,6 @@ class Script:
             # clear accumulated keys
             self.key_down = set()
             self.key_up = set()
+            self.dt = 0
 
         return ran_script

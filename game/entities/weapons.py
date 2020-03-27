@@ -52,6 +52,7 @@ class Pistol(Weapon):
     color = "yellow"
     letter = "P"
     max_ammo = -1
+    sound = "shoot.wav"
 
     def __init__(self, app, scene, player):
         super(Pistol, self).__init__(player, self.max_ammo, 3, 1, app, scene)
@@ -76,6 +77,7 @@ class MachineGun(Weapon):
     color = "orange"
     letter = "M"
     max_ammo = 25
+    sound = "shoot.wav"
 
     def __init__(self, app, scene, player):
         super(MachineGun, self).__init__(player, self.max_ammo, 6, 1, app, scene)
@@ -116,6 +118,7 @@ class LaserGun(Weapon):
     letter = "L"
     color = "red"
     max_ammo = 20
+    sound = "laser.wav"
 
     def __init__(self, app, scene, player):
         super(LaserGun, self).__init__(player, self.max_ammo, 2, 2, app, scene)

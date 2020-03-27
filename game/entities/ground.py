@@ -36,7 +36,7 @@ class Ground(Entity):
             for x in range(self.texture.get_width()):
                 randvec = vec4(vec3(random.random()), 0)
                 c = col
-                c = glm.mix(col, randvec, 0.02)
+                c = glm.mix(col, randvec, 0.05)
                 c = [int(clamp(x * 255, 0, 255)) for x in c]
                 pgc = pygame.Color(*c)
                 self.texture.set_at((x, y), pgc)
