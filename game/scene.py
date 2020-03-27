@@ -81,8 +81,8 @@ class Scene(Signal):
         for i in range(50):
             x = randint(-500, 500)
             y = -200 + (random.random() ** 0.5 * 800)
-            z = -3000
-            pos = vec3(x, y, z)
+            z = -SCREEN_DIST
+            pos = vec3(x, y, z) * 1000
             self.add(Star(self.app, self, pos, self.app.state.player.velocity.z))
 
     def draw_sky(self):

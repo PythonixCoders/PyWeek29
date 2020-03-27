@@ -227,7 +227,7 @@ class Entity:
         if self.ai:
             self.ai.update(self, dt)
 
-    def render(self, camera, surf=None, pos=None, scale=True):
+    def render(self, camera, surf=None, pos=None, scale=True, fade=True):
         """
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
@@ -257,16 +257,17 @@ class Entity:
         size = ivec2(pos_bl.xy - pos_tl.xy)
         self.render_size = size
 
-        max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
-        fade = surf_fader(max_fade_dist, camera.distance(pos))
-
         if not scale or 400 > size.x > 0:
             if scale:
                 # print(ivec2(size))
                 surf = pygame.transform.scale(surf, ivec2(size))
 
-            surf.set_alpha(fade)
-            surf.set_colorkey(0)
+            if fade:
+                max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
+                alpha = surf_fader(max_fade_dist, camera.distance(pos))
+
+                surf.set_alpha(alpha)
+                surf.set_colorkey(0)
             self.app.screen.blit(surf, ivec2(pos_tl))
 
         # if size.x > 150:
