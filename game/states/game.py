@@ -38,7 +38,7 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
-        self.level = 2
+        self.level = 3
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
