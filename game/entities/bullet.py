@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # from .abstract.entity import Entity
-from game.constants import *
-from game.base.entity import Entity
-from glm import vec3, normalize
-from game.base.enemy import Enemy
+from glm import normalize
+
 from game.base.being import Being
+from game.base.entity import Entity
+from game.constants import *
 
 
 class Bullet(Entity):

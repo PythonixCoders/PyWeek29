@@ -1,16 +1,9 @@
 from os import path
 
-import pygame
-import glm
-
 from game.base.enemy import Enemy
-from game.base.entity import Entity
-from game.constants import Y, SPRITES_DIR, ORANGE, GRAY
-from game.entities.ai import AI
-from game.entities.bullet import Bullet
+from game.constants import *
 from game.entities.camera import Camera
 from game.util import *
-from game.constants import *
 
 
 class Butterfly(Enemy):

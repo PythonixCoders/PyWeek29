@@ -9,11 +9,11 @@ from game.base.signal import Signal, SlotList
 from game.constants import *
 from os import path
 
-from game.entities.ai import AI
 from game.util import *
 
 if TYPE_CHECKING:
     from game.base.app import App
+    from game.entities.ai import AI
 
 
 class Entity:
@@ -82,7 +82,7 @@ class Entity:
             self.scripts += self
 
         ai = kwargs.pop("ai", None)
-        self.ai: AI = ai(self) if ai else None
+        self.ai: "AI" = ai(self) if ai else None
 
         if kwargs:
             raise ValueError(
