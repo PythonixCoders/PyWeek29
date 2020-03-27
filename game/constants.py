@@ -45,10 +45,11 @@ BULLET_SIZE = 200
 BULLET_OFFSET = glm.vec3(0, -20, -300)
 CAMERA_OFFSET = glm.vec3(0, 0, 300)
 SCREEN_DIST = 3000
-AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_DISTANCE
 FULL_FOG_DISTANCE = 1.5
 """
 Distance at which we see nothing behing the screen camera.
 If the screen is 1000px from the camera, everything at 1300px will
 be completely transparent.
 """
+AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_DISTANCE
+BUTTERFLY_MIN_SHOOT_DIST = 1500

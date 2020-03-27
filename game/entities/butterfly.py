@@ -43,7 +43,7 @@ class Butterfly(Enemy):
             vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
         )
 
-        self.scripts += [self.randomly_fire, self.randomly_charge]
+        self.scripts += [self.randomly_charge]
 
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
@@ -96,35 +96,6 @@ class Butterfly(Enemy):
     def update(self, dt):
         self.time += dt * 10
         super().update(dt)
-
-    def randomly_fire(self, script):
-        """
-        Behavior script: Randomly fire
-        """
-        yield  # no call during entity ctor
-
-        while True:
-            player = self.app.state.player
-            if player and player.alive:
-                # print('randomly fire')
-                to_player = player.position - self.position
-                if glm.length(to_player) < 2000:  # wihin range
-                    self.play_sound("squeak.wav")
-                    self.scene.add(
-                        Bullet(
-                            self.app,
-                            self.scene,
-                            self,
-                            self.position,
-                            glm.normalize(to_player),
-                            self.damage,
-                            BULLET_IMAGE_PATH,
-                            3,
-                            300,
-                        )
-                    )
-
-            yield script.sleep(max(1, random.random() * 5))
 
     def randomly_charge(self, script):
         """
