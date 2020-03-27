@@ -7,21 +7,16 @@ from game.entities.bullet import Bullet
 
 
 class Weapon(Entity):
-    def __init__(self, player, letter, color, ammo, speed, damage, app, scene):
+    def __init__(self, player, ammo, speed, damage, app, scene):
         """
         A generic weapon.
 
         :param player: The player holding the weapon
-        :param letter: Letter to display it
-        :param color: Color for the letter display
         :param ammo: Max ammunition
         :param speed: bullets per second
         :param damage: damage per bullet
         """
         super().__init__(app, scene, parent=player)
-        self.letter = letter
-        self.color = color
-        self.max_ammo = ammo  # max ammo
         self.ammo = ammo  # current ammo
         self.cooldown = 1 / speed
         self.damage = damage
@@ -54,8 +49,12 @@ class Weapon(Entity):
 
 
 class Pistol(Weapon):
+    color = "yellow"
+    letter = "P"
+    max_ammo = -1
+
     def __init__(self, app, scene, player):
-        super(Pistol, self).__init__(player, "P", "yellow", -1, 3, 1, app, scene)
+        super(Pistol, self).__init__(player, self.max_ammo, 3, 1, app, scene)
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -74,8 +73,12 @@ class Pistol(Weapon):
 
 
 class MachineGun(Weapon):
+    color = "orange"
+    letter = "M"
+    max_ammo = 25
+
     def __init__(self, app, scene, player):
-        super(MachineGun, self).__init__(player, "M", "orange", 25, 6, 1, app, scene)
+        super(MachineGun, self).__init__(player, self.max_ammo, 6, 1, app, scene)
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -110,8 +113,12 @@ class Laser(Bullet):
 
 
 class LaserGun(Weapon):
+    letter = "L"
+    color = "red"
+    max_ammo = 20
+
     def __init__(self, app, scene, player):
-        super(LaserGun, self).__init__(player, "L", "red", 20, 2, 2, app, scene)
+        super(LaserGun, self).__init__(player, self.max_ammo, 2, 2, app, scene)
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -129,3 +136,7 @@ class LaserGun(Weapon):
                 "red",
                 self.damage / 5,
             )
+
+
+# need this for powerup
+WEAPONS = [Pistol, MachineGun, LaserGun]

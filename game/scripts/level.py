@@ -5,6 +5,7 @@ from random import randint
 
 from game.constants import FULL_FOG_DISTANCE
 from game.entities.butterfly import Butterfly
+from game.entities.powerup import Powerup
 from game.entities.camera import Camera
 from game.entities.cloud import Cloud
 from game.util import random_color
@@ -19,6 +20,23 @@ class Level:
         self.scene = scene
         self.script = script
         self.spawned = 0
+
+    def spawn_powerup(self, x: float, y: float, letter: str = None):
+        """
+        Spawn a powerup at position (x, y) at the current max depth
+        :param x: float between -1 and 1. 0 is horizontal center of the screen
+        :param y: float between -1 and 1. 0 is vertical center of the screen
+        :param letter: str powerup letter, None means random powerup
+        """
+
+        # Assuming the state is Game
+        camera: Camera = self.app.state.camera
+        pos = camera.rel_to_world(
+            vec3(x, y, -camera.screen_dist * FULL_FOG_DISTANCE)
+            * vec3(*camera.screen_size / 2, 1)
+        )
+
+        self.scene.add(Powerup(self.app, self.scene, letter, position=pos))
 
     def spawn(self, x: float, y: float):
         """

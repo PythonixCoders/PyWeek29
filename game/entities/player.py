@@ -14,8 +14,10 @@ from game.base.inputs import Inputs, Axis
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
+from game.entities.powerup import Powerup
 from game.base.enemy import Enemy
-from game.entities.weapons import Weapon, Pistol, MachineGun, LaserGun
+from game.entities.weapons import Weapon, WEAPONS
+from glm import vec3
 
 
 class Player(Being):
@@ -36,6 +38,7 @@ class Player(Being):
         ]
 
         self.position = vec3(0, 0, 0)
+        self.collision_size = vec3(500, 500, 500)
         self.speed = vec3(speed)
         self.velocity = vec3(self.speed)
 
@@ -43,8 +46,7 @@ class Player(Being):
         self.solid = True
 
         self.weapons: List[Weapon] = [
-            self.scene.add(gun(app, scene, self))
-            for gun in (Pistol, MachineGun, LaserGun)
+            self.scene.add(gun(app, scene, self)) for gun in WEAPONS
         ]
         self.current_weapon = 0
 
@@ -75,6 +77,17 @@ class Player(Being):
         if isinstance(other, Enemy):
             self.score += other.hp
             other.kill(other.hp, None, self)
+        elif isinstance(other, Powerup):
+            if other.heart:
+                self.hp = 3
+            else:
+                for wpn in self.weapons:
+                    if wpn.letter == other.letter:
+                        wpn.ammo = wpn.max_ammo
+                        break
+            print("powerup")
+            self.play_sound("powerup.wav")
+            other.remove()
 
     def find_enemy_in_crosshair(self):
         # Assuming state is Game

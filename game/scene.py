@@ -264,7 +264,7 @@ class Scene(Signal):
             if not a or not a.solid:
                 continue
 
-            if self.invalid_size(a.size):
+            if self.invalid_size(a.collision_size):
                 continue
 
             # for each slot, loop through each slot
@@ -277,13 +277,13 @@ class Scene(Signal):
                     if not a.has_collision and not b.has_collision:
                         continue
 
-                    if self.invalid_size(b.size):
+                    if self.invalid_size(b.collision_size):
                         continue
 
-                    a_min = a.position - a.size / 2
-                    a_max = a.position + a.size / 2
-                    b_min = b.position - b.size / 2
-                    b_max = b.position + b.size / 2
+                    a_min = a.position - a.collision_size / 2
+                    a_max = a.position + a.collision_size / 2
+                    b_min = b.position - b.collision_size / 2
+                    b_max = b.position + b.collision_size / 2
                     col = not (
                         b_min.x > a_max.x
                         or b_max.x < a_min.x

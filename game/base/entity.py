@@ -41,14 +41,6 @@ class Entity:
         self._script = None
         script = kwargs.get("script")
 
-        if callable(self):
-            # use __call__ as script
-            self._script = Script(self.app, self, self, use_input=False)
-            assert not isinstance(script, str)  # only one script allowed
-        elif isinstance(script, str):
-            # load script from string 'scripts/' folder
-            self._script = Script(self.app, self, script, use_input=False)
-
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
         self.acceleration = kwargs.get("acceleration") or vec3(0)
@@ -65,14 +57,22 @@ class Entity:
         self.filename = filename
         if filename:
             self._surface = self.app.load_img(filename, kwargs.get("scale", 1))
-            self.size = estimate_3d_size(self._surface.get_size())
+            self.collision_size = self.size = estimate_3d_size(self._surface.get_size())
         else:
-            self.size = vec3(0)
+            self.collision_size = self.size = vec3(0)
         self.render_size = vec3(0)
         """Should hold the size in pixel at which the entity was last rendered"""
 
         if hasattr(self, "event"):
             self.slots += app.add_event_listener(self)
+
+        if callable(self):
+            # use __call__ as script
+            self._script = Script(self.app, self, self, use_input=False)
+            assert not isinstance(script, str)  # only one script allowed
+        elif isinstance(script, str):
+            # load script from string 'scripts/' folder
+            self._script = Script(self.app, self, script, use_input=False)
 
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"
@@ -194,11 +194,13 @@ class Entity:
                 filter(lambda slot: not slot.once or not slot.count, self.slots._slots)
             )
 
-    def render(self, camera, surf=None):
+    def render(self, camera, surf=None, pos=None):
         """
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
         """
+        if not pos:
+            pos = self.position
 
         surf: SurfaceType = surf or self._surface
         if not surf:
@@ -208,8 +210,8 @@ class Entity:
         half_diag = vec3(-surf.get_width(), surf.get_height(), 0) / 2
         world_half_diag = camera.rel_to_world(half_diag) - camera.position
 
-        pos_tl = camera.world_to_screen(self.position + world_half_diag)
-        pos_bl = camera.world_to_screen(self.position - world_half_diag)
+        pos_tl = camera.world_to_screen(pos + world_half_diag)
+        pos_bl = camera.world_to_screen(pos - world_half_diag)
 
         if None in (pos_tl, pos_bl):
             # behind the camera
@@ -220,9 +222,9 @@ class Entity:
         self.render_size = size
 
         max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
-        fade = surf_fader(max_fade_dist, camera.distance(self.position))
+        fade = surf_fader(max_fade_dist, camera.distance(pos))
 
-        if size.x > 0:
+        if 400 > size.x > 0:
             surf = pygame.transform.scale(surf, ivec2(size))
 
             surf.set_alpha(fade)

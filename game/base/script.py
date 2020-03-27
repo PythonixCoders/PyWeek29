@@ -118,7 +118,7 @@ class Script:
 
     @script.setter
     def script(self, script=None):
-        print("Script:", script, self.script_args)
+        # print("Script:", script, self.script_args)
         self.slots = []
         self.paused = False
 
@@ -203,12 +203,12 @@ class Script:
                     pass
 
             except StopIteration:
-                print("Script Finished")
+                # print("Script Finished")
                 # traceback.print_exc()
                 self._script = None
-            except Exception:
-                traceback.print_exc()
-                self._script = None
+            # except Exception:
+            #     traceback.print_exc()
+            #     self._script = None
 
         self.inside = False
 

@@ -317,4 +317,3 @@ class Inputs(dict, Dict[str, Union[Button, Axis]]):
         """Actualize buttons and axis."""
         for inp in self.values():
             inp.event(event)
-

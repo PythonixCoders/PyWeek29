@@ -30,7 +30,7 @@ class Butterfly(Enemy):
         self.frames = self.get_animation(color)
 
         size = self.frames[0].get_size()
-        self.size = vec3(*size, min(size))
+        self.collision_size = self.size = vec3(*size, min(size))
         self.position = pos
 
         self.time = 0

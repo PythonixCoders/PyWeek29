@@ -3,7 +3,7 @@
 import random
 
 import pygame
-from glm import ivec2, ivec4
+from glm import ivec2, ivec4, vec3
 
 from game.base.entity import Entity
 from game.constants import *
@@ -14,13 +14,13 @@ class Message(Entity):
     A single message in world space
     """
 
-    def __init__(self, app, scene, text):
-        super().__init__(app, scene)
+    def __init__(self, app, scene, text, color, **kwargs):
+        super().__init__(app, scene, **kwargs)
 
         self.app = app
         self.scene = scene
-        self.text = text
 
+        self.collision_size = self.size = vec3(24 * len(text), 24, 24)
         self.font_size = ivec2(24, 24)
         font_fn = "data/PressStart2P-Regular.ttf"
 
@@ -29,18 +29,24 @@ class Message(Entity):
             lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
         )
 
-        # dirty flags for lazy redrawing
-        self.dirty = True
+        self.shadow_color = pygame.Color(120, 120, 120, 0)
+        self.shadow2_color = pygame.Color(0, 0, 0, 0)
 
-        # set entity surface
-        self._surface = pygame.Surface(
-            self.app.size, pygame.SRCALPHA, 32
-        ).convert_alpha()
+        self.set(text, color)
 
-        self.bg_color = ivec4(255, 255, 255, 0)  # transparent by default
-        self.shadow_color = ivec4(120, 120, 120, 0)
-        self.shadow2_color = ivec4(0, 0, 0, 0)
+    def set(self, text, color):
+        self.text = text
+        self.size = vec3(24 * len(text), 24, 24)
+        self.color = pygame.Color(color) if isinstance(color, str) else color
 
-    def update(self, t):
-        self.position = self.app.state.player.position + Z * 100
-        pass
+        self.surfaces = [
+            self.font.render(text, True, self.shadow2_color),
+            self.font.render(text, True, self.shadow_color),
+            self.font.render(text, True, self.color),
+        ]
+
+        self.offsets = [vec3(2, -2, 0), vec3(-2, 3, 0), vec3(0, 0, 0)]
+
+    def render(self, camera):
+        for i, img in enumerate(self.surfaces):
+            super().render(camera, self.surfaces[i], self.position + self.offsets[i])
