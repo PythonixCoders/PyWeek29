@@ -40,6 +40,14 @@ class Butterfly(Enemy):
         self.frame = 0
         self.damage = 1
 
+        # drift slightly in X/Y plane
+        self.velocity = (
+            vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
+        )
+
+        self.add_script(self.randomly_fire)
+        self.add_script(self.randomly_charge)
+
     def get_animation(self, color):
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")
 
@@ -79,6 +87,7 @@ class Butterfly(Enemy):
         # Butterfly will turn gray when killed
         self.frames = self.get_animation(GRAY)
 
+        self.scripts = []
         self.explode()
         self.play_sound("butterfly.wav")
         self.fall()
@@ -91,12 +100,16 @@ class Butterfly(Enemy):
         self.time += dt * 10
         super().update(dt)
 
-    def __call__(self, script):
+    def randomly_fire(self, script):
+        """
+        Behavior script: Randomly fire
+        """
         yield  # no call during entity ctor
 
         while True:
             player = self.app.state.player
             if player and player.alive:
+                # print('randomly fire')
                 to_player = player.position - self.position
                 if glm.length(to_player) < 2000:  # wihin range
                     self.play_sound("squeak.wav")
@@ -109,11 +122,34 @@ class Butterfly(Enemy):
                             glm.normalize(to_player),
                             self.damage,
                             BULLET_IMAGE_PATH,
-                            20,  # speed
+                            3,
+                            300,
                         )
                     )
 
             yield script.sleep(max(1, random.random() * 5))
+
+    def randomly_charge(self, script):
+        """
+        Behavior script: Charge towards player randomly
+        """
+        yield  # no call during entity ctor
+
+        while True:
+            yield script.sleep(random.random() * 10)
+
+            player = self.app.state.player
+            if self.position.z < player.position.z:
+                break
+
+            if player and player.alive:
+                # print('sometimes crazy')
+                to_player = player.position - self.position
+                if glm.length(to_player) < 2000:  # wihin range
+                    to_player = player.position - self.position
+                    self.play_sound("squeak.wav")
+                    self.acceleration = glm.normalize(to_player)
+                    break  # only do this once
 
     def render(self, camera: Camera):
 

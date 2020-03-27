@@ -41,7 +41,7 @@ class Player(Being):
         ]
 
         self.position = vec3(0, 0, 0)
-        self.collision_size = vec3(500, 500, 500)
+        self.collision_size = vec3(50, 50, 500)
         self.speed = vec3(speed)
         self.velocity = vec3(self.speed)
 

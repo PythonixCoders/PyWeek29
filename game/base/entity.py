@@ -206,7 +206,7 @@ class Entity:
                 self.remove()
                 return
 
-        if self.script:
+        if self.scripts:
             self.scripts.each(lambda x, dt: x.update(dt), dt)
             self.scripts.slots = list(
                 filter(lambda x: not x.get().done(), self.scripts.slots)
