@@ -9,6 +9,9 @@ from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
 from game.util import clamp
+from game.entities.cloud import Cloud
+from game.entities.star import Star
+
 from random import randint
 import math
 import weakref
@@ -65,6 +68,22 @@ class Scene(Signal):
 
         if script:
             self.script = script  # trigger setter
+
+    def cloudy(self):
+        for i in range(30):
+            x = randint(-3000, 3000)
+            y = randint(100, 300)
+            z = randint(-4000, -1300)
+            pos = vec3(x, y, z)
+            self.add(Cloud(self.app, self, pos, self.app.state.player.velocity.z))
+
+    def stars(self):
+        for i in range(50):
+            x = randint(-500, 500)
+            y = -200 + (random.random() ** 0.5 * 800)
+            z = -3000
+            pos = vec3(x, y, z)
+            self.add(Star(self.app, self, pos, self.app.state.player.velocity.z))
 
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()
@@ -275,7 +294,7 @@ class Scene(Signal):
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):
-        self._sky_color = self.color(c) if c else None
+        self.sky_color = self.color(c) if c else None
 
     def set_ground_color(self, c):
         self.ground_color = self.color(c) if c else None

@@ -200,25 +200,5 @@ class Level:
                 terminal.clear(left + (i, 0))
                 yield self.pause(0.04)
 
-    def cloudy(self):
-        for i in range(30):
-            x = randint(-3000, 3000)
-            y = randint(100, 300)
-            z = randint(-4000, -1300)
-            pos = vec3(x, y, z)
-            self.scene.add(
-                Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z)
-            )
-
-    def stars(self):
-        for i in range(50):
-            x = randint(-500, 500)
-            y = -200 + (random.random() ** 0.5 * 800)
-            z = -3000
-            pos = vec3(x, y, z)
-            self.scene.add(
-                Star(self.app, self.scene, pos, self.app.state.player.velocity.z)
-            )
-
     def __iter__(self):
         return self()

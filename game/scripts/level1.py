@@ -18,7 +18,7 @@ class Level1(Level):
     music = "butterfly.ogg"
 
     def __call__(self):
-        self.stars()
+        self.scene.stars()
 
         yield from super().__call__()
 

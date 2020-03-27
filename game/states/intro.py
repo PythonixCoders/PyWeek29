@@ -53,28 +53,29 @@ class Intro(State):
         self.scene.music = "butterfly2.ogg"
         self.scene.sky_color = "#4c0b6b"
         self.scene.ground_color = "#e08041"
+        self.scene.stars
 
-        # when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
-        # a = when.fade(
-        #     3,
-        #     (0, 1),
-        #     lambda t: scene.set_sky_color(
-        #         glm.mix(color("black"), color("darkgray"), t)
-        #     ),
-        # )
+        a = when.fade(
+            10,
+            (0, 1),
+            lambda t: scene.set_sky_color(
+                glm.mix(color("#4c0b6b"), color("#e08041"), t)
+            ),
+        )
+        # self.scene.set_ground_color = "#e08041"
 
         # scene.sky_color = "black"
-        msg = "Welcome to Butterfly Destroyers!"
+        msg = "Butterfly Destroyers"
 
         self.scene.music = "butterfly2.ogg"
 
         scene.ensure_sound("message.wav")
         for i in range(len(msg)):
-            terminal.write(msg[i], (i, 0), "#e08041")
+            terminal.write(msg[i], (len(msg) / 2 - 1 + i, 1), "#e08041")
             yield script.sleep(0.01 if script.keys else 0.05)
 
         msg = [
-            "In the year, 20XX, the butterfly",
+            "In the year 20XX, the butterfly",
             "overpopulation problem has",
             "obviously reached critical mass.",
             "The military has decided to intervene.",
@@ -85,7 +86,7 @@ class Intro(State):
         ]
         for y, line in enumerate(msg):
             for x, m in enumerate(line):
-                terminal.write(m, (x, y * 2 + 3), "white")
+                terminal.write(m, (x, y * 2 + 4), "white")
                 # scene.ensure_sound("type.wav")
                 scene.ensure_sound("message.wav")
                 yield script.sleep(0.01 if script.keys else 0.05)
