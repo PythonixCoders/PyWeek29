@@ -3,6 +3,7 @@
 from game.base.signal import Slot
 from game.base.when import When
 from game.constants import *
+from game.base.signal import Signal
 from glm import vec3, vec4, ivec4
 import math
 import importlib
@@ -20,14 +21,15 @@ class Script:
         self.dt = 0
         self.fn = script
         self.resume_condition = None
-
         self.script_args = script_args
+        self.scripts = Signal()  # extra scripts attached to this one
 
         # these are accumulated between yields
         # this is different from get_pressed()
         self.keys = set()
         self.keys_down = set()
         self.keys_up = set()
+        self.use_input = use_input
 
         if use_input:
             self.event_slot = self.app.on_event.connect(self.event)
@@ -40,6 +42,15 @@ class Script:
         self.inside = False
 
         self.script = script  # (this calls script property)
+
+    def push(self, fn):
+        print(fn)
+        if self.script_args:
+            script = Script(self.app, self.ctx, fn, self.use_input, *self.script_args)
+        else:
+            script = Script(self.app, self.ctx, fn, self.use_input)
+
+        self.scripts += script
 
     def pause(self):
         self.paused = True
@@ -209,6 +220,13 @@ class Script:
             # except Exception:
             #     traceback.print_exc()
             #     self._script = None
+
+        # extra scripts
+        if self.scripts:
+            self.scripts.each(lambda x, dt: x.update(dt), dt)
+            self.scripts.slots = list(
+                filter(lambda x: not x.get().done(), self.scripts.slots)
+            )
 
         self.inside = False
 

@@ -11,6 +11,7 @@ import weakref
 from game.base.entity import Entity
 from game.base.being import Being
 from game.base.inputs import Inputs, Axis
+from game.base.script import Script
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.butterfly import Butterfly
@@ -50,12 +51,17 @@ class Player(Being):
         ]
         self.current_weapon = 0
 
+        self.add_script(self.blink)
+        self.add_script(self.smoke)
+
     @property
     def weapon(self):
         return self.weapons[self.current_weapon % len(self.weapons)]
 
     def kill(self, damage, bullet, enemy):
         # TODO: player death
+        # self.scene.play_sound('explosion.wav')
+        self.remove()
         return False
 
     def hurt(self, damage, bullet, enemy):
@@ -64,9 +70,12 @@ class Player(Being):
         """
         if self.hp <= 0:
             return 0
+        if self.blinking:  # invulnerable
+            return 0
 
         damage = min(self.hp, damage)  # calc effective damage (not more than hp)
         self.hp -= damage
+        self.blinking = True
         if self.hp <= 0:
             self.kill(damage, bullet, enemy)  # kill self
         # if self.hp < 3:
@@ -75,7 +84,8 @@ class Player(Being):
 
     def collision(self, other, dt):
         if isinstance(other, Enemy):
-            self.score += other.hp
+            if other.alive:
+                self.hurt(other.hp, None, other)
             other.kill(other.hp, None, self)
         elif isinstance(other, Powerup):
             if other.heart:
@@ -168,6 +178,39 @@ class Player(Being):
 
         super().update(dt)
 
+    def smoke(self, script):
+        while True:
+            if self.hp < 3:
+                self.scene.add(
+                    Entity(
+                        self.app,
+                        self.scene,
+                        "bullet.png",
+                        position=self.position + vec3(0, -20, 0),
+                        velocity=(
+                            vec3(random.random(), random.random(), random.random())
+                            - vec3(0.5)
+                        )
+                        * 2,
+                        life=0.2,
+                        particle=True,
+                    )
+                )
+                yield script.sleep(self.hp / 5)
+            yield
+
+    def blink(self, script):
+        self.blinking = False
+        while True:
+            if self.blinking:
+                for i in range(10):
+                    yield script.sleep(0.2)
+                    self.visible = False
+                    yield script.sleep(0.2)
+                    self.visible = True
+                self.blinking = False
+            yield
+
     def heading(self):
 
         camera = self.app.state.camera
@@ -181,34 +224,18 @@ class Player(Being):
         direction = aim - start
         return start, aim, direction
 
-    # def smoke(self):
-
-    #     start, aim, direction = self.heading()
-
-    #     self.scene.add(
-    #         Entity(
-    #             self.app,
-    #             self.scene,
-    #             "bullet.png",
-    #             position=self.position - start,
-    #             # velocity=(
-    #             #     vec3(*(random.random() for r in range(3))) - vec3(0.5)
-    #             # ) * 10,
-    #             life=1,
-    #             particle=True,
-    #         )
-    #     )
-
     def render(self, camera):
         self.write_weapon_stats()
 
         # Ship
         rect = self._surface.get_rect()
+
         rect.center = (self.app.size[0] / 2, self.app.size[1] * 0.8)
         direction = self.velocity.xy / self.speed.xy
         rect.center += direction * (10, -10)
 
-        self.app.screen.blit(self._surface, rect)
+        if self.visible:
+            self.app.screen.blit(self._surface, rect)
 
         # Crosshair
         rect = self.crosshair_surf.get_rect()

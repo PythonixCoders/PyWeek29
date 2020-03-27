@@ -30,6 +30,7 @@ class Entity:
         self.slots = SlotList()
         self._life = kwargs.get("life")  # particle life (length of time to exist)
         self.on_move = Signal()
+        self.on_update = Signal()
         self.on_remove = Signal()
         # self.dirty = True
         self._surface = None
@@ -37,14 +38,13 @@ class Entity:
         self.parent = kwargs.get("parent")
         self.sounds = {}
         self.particle = kwargs.get("particle")
-
-        ai = kwargs.get("ai")
-        self.ai: AI = ai(self) if ai else None
+        self.visible = True
 
         self._script_func = False
 
-        self._script = None
         script = kwargs.get("script")
+        self.script = None  # main script
+        self.script = Signal()
 
         self._position = kwargs.get("position") or vec3(0)
         self.velocity = kwargs.get("velocity") or vec3(0)
@@ -71,13 +71,24 @@ class Entity:
         if hasattr(self, "event"):
             self.slots += app.add_event_listener(self)
 
+        if isinstance(script, str):
+            # load script from string 'scripts/' folder
+            self.script = self.add_script(script)
+
         if callable(self):
             # use __call__ as script
-            self._script = Script(self.app, self, self, use_input=False)
-            assert not isinstance(script, str)  # only one script allowed
-        elif isinstance(script, str):
-            # load script from string 'scripts/' folder
-            self._script = Script(self.app, self, script, use_input=False)
+            self.script = self.add_script(self)
+
+        ai = kwargs.get("ai")
+        self.ai: AI = ai(self) if ai else None
+
+    def add_script(self, fn):
+        """
+        :param fn: add script `fn` (cls, func, or filename)
+        """
+        script = Script(self.app, self, fn, use_input=False)
+        self.script += script
+        return script
 
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"
@@ -191,19 +202,29 @@ class Entity:
                 self.remove()
                 return
 
-        if self._script:  # Script object
-            self._script.update(dt)
+        if self.script:
+            self.script.each(lambda x, dt: x.update(dt), dt)
+            self.script.slots = list(
+                filter(lambda x: not x.get().done(), self.script.slots)
+            )
 
         if self.slots:
             self.slots._slots = list(
                 filter(lambda slot: not slot.once or not slot.count, self.slots._slots)
             )
 
+        self.on_update(dt)
+        if self.ai:
+            self.ai.update(self, dt)
+
     def render(self, camera, surf=None, pos=None):
         """
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
         """
+        if not self.visible:
+            return
+
         if not pos:
             pos = self.position
 

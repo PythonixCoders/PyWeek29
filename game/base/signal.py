@@ -162,10 +162,12 @@ class Signal:
         self.clean()
 
     def __iadd__(self, func):
-        return self.connect(func, weak=False)
+        self.connect(func, weak=False)
+        return self
 
     def __isub__(self, func):
-        return self.disconnect(func, weak=False)
+        self.disconnect(func, weak=False)
+        return self
 
     def connect(self, func, weak=True, once=False):
 

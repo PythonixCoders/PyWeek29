@@ -11,7 +11,7 @@ class Being(Entity):
     def __init__(self, app, scene, filename=None, **kwargs):
         super().__init__(app, scene, filename, **kwargs)
         self.solid = True
-        self.hp = 1.0
+        self.hp = 1
         self.score = 0
         self.alive = True  # prevent mutliple kill()
 

@@ -4,12 +4,13 @@ import random
 
 import pygame
 from glm import vec3
+import random
+import math
 
 from game.entities.message import Message
 from game.entities.weapons import WEAPONS
 from game.base.entity import Entity
 from game.constants import *
-import random
 
 
 class Powerup(Message):
@@ -42,6 +43,8 @@ class Powerup(Message):
         self.solid = True
 
         self.collision_size = self.size = vec3(500)
+        self.time = 0
+        self.offset = vec3(0)
 
     def __call__(self, script):
         color = self.color
@@ -50,3 +53,11 @@ class Powerup(Message):
             yield script.sleep(0.2)
             self.set(self.letter, color)
             yield script.sleep(0.2)
+
+    def update(self, dt):
+        super().update(dt)
+        self.time += dt
+        self.offset.y = math.sin(self.time * math.tau)
+
+    def render(self):
+        super().render(dt, self.position)
