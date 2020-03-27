@@ -118,7 +118,7 @@ class Player(Being):
             return 0
 
         dmg = super().hurt(damage, bullet, enemy)
-        self.scene.add(Message(self.app, self.scene, letter, position=pos))
+        # self.scene.add(Message(self.app, self.scene, letter, position=pos))
         if dmg:
             self.blinking = True
             self.health_flash = 1
