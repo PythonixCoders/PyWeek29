@@ -167,10 +167,7 @@ class Level:
                 yield self.pause(delay / 4)
 
     def __call__(self):
-        if not self.scene.stars_visible:
-            self.scene.sky_color = self.sky
-        else:
-            self.scene.sky_color = self.night_sky
+        self.scene.sky_color = self.sky
         self.scene.ground_color = self.ground
         self.scene.music = self.music
 

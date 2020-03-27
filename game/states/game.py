@@ -57,6 +57,10 @@ class Game(State):
         self.time = 0
 
     def toggle_pause(self, *args):
+        if not self.player or not self.player.alive:
+            self.app.state = "game"
+            return
+
         self.paused = not self.paused
         if self.paused:
             self.terminal.write_center(
@@ -111,7 +115,6 @@ class Game(State):
         if self.scene.script and self.scene.script.done():
             self.app.state = "intermission"
             return
-            self.level += 1
 
         self.scene.update(dt)
         self.gui.update(dt)
@@ -184,3 +187,9 @@ class Game(State):
         # inputs["test"] = Button(pg.K_p)
         inputs["pause"] = Button(pg.K_ESCAPE)
         return inputs
+
+    def restart(self):
+        """
+        Called by player when() event after death
+        """
+        self.level = self.level  # retriggers
