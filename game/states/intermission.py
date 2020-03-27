@@ -19,7 +19,7 @@ class Intermission(State):
         self.scene = Scene(self.app, self)
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.stats = self.app.data.get("stats", Stats())
+        self.stats = self.app.data["stats"] = self.app.data.get("stats", Stats())
 
         self.time = 0
         self.bg_color = Scene.color("darkred")
