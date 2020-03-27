@@ -5,7 +5,7 @@ from random import randint
 
 from game.base.inputs import Inputs, Axis, Button, JoyAxis, JoyButton, JoyAxisTrigger
 from game.base.state import State
-from game.constants import GROUND_HEIGHT
+from game.constants import GROUND_HEIGHT, CAMERA_OFFSET
 from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player
@@ -78,7 +78,7 @@ class Game(State):
 
         # Update the camera according to the player position
         # And movement
-        self.camera.position = self.player.position
+        self.camera.position = self.player.position + CAMERA_OFFSET
         self.camera.up = vec3(0, 1, 0)
         d = self.player.velocity.x / self.player.speed.x
         if d:

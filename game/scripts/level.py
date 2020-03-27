@@ -53,7 +53,7 @@ class Level:
     def __call__(self):
         self.scene.sky_color = self.sky
         self.scene.ground_color = self.ground
-        self.scene.music = self.music
+        # self.scene.music = self.music
 
         if self.name:
             terminal = self.app.state.terminal
