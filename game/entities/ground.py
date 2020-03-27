@@ -26,7 +26,7 @@ class Ground(Entity):
     def color(self, c):
         self._color = c
         self.texture = pygame.Surface(self.app.size / 8).convert()
-        self.texture.fill(GREEN)
+        self.texture.fill(self.color)
         sky_color = self.scene.sky_color or Scene.color(pygame.Color("blue"))
         for y in range(self.texture.get_height()):
             col = vec4(self.texture.get_at((0, y)).normalize())
