@@ -80,6 +80,7 @@ class Player(Being):
         # self.scene.play_sound('explosion.wav')
         self.acceleration = -Y * 100
         self.explode()
+        self.remove()
         self.alive = False
         return False
 
