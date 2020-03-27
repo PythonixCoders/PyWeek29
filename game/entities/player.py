@@ -7,6 +7,7 @@ from pygame.surface import SurfaceType
 from copy import copy
 import random
 import weakref
+import math
 
 from game.base.entity import Entity
 from game.base.being import Being
@@ -18,6 +19,7 @@ from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.base.enemy import Enemy
 from game.entities.weapons import Weapon, WEAPONS
+from game.base.stats import Stats
 from glm import vec3
 
 
@@ -26,7 +28,9 @@ class Player(Being):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
         self.game_state = self.scene.state
 
-        self.score = 0
+        # persistant stats for score screen
+        self.stats = self.app.data.get("stats", Stats())
+
         self.hp = 3
         self.friendly = True  # determines what Beings you can damage
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
@@ -48,6 +52,7 @@ class Player(Being):
         self.alive = True
         self.solid = True
         self.blinking = False
+        self.targeting = False
 
         self.weapons: List[Weapon] = [
             self.scene.add(gun(app, scene, self)) for gun in WEAPONS
@@ -55,6 +60,15 @@ class Player(Being):
         self.current_weapon = 0
 
         self.scripts += [self.blink, self.smoke]
+
+    @property
+    def targeting(self):
+        return self._targeting
+
+    @targeting.setter
+    def targeting(self, t):
+        self._targeting = t
+        self.crosshair_t = 0
 
     @property
     def weapon(self):
@@ -183,6 +197,9 @@ class Player(Being):
             self.velocity.y = min(0, self.velocity.y)
             self.position.y = 300
 
+        self.crosshair_t %= 1.0
+        self.crosshair_scale = 1 + math.sin(self.crosshair_t * math.tau) * 0.1
+
         super().update(dt)
 
     def smoke(self, script):
@@ -249,6 +266,11 @@ class Player(Being):
         rect.center = self.app.size / 2
 
         if self.find_enemy_in_crosshair():
-            self.app.screen.blit(self.crosshair_surf_green, rect)
+            self.targeting = True
+            img = self.crosshair(self.crosshair_surf_green)
+            rect = (rect.x, rect.y, *(ivec2(rect[1], rect[2]) * self.crosshair_scale()))
+            print(rect)
+            self.app.screen.scaled_blit(img, rect)
         else:
+            self.targeting = False
             self.app.screen.blit(self.crosshair_surf, rect)

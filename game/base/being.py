@@ -14,7 +14,7 @@ class Being(Entity):
         super().__init__(app, scene, filename, **kwargs)
         self.solid = True
         self.hp = 1
-        self.score = 0
+        self.stats = None
         self.alive = True  # prevent mutliple kill()
         self.friendly = False
 
@@ -29,9 +29,13 @@ class Being(Entity):
         if dmg_taken > 0:
             self.hp -= dmg_taken
             assert self.hp >= 0
+            killed = False
             if self.hp == 0:
-                self.kill(dmg_taken, bullet, damager)
-            damager.score += max(int(dmg_taken), 1)
+                killed = self.kill(dmg_taken, bullet, damager)
+            if damager.stats:
+                damager.stats.kills = int(killed)
+                damager.stats.damage_done += dmg_done
+                damager.stats.score += max(int(dmg_taken), 1)
         return dmg_taken
 
     def explode(self):

@@ -223,7 +223,7 @@ class Terminal(Entity):
         else:
             pos = ivec2(pos[0], pos[1])
 
-        pos.x += self.size.x - 1
+        pos.x += self.size.x - 2
         return self.write(text, pos, color, offset, 1, len(text))
 
     def scramble(self):

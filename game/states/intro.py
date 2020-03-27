@@ -15,6 +15,7 @@ class Intro(State):
         super().__init__(app, state, self)
 
         self.scene = Scene(self.app, self)
+        self.scene.music = "butterfly2.ogg"
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
 

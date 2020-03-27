@@ -26,10 +26,10 @@ class Scene(Signal):
         self.state = state
         self.when = When()
         self.slotlist = SlotList()
+        self._script = None
 
         # self.script_paused = False
         # self.script_slots = []
-        self.sky_color = None
         self.dt = 0
         self.sounds = {}
 
@@ -49,12 +49,12 @@ class Scene(Signal):
         # self.on_collision.enter = self.on_collision_enter
         # self.on_collision.leave = self.on_collision_leave
 
+        self._ground_color = None
         self._music = None
+        self.sky_color = None
 
         if script:
             self.script = script  # trigger setter
-        else:
-            self._script = None
 
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()
@@ -135,14 +135,16 @@ class Scene(Signal):
 
     @property
     def ground_color(self):
-        return self.color(self.app.state.ground.color)
+        return self._ground_color
 
     @ground_color.setter
     def ground_color(self, color):
-        c = self.color(color)
-        self.app.state.ground.color = pygame.Color(
-            int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
-        )
+        self._ground_color = color
+        if color:
+            c = self.color(color)
+            self.app.state.ground.color = pygame.Color(
+                int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
+            )
 
     @music.setter
     def music(self, filename):
@@ -244,6 +246,8 @@ class Scene(Signal):
     def sky_color(self, c):
         self._sky_color = self.color(c) if c else None
         self.draw_sky()
+        # reset ground gradient (depend on sky color)
+        self.ground_color = self.ground_color
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):

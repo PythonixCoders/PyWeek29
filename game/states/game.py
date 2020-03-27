@@ -34,7 +34,8 @@ class Game(State):
         self.player = self.scene.add(Player(app, self.scene))
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
 
-        self.level = 1
+        self.level = self.player.stats.level
+        self.scene.script = "level" + str(self.level)
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
@@ -42,8 +43,8 @@ class Game(State):
 
         self.debug = False
         self.slots += [
-            app.inputs["debug"].on_press(lambda _: self.pause(True)),
-            app.inputs["debug"].on_release(lambda _: self.paused(False)),
+            app.inputs["debug"].on_press(lambda _: self.debug_mode(True)),
+            app.inputs["debug"].on_release(lambda _: self.debug_mode(False)),
         ]
         self.slots += [
             app.inputs["pause"].on_press(self.toggle_pause),
@@ -51,11 +52,11 @@ class Game(State):
 
         self.time = 0
 
-    def toggle_pause(self):
+    def toggle_pause(self, btn):
         self.paused = not self.paused
         if self.paused:
             self.terminal.write_center(
-                "PAUSED", 10,
+                "- GAME PAUSED -", 10,
             )
             # self.scene.play_sound('pause.wav')
         else:
@@ -87,8 +88,10 @@ class Game(State):
 
         super().update(dt)  # needed for state script (unused)
 
-        if not self.scene.script or self.scene.script.done():
-            self.scene.script = "level1"  # restart
+        if self.scene.script and self.scene.script.done():
+            self.app.state = "intermission"
+            return
+            # self.scene.script = "level1"  # restart
 
         self.scene.update(dt)
         self.gui.update(dt)
@@ -116,7 +119,7 @@ class Game(State):
         # self.terminal.write(pos_display, pos_pos)
 
         # Render Player's Score
-        score_display = "Score: {}".format(self.player.score)
+        score_display = "Score: {}".format(self.player.stats.score)
         score_pos = (
             self.terminal.size.x - len(score_display),
             0,
