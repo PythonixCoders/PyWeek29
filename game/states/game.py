@@ -28,6 +28,7 @@ class Game(State):
         self.gui = Scene(self.app, self)
         self.slots = SlotList()
         self.paused = False
+        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
 
         # create terminal first since player init() writes to it
         self.terminal = self.gui.add(Terminal(self.app, self.scene))

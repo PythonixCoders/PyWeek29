@@ -41,6 +41,7 @@ class Scene(Signal):
         # ]
 
         self.sky_color = None
+        self.ground_color = None
         self.dt = 0
         self.sounds = {}
 
@@ -61,7 +62,6 @@ class Scene(Signal):
         # self.on_collision.leave = self.on_collision_leave
 
         self._music = None
-        self.sky_color = None
 
         if script:
             self.script = script  # trigger setter

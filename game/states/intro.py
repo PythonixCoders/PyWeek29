@@ -3,6 +3,8 @@
 from game.base.state import State
 from game.entities.camera import Camera
 from game.entities.terminal import Terminal
+from game.entities.ground import Ground
+from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.scene import Scene
 import pygame
 import glm
@@ -15,9 +17,9 @@ class Intro(State):
         super().__init__(app, state, self)
 
         self.scene = Scene(self.app, self)
-        self.scene.music = "butterfly2.ogg"
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
+        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
 
         self.time = 0
 
@@ -41,26 +43,34 @@ class Intro(State):
         self.scene.render(self.camera)
 
     def __call__(self, script):
+        yield
 
         when = script.when
         scene = self.scene
         color = self.scene.color
         terminal = self.terminal
 
-        when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
-        a = when.fade(
-            3,
-            (0, 1),
-            lambda t: scene.set_sky_color(
-                glm.mix(color("black"), color("darkgray"), t)
-            ),
-        )
+        self.scene.music = "butterfly2.ogg"
+        self.scene.sky_color = "#4c0b6b"
+        self.scene.ground_color = "#e08041"
+
+        # when.fade(3, scene.__class__.sky_color.setter, (vec4(0), vec4(1)))
+        # a = when.fade(
+        #     3,
+        #     (0, 1),
+        #     lambda t: scene.set_sky_color(
+        #         glm.mix(color("black"), color("darkgray"), t)
+        #     ),
+        # )
 
         # scene.sky_color = "black"
         msg = "Welcome to Butterfly Destroyers!"
+
+        self.scene.music = "butterfly2.ogg"
+
+        scene.ensure_sound("message.wav")
         for i in range(len(msg)):
-            terminal.write(msg[i], (i, 0), "red")
-            scene.ensure_sound("type.wav")
+            terminal.write(msg[i], (i, 0), "#e08041")
             yield script.sleep(0.01 if script.keys else 0.05)
 
         msg = [
@@ -76,7 +86,8 @@ class Intro(State):
         for y, line in enumerate(msg):
             for x, m in enumerate(line):
                 terminal.write(m, (x, y * 2 + 3), "white")
-                scene.ensure_sound("type.wav")
+                # scene.ensure_sound("type.wav")
+                scene.ensure_sound("message.wav")
                 yield script.sleep(0.01 if script.keys else 0.05)
 
         t = 0
