@@ -9,6 +9,7 @@ from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
 from game.util import clamp
+from random import randint
 import math
 import weakref
 import random
@@ -26,10 +27,20 @@ class Scene(Signal):
         self.state = state
         self.when = When()
         self.slotlist = SlotList()
+        self._sky_color = None
+        self._ground_color = None
         self._script = None
 
         # self.script_paused = False
         # self.script_slots = []
+        self.stars_visible = 1
+
+        star_density = 80
+        self.star_pos = [
+            (randint(0, 200), randint(0, 200)) for i in range(star_density)
+        ]
+
+        self.sky_color = None
         self.dt = 0
         self.sounds = {}
 
@@ -49,7 +60,6 @@ class Scene(Signal):
         # self.on_collision.enter = self.on_collision_enter
         # self.on_collision.leave = self.on_collision_leave
 
-        self._ground_color = None
         self._music = None
         self.sky_color = None
 
@@ -59,7 +69,9 @@ class Scene(Signal):
     def draw_sky(self):
         self.sky = pygame.Surface(self.app.size / 8).convert()
         sky_color = self.sky_color or Scene.color(pygame.Color("blue"))
+
         self.sky.fill((0, 0, 0))
+
         for y in range(self.sky.get_height()):
             interp = (1 - y / self.sky.get_height()) * 2
             for x in range(self.sky.get_width()):
@@ -70,7 +82,19 @@ class Scene(Signal):
                 c = [int(clamp(x * 255, 0, 255)) for x in c]
                 pgc = pygame.Color(*c)
                 self.sky.set_at((x, y), pgc)
+
+        if self.stars_visible:
+            self.draw_stars(self.sky, self.star_pos)
+
         self.sky = pygame.transform.scale(self.sky, self.app.size)
+
+    def draw_stars(self, surface, star_positions):
+        size = 1
+        for pos in star_positions:
+            star = pygame.Surface((size, size))
+            star.fill((255, 255, 255))
+            star.set_alpha(175)
+            surface.blit(star, pos)
 
     def remove_sound(self, filename):
         if filename in self.sounds:

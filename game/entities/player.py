@@ -2,7 +2,7 @@
 from typing import List
 
 import pygame
-from glm import vec3, sign, length
+from glm import ivec2, vec3, sign, length
 from pygame.surface import SurfaceType
 from copy import copy
 import random
@@ -267,10 +267,9 @@ class Player(Being):
 
         if self.find_enemy_in_crosshair():
             self.targeting = True
-            img = self.crosshair(self.crosshair_surf_green)
-            rect = (rect.x, rect.y, *(ivec2(rect[1], rect[2]) * self.crosshair_scale()))
-            print(rect)
-            self.app.screen.scaled_blit(img, rect)
+            sz = ivec2(rect[1], rect[2]) * self.crosshair_scale
+            img = pygame.transform.scale(self.crosshair_surf_green, sz)
+            self.app.screen.blit(self.crosshair_surf_green, rect)
         else:
             self.targeting = False
             self.app.screen.blit(self.crosshair_surf, rect)
