@@ -135,7 +135,7 @@ class Butterfly(Enemy):
         yield  # no call during entity ctor
 
         while True:
-            yield script.sleep(random.random() * 5)
+            yield script.sleep(random.random() * 8)
 
             player = self.app.state.player
             if player and player.alive:
