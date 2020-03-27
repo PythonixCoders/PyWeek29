@@ -21,7 +21,6 @@ class Level1(Level):
 
         for _ in range(10):
             self.spawn(0, 0)
-            self.spawn_powerup(0, 0)
             yield self.pause(1)
 
         self.spawn(0.5, 0.5)
