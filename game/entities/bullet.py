@@ -35,6 +35,8 @@ class Bullet(Entity):
         self.size.z = BULLET_SIZE  # to prevent tunneling
         self.parent = parent  # whoever shot the bullet
 
+        print(self, self.app.state.player.position)
+
     def collision(self, other, dt):
         if isinstance(other, Enemy):
             other.hurt(self.damage, self, self.parent)  # apply dmg

@@ -24,7 +24,7 @@ class Butterfly(Enemy):
         :param scale:
         """
 
-        super().__init__(app, scene, ia=ia)
+        super().__init__(app, scene, ai=ai)
 
         self.num = num
         self.frames = self.get_animation(color)
@@ -103,8 +103,6 @@ class Butterfly(Enemy):
 
     def update(self, dt):
         self.time += dt * 10
-        if self.ai:
-            self.ai.update(self, dt)
         super().update(dt)
 
     def render(self, camera: Camera):

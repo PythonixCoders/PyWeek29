@@ -180,6 +180,10 @@ class Entity:
         return sound, channel, slot
 
     def update(self, dt):
+
+        if self.ai:
+            self.ai.update(self, dt)
+
         if self.acceleration != vec3(0):
             self.velocity += self.acceleration * dt
         if self.velocity != vec3(0):

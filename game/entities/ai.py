@@ -1,12 +1,12 @@
 from math import cos, sin, pi
 
-from glm import vec3
+from glm import vec3, normalize, length
 
 
 class AI:
     def __call__(self, entity):
         """Use it to set initial conditions from the entity"""
-        pass
+        return self
 
     def update(self, entity, dt):
         pass
@@ -24,10 +24,51 @@ class CircleAi(AI):
         return self
 
     def update(self, entity, dt):
-        super().update(entity, dt)
+        if not entity.alive:
+            return
+
         self.angle += self.angular_speed * dt
         self.angle %= pi * 2
 
         entity.position = entity.ai_start_pos + vec3(
             cos(self.angle) * self.radius, sin(self.angle) * self.radius, 0
         )
+
+
+class ChasingAi(AI):
+    def __init__(self, speed=20):
+        self.speed = speed
+
+    def update(self, entity, dt):
+        if not entity.alive:
+            return
+        player = entity.app.state.player  # Assume state is Game
+        dir = player.position - entity.position
+        dir.z = 0
+        if dir != vec3(0):
+            if abs(dir.x) < 40 and abs(dir.y) < 40:
+                # Too close, go away
+                entity.position -= normalize(dir) * self.speed * dt
+            else:
+                # Far get closer
+                entity.position += normalize(dir) * self.speed * dt
+
+
+class AvoidAi(AI):
+    def __init__(self, speed=20, radius=40):
+        self.radius = radius
+        self.speed = speed
+
+    def update(self, entity, dt):
+        if not entity.alive:
+            return
+
+        player = entity.app.state.player  # Assume state is Game
+        dir = player.position - entity.position
+        dir.z = 0
+        if dir != vec3(0) and length(dir.xy) < self.radius:
+            # Too close, go away
+            entity.position -= normalize(dir) * self.speed * dt
+
+
+#
