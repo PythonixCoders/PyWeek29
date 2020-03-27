@@ -132,10 +132,10 @@ class Level:
                 yield self.pause(0.04)
 
     def cloudy(self):
-        for i in range(20):
-            x = randint(-2000, 2000)
-            y = randint(300, 600)
-            z = randint(-7000, -3000)
+        for i in range(30):
+            x = randint(-3000, 3000)
+            y = randint(100, 300)
+            z = randint(-4000, -1300)
             pos = vec3(x, y, z)
             self.scene.add(
                 Cloud(self.app, self.scene, pos, self.app.state.player.velocity.z)
