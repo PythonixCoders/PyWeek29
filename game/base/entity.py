@@ -38,9 +38,6 @@ class Entity:
         self.sounds = {}
         self.particle = kwargs.get("particle")
 
-        ai = kwargs.get("ai")
-        self.ai: AI = ai(self) if ai else None
-
         self._script_func = False
 
         self._script = None
@@ -78,6 +75,9 @@ class Entity:
         elif isinstance(script, str):
             # load script from string 'scripts/' folder
             self._script = Script(self.app, self, script, use_input=False)
+
+        ai = kwargs.get("ai")
+        self.ai: AI = ai(self) if ai else None
 
     def __str__(self):
         return f"{self.__class__.__name__}(pos: {self.position})"
