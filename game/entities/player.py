@@ -285,6 +285,9 @@ class Player(Being):
         return aim
 
     def fire(self, button):
+        if not self.alive:
+            return
+
         if not button.pressed:
             return
 

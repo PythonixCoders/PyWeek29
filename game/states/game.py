@@ -188,7 +188,14 @@ class Game(State):
         # pos_pos = (self.terminal.size.x - len(pos_display), 0)
         # self.terminal.write(pos_display, pos_pos)
 
+        # self.debug = True
         if self.debug:
+            self.terminal.write(
+                "Sc/when:  " + str(len(self.scene.script.when)) + "     ", 14
+            )
+            self.terminal.write("S/when:  " + str(len(self.scene.when)) + "     ", 15)
+            self.terminal.write("SL:  " + str(len(self.scene.slotlist)) + "     ", 16)
+            self.terminal.write("Res:  " + str(len(self.app.cache)) + "     ", 17)
             self.terminal.write(f"FPS low:  {self.scene.lowest_fps}    ", 18)
             self.terminal.write(f"Pmax:     {self.scene.max_particles}    ", 19)
             self.terminal.write(f"Entities: {len(self.scene.slots)}   ", 20)

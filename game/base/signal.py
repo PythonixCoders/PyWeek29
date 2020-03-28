@@ -13,6 +13,9 @@ class SlotList:
     def __bool__(self):
         return bool(self._slots)
 
+    def __len__(self):
+        return len(self._slots)
+
     def __iadd__(self, slot):
         assert slot is not None
         if isinstance(slot, (tuple, list)):

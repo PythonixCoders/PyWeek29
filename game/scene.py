@@ -247,15 +247,12 @@ class Scene(Signal):
             return None, None, None
         channel.set_volume(SOUND_VOLUME)
         if callback:
-            slot = self.when.once(self.sounds[0].get_length(), callback)
-            self.slotlist += slot
+            self.when.once(self.sounds[0].get_length(), callback, weak=False)
         else:
             slot = None
         self.sounds[filename] = (sound, channel, slot)
         channel.play(sound, *args)
-        self.slotlist += self.when.once(
-            sound.get_length(), lambda: self.remove_sound(sound)
-        )
+        self.when.once(sound.get_length(), lambda: self.remove_sound(sound), weak=False)
         return sound, channel, slot
 
     @property
@@ -503,7 +500,7 @@ class Scene(Signal):
         # extra scripts
         if self.scripts:
             self.scripts.each(lambda x, dt: x.update(dt), dt)
-            # self.scripts.slots = list(filter(self.filter_script, self.scripts.slots))
+            self.scripts.slots = list(filter(self.filter_script, self.scripts.slots))
 
         # self.sort(lambda a, b: a.z < b.z)
         # self.slots = sorted(self.slots, key=z_compare)
