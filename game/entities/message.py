@@ -23,17 +23,25 @@ class Message(Entity):
 
         self.collision_size = self.size = vec3(24 * len(text), 24, 150)
         self.font_size = ivec2(24, 24)
-        font_fn = "data/PressStart2P-Regular.ttf"
-
-        self.font = self.app.load(
-            font_fn + ":" + str(self.font_size.y),
-            lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
-        )
 
         self.shadow_color = pygame.Color(120, 120, 120, 0)
         self.shadow2_color = pygame.Color(0, 0, 0, 0)
 
         self.set(text, color)
+
+    @property
+    def font_size(self):
+        return self._font_size
+
+    @font_size.setter
+    def font_size(self, value):
+        self._font_size = value
+
+        font_fn = "data/PressStart2P-Regular.ttf"
+        self.font = self.app.load(
+            font_fn + ":" + str(self.font_size.y),
+            lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
+        )
 
     def set(self, text, color):
         self.text = text
