@@ -41,7 +41,7 @@ class Blast(Entity):
 
         self.solid = True
 
-        self.play_sound("hurt.wav")
+        # self.play_sound("hurt.wav")
 
     def update(self, t):
         super().update(t)

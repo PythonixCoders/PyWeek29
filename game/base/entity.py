@@ -225,7 +225,9 @@ class Entity:
 
         self.on_update(dt)
 
-    def render(self, camera, surf=None, pos=None, scale=True, fade=True):
+    def render(
+        self, camera, surf=None, pos=None, scale=True, fade=True, cull=False, big=False
+    ):
         """
         Tries to renders surface `surf` from camera perspective
         If `surf` is not provided, render self._surface (loaded from filename)
@@ -235,6 +237,12 @@ class Entity:
 
         if not pos:
             pos = self.position
+
+        pp = self.scene.player.position if self.scene.player else vec4(0)
+        if cull:
+            if pos.x < pp.x - 1000 or pos.x > pp.x + 1000:
+                self.remove()
+                return
 
         surf: SurfaceType = surf or self._surface
         if not surf:
@@ -255,12 +263,14 @@ class Entity:
         size = ivec2(pos_bl.xy - pos_tl.xy)
         self.render_size = size
 
-        if not scale or 400 > size.x > 0:
+        if not scale or 400 > size.x > 0 or big:
             if scale:
                 # print(ivec2(size))
                 surf = pygame.transform.scale(surf, ivec2(size))
 
-            if fade:
+            # don't fade close sprites
+            far = abs(pos.z - pp.z) > 1000
+            if fade and far:
                 max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
                 alpha = surf_fader(max_fade_dist, camera.distance(pos))
                 # If fade is integer make it bright faster
@@ -270,6 +280,9 @@ class Entity:
                 else:
                     surf.set_alpha(alpha)
                     surf.set_colorkey(0)
+            # if not far:
+            #     if not 'Rain' in str(self) and not 'Rock' in str(self):
+            #         print('skipped fade', self)
             self.app.screen.blit(surf, ivec2(pos_tl))
 
         # if size.x > 150:

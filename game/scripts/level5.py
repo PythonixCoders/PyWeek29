@@ -4,6 +4,7 @@ from game.scripts.level import Level
 from game.entities.butterfly import Butterfly
 from game.entities.buttabomber import ButtaBomber
 from game.entities.flyer import Flyer
+from game.entities.boss import Boss
 
 
 class Level5(Level):
@@ -18,15 +19,13 @@ class Level5(Level):
         self.scene.rocks()
         self.scene.stars()
         self.scene.rain()
-        self.scene.lightning(0)
 
         yield from super().__call__()
 
-        for x in range(5):
-            self.square(0.25, 0, ButtaBomber)
-            yield self.small_pause()
-            self.square(0.25, 0, Flyer)
-            yield self.big_pause()
+        self.spawn(0, 0, None, Boss)
+        yield self.small_pause()
+        # self.square(0.25, 0, Flyer)
+        # yield self.big_pause()
 
         # for i in range(1, 4):
         #     self.spawn(i / 14, 0)

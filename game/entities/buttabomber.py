@@ -42,7 +42,7 @@ class ButtaBomber(Enemy):
         self.scripts += [self.injured, self.approach]
 
     def get_animation(self, color="red"):
-        cache_id = ("blue_lepidopter.gif:frames", color)
+        cache_id = ("buttabomber.gif:frames", color)
         if cache_id in self.app.cache:
             return self.app.cache[cache_id]
 
@@ -122,8 +122,8 @@ class ButtaBomber(Enemy):
                 player = self.app.state.player
                 if player and player.alive:
                     to_player = glm.normalize(player.position - self.position)
-                    self.velocity = vec3(nrand(10), nrand(10), 0)
-                    self.velocity += to_player * 20
+                    self.velocity = vec3(nrand(100), nrand(100), 0)
+                    self.velocity += to_player * 100
 
                     # ppos = self.scene.player.position
                     # pvel = self.scene.player.velocity

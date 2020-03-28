@@ -3,7 +3,7 @@ import random
 from typing import Union, Optional
 
 import glm  # for mix (conflicts with util.mix)
-from glm import vec3, vec4, normalize, cross, dot, vec2
+from glm import vec3, vec4, ivec2, ivec3, ivec4, normalize, cross, dot, vec2
 
 from game.constants import EPSILON, DEBUG
 import pygame
@@ -147,7 +147,13 @@ def estimate_3d_size(size_2d):
 
 
 def pg_color(c):
-    if isinstance(c, vec3):
+    if isinstance(c, pygame.Color):
+        return c
+    elif isinstance(c, vec3):
+        c = vec4(c, 0)
+    elif isinstance(c, ivec2):
+        c = vec4(c, 0, 0)
+    elif isinstance(c, ivec3):
         c = vec4(c, 0)
     elif isinstance(c, str):
         return pygame.Color(c)

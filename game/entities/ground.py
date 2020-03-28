@@ -5,9 +5,9 @@ from glm import vec3, vec4
 import glm
 import random
 
-from game.constants import FULL_FOG_DISTANCE, GREEN
+from game.constants import FULL_FOG_DISTANCE, GREEN, EPSILON
 from game.entities.camera import Camera
-from game.util import clamp, ncolor
+from game.util import *
 
 from game.base.entity import Entity
 
@@ -16,51 +16,51 @@ class Ground(Entity):
     def __init__(self, app, scene, height):
         super().__init__(app, scene)
         self.position = vec3(0, height, float("-inf"))
-        self.color = GREEN
-        self.delay = 0.5
+        self._color = pg_color(GREEN)
+        self.delay = 1
         self.delay_t = 0  # time until next redraw
+
+    def fade_opt(self, c):
+        """
+        Sets color only if it hasn't change for self.delay seconds
+        """
+        if self.delay_t > EPSILON:
+            return False
+
+        self.delay_t = self.delay
+
+        self.color = c
+        return True
 
     @property
     def color(self):
         return self._color
 
     @color.setter
-    def fade_opt(self, c):
-        """
-        Sets color only if it hasn't change for self.delay seconds
-        """
-        if self.delay_t < self.delay:
-            return False
-
-        print("???")
-        self.delay_t = self.delay
-
-        self.color(c)
-        return True
-
-    @color.setter
     def color(self, c):
-        self._color = c
+        # self._color = c
         self.texture = pygame.Surface(self.app.size / 8).convert()
-        self.texture.fill(self.color)
+        self.texture.fill(c)
         sky_color = self.scene.sky_color or ncolor("blue")
         for y in range(self.texture.get_height()):
             col = vec4(self.texture.get_at((0, y)).normalize())
             interp = (1 - y / self.texture.get_height()) * 2
+            print(c)
             col = glm.mix(col, sky_color, interp)
 
             for x in range(self.texture.get_width()):
-                randvec = vec4(vec3(random.random()), 0)
+                randvec = random_rgb()
                 c = col
                 c = glm.mix(col, randvec, 0.05)
-                c = [int(clamp(x * 255, 0, 255)) for x in c]
-                pgc = pygame.Color(*c)
+                # c = [int(clamp(x * 255, 0, 255)) for x in c]
+                # print(c)
+                pgc = pg_color(c)
                 self.texture.set_at((x, y), pgc)
         self.texture = pygame.transform.scale(self.texture, self.app.size)
 
     def update(self, t):
         super().update(t)
-        self.delay_t = max(0, self.delay - t)
+        self.delay_t = max(0, self.delay_t - t)
 
     def render(self, camera: Camera):
         super().render(camera)

@@ -9,7 +9,7 @@ from game.constants import *
 from glm import vec3, vec4, ivec4
 from game.base.script import Script
 from game import util
-from game.util import clamp, ncolor
+from game.util import clamp, ncolor, pg_color
 from game.entities.cloud import Cloud
 from game.entities.rock import Rock
 from game.entities.rain import Rain
@@ -61,16 +61,16 @@ class Scene(Signal):
 
         # color change delays when using opt funcs
         self.delay_t = 0
-        self.delay = 1
+        self.delay = 0.2
         self.time = 0
 
         self.sky_color = None
-        self.ground_color = None
+        # self.ground_color = GREEN
         self.dt = 0
         self.sounds = {}
 
         # self.script_fn = script
-        # self.event_slot = self.app.on_event.connect(self.event)
+        # self.event_slot = self.app.on_event.connect(self.even)
 
         # self.script_resume_condition = None
 
@@ -102,8 +102,9 @@ class Scene(Signal):
         if self.has_clouds:
             return
 
+        pv = self.player.velocity if self.player else vec3(0)
         if hasattr(self.app.state, "player"):
-            velz = self.app.state.player.velocity.z
+            velz = pv.z
         else:
             velz = 0
         for i in range(30):
@@ -139,20 +140,20 @@ class Scene(Signal):
 
     def add_rock(self):
 
-        velz = self.app.state.player.velocity.z
+        velz = self.player.velocity.z if self.player else vec3(0)
         x = randint(-500, 500)
         y = GROUND_HEIGHT - 15
-        z = -5000
-        ppos = self.app.state.player.position
+        z = -9000
+        ppos = self.player.position if self.player else vec3(0)
         pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
         self.add(Rock(self.app, self, pos, velz))
 
     def add_rain_drop(self):
-        velz = self.app.state.player.velocity.z
-        x = randint(-300, 300)
+        velz = self.player.velocity.z if self.player else 0
+        x = randint(-400, 400)
         y = randint(0, 300)
         z = randint(-5000, -2000)
-        ppos = self.app.state.player.position
+        ppos = self.player.position if self.player else vec3(0)
         pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
         self.add(Rain(self.app, self, pos, velz, particle=True))
 
@@ -170,7 +171,7 @@ class Scene(Signal):
 
     def stars(self):
         if hasattr(self.app.state, "player"):
-            velz = self.app.state.player.velocity.z
+            velz = self.player.velocity.z
         else:
             velz = 0
 
@@ -278,15 +279,16 @@ class Scene(Signal):
 
     @ground_color.setter
     def ground_color(self, color):
-        self._ground_color = color
-        if color:
-            if not self.ground:
-                self.ground = self.add(Ground(self.app, self, GROUND_HEIGHT))
+        if color is None:
+            return
 
-            c = ncolor(color)
-            self.ground.color = pygame.Color(
-                int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
-            )
+        self._ground_color = ncolor(color)
+        if not self.ground:
+            self.ground = self.add(Ground(self.app, self, GROUND_HEIGHT))
+
+        self.ground.color = color
+        if "ROCK" in self.app.cache:
+            del self.app.cache["ROCK"]  # rocks need to reload their color
 
     @music.setter
     def music(self, filename):
@@ -357,7 +359,7 @@ class Scene(Signal):
         self._sky_color = ncolor(c) if c else None
         self.draw_sky()
         # reset ground gradient (depend on sky color)
-        self.ground_color = self.ground_color
+        self.ground_color = self._ground_color
 
     # for scripts to call when.fade(1, set_sky_color)
     def set_sky_color(self, c):
@@ -367,9 +369,9 @@ class Scene(Signal):
         """
         Optimized for fades.
         """
-        if self.delay_t < self.delay:
-            self.set_ground_color_opt(self.ground_color)
+        if self.delay_t > EPSILON:
             return False
+        print("delay")
 
         self.delay_t = self.delay
 
@@ -387,7 +389,12 @@ class Scene(Signal):
         """
         Optimized for fades.
         """
-        self.ground_color = ncolor(c) if c else None
+        if not self.ground:
+            self.ground = self.add(Ground(self.app, self, GROUND_HEIGHT))
+        if c:
+            self.ground.fade_opt(ncolor(c))
+        else:
+            self.ground = None
 
     def remove(self, entity):
         # self.slotlist -= entity
@@ -460,7 +467,7 @@ class Scene(Signal):
         self.lowest_fps = min(self.app.fps, self.lowest_fps)
 
         if self.app.fps < 45:
-            self.max_particles = max(self.max_particles / 2, 8)
+            self.max_particles = max(self.max_particles / 2, 4)
 
         if self.lowest_fps >= 60:
             if self.app.fps > 120:
@@ -480,6 +487,7 @@ class Scene(Signal):
 
         self.time += dt
         # print(self.time)
+        self.delay_t = max(0, self.delay_t - dt)
 
         # do time-based events
         self.when.update(dt)
@@ -497,8 +505,9 @@ class Scene(Signal):
             # self.scripts.slots = list(filter(self.filter_script, self.scripts.slots))
 
         # self.sort(lambda a, b: a.z < b.z)
-        self.slots = sorted(self.slots, key=z_compare)
-        self.slots = list(filter(lambda x: not x.get().removed, self.slots))
+        # self.slots = sorted(self.slots, key=z_compare)
+        self.slots.sort(key=z_compare)
+        # self.slots = list(filter(lambda x: not x.get().removed, self.slots))
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)

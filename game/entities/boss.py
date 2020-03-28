@@ -2,6 +2,8 @@ from os import path
 
 import pygame
 import glm
+from glm import ivec2
+import math
 
 from game.base.enemy import Enemy
 from game.base.entity import Entity
@@ -14,7 +16,7 @@ from game.constants import *
 
 
 class Boss(Enemy):
-    NB_FRAMES = 4
+    NB_FRAMES = 1
     DEFAULT_SCALE = 5
 
     def __init__(
@@ -28,36 +30,56 @@ class Boss(Enemy):
         """
         super().__init__(app, scene, position=pos, ai=ai)
 
-        self.scene.music = "butterfly2.mp3"
+        # self.scene.music = "butterfly2.mp3"
 
         self.num = num
         self.frames = self.get_animation(color)
+        self._surface = self.frames[0]
 
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
 
         self.time = 0
         self.frame = 0
-        self.hp = 100
+        self.hp = 500
         self.damage = 1
 
         # drift slightly in X/Y plane
-        self.velocity = nrand()
+        # self.velocity = nrand()
 
-        self.scripts += [self.randomly_fire, self.randomly_charge]
+        self.scripts += [self.throw, self.approach]
 
-    def get_animation(self, color):
-        filename = path.join(SPRITES_DIR, "butterfly-orange.png")
+    def get_animation(self, color="red"):
+        cache_id = ("buttabomber.gif:frames", color)
+        if cache_id in self.app.cache:
+            return self.app.cache[cache_id]
+
+        color = pg_color(color)
+
+        filename = path.join(SPRITES_DIR, "buttabomber.gif")
 
         # load an image if its not already in the cache, otherwise grab it
-        image: pygame.SurfaceType = self.app.load_img(filename)
 
-        h, s, v = rgb2hsv(*color)
-        brighter = hsv2rgb(h + 0.03, s + 0.1, v + 0.1)
-        darker = hsv2rgb(h - 0.06, s - 0.1, v - 0.1)
-        very_darker = hsv2rgb(h + 0.2, 0.5, 0.2)
+        self.app.cache[cache_id] = frames
+        return frames
 
-        palette = [(1, 0, 1), (0, 0, 0), brighter, color, darker, very_darker]
+    def get_animation(self, color):
+        filename = path.join(SPRITES_DIR, "buttabomber.gif")
+
+        # load an image if its not already in the cache, otherwise grab it
+        # image: pygame.SurfaceType = self.app.load_img('BOSS')
+        if "BOSS" not in self.app.cache:
+            image = pygame.image.load(filename)
+            image = pygame.transform.scale(image, ivec2(256))
+            self.app.cache["BOSS"] = image
+        else:
+            image = self.app.cache["BOSS"]
+
+        brighter = color
+        darker = pygame.Color("yellow")
+        very_darker = pygame.Color("gold")
+
+        palette = [(1, 0, 1), (0, 0, 0), brighter, darker, very_darker]
 
         image.set_palette(palette)
         image.set_colorkey((1, 0, 1))  # index 0
@@ -70,7 +92,12 @@ class Boss(Enemy):
             for i in range(self.NB_FRAMES)
         ]
 
-        return frames
+        self.width = image.get_width() // self.NB_FRAMES
+        self.height = image.get_height()
+        self.size = ivec2(image.get_size())
+        self.render_size = ivec2(image.get_size())
+
+        return [image]
 
     def fall(self):
         self.velocity = -Y * 100
@@ -87,7 +114,6 @@ class Boss(Enemy):
 
         self.scripts = []
         self.explode()
-        self.play_sound("butterfly.wav")
         self.fall()
         return True
 
@@ -95,7 +121,13 @@ class Boss(Enemy):
     #     return super().hurt(damage, bullet, player)
 
     def update(self, dt):
-        self.time += dt * 10
+        self.time += dt
+
+        s = 300
+        st = 1
+        self.position.x = s * math.sin(self.time * st)
+        self.position.y = s * math.sin(self.time * st) / 3
+
         super().update(dt)
 
     def render(self, camera: Camera):
@@ -106,3 +138,49 @@ class Boss(Enemy):
 
         surf = self.frames[int(self.time + self.num) % self.NB_FRAMES]
         super(Boss, self).render(camera, surf)
+
+    def approach(self, script):
+        yield
+
+        self.velocity = Z * 4000
+
+        while True:
+            yield script.sleep(0.2)
+            ppos = self.scene.player.position
+            v = ppos - self.position
+            d = glm.length(v)
+            if d < 4000:
+                # self.velocity = vec3(
+                #     nrand(20), nrand(20), self.scene.player.velocity.z * nrand(1)
+                # )
+                # self.position.z = self.scene.player.position.z# + math.sin(self.time)
+                self.velocity.z = self.scene.player.velocity.z
+                # while True:
+                #     # self.position.z = math.sin(self.time)
+                #     yield
+
+    def render(self, camera):
+        super().render(
+            camera,
+            surf=self._surface,
+            pos=None,
+            scale=True,
+            fade=True,
+            cull=False,
+            big=True,
+        )
+
+    def throw(self, script):
+        yield
+
+        # self.velocity = Z * 4000
+
+        # while True:
+        #     yield script.sleep(0.2)
+        #     ppos = self.scene.player.position
+        #     v = ppos - self.position
+        #     d = glm.length(v)
+        #     if d < 2500:
+        #         self.velocity = vec3(
+        #             nrand(20), nrand(20), self.scene.player.velocity.z * nrand(1)
+        #         )
