@@ -182,7 +182,7 @@ class TracingBullet(Bullet):
                 continue
 
             d = length(e.position - self.position)
-            if 300 < d < dist:
+            if 200 < d < dist:
                 dist = d
                 closest = e
         return closest
@@ -210,7 +210,7 @@ class TracingBullet(Bullet):
 class TracingGun(Weapon):
     letter = "A"
     color = "green"
-    max_ammo = 100
+    max_ammo = 20
     sound = "shoot.wav"
     speed = 3
 

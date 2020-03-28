@@ -46,6 +46,7 @@ class Level:
         """
         Use this as a context manager to skip parts of a level with creating it.
 
+        Only works when DEBUG is True
         Exemple:
 
         self.pause(5)  # This will happen
@@ -57,9 +58,9 @@ class Level:
         self.spawn(0, 0)  # This will happen
 
         """
-        self._skip += 1
+        self._skip += DEBUG
         yield
-        self._skip -= 1
+        self._skip -= DEBUG
 
     def spawn_powerup(self, x: float, y: float, letter: str = None):
         """
@@ -144,13 +145,23 @@ class Level:
             yield self.small_pause()
 
     def rotating_circle(
-        self, n, radius, speed_mult=1, center=(0, 0), simultaneous=True, Type=Butterfly
+        self,
+        n,
+        radius,
+        speed_mult=1,
+        center=(0, 0),
+        simultaneous=True,
+        ai=None,
+        Type=Butterfly,
     ):
+        ai = ai or self.default_ai
+
         speed = self.speed * speed_mult
         for i in range(n):
             angle = i / n * 2 * pi
 
-            self.spawn(center[0], center[1], CircleAi(radius, angle, speed / radius))
+            a = CircleAi(radius, angle, speed / radius)
+            self.spawn(center[0], center[1], CombinedAi(a, ai))
 
             if simultaneous:
                 yield self.pause(0)
@@ -170,6 +181,10 @@ class Level:
     def rotating_v_shape(
         self, n, start_angle=0, angular_mult=1, ai=None, Type=Butterfly
     ):
+        if self._skip:
+            yield self.pause(0)
+            return
+
         angular_speed = self.angular_speed * angular_mult
         ai = ai or self.default_ai
 
@@ -188,6 +203,9 @@ class Level:
     def slow_type(
         self, text, line=5, color="white", delay=0.1, clear=False, blink=False
     ):
+        if self._skip:
+            yield self.pause(0)
+            return
 
         for i, letter in enumerate(text):
             self.terminal.write_center(

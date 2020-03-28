@@ -18,10 +18,14 @@ class Level4(Level):
     ground = "#F7CA18"
     sky = "#303266"
     music = "butterfly.ogg"
-    default_ai = AvoidAi(10, 30)
+    default_ai = AvoidAi(50, 40)
 
     def __call__(self):
         self.scene.stars()
+
+        # reset in case we are doing the level again
+        # As it is changed throughout the level
+        self.default_ai = AvoidAi(50, 40)
 
         yield from super().__call__()
 
@@ -32,7 +36,6 @@ class Level4(Level):
         Put it an end
         While they're still weak!
         """
-
         yield from self.slow_type_lines(text, 5, "yellow", 0.05)
 
         for i in range(10):
@@ -56,13 +59,46 @@ class Level4(Level):
         yield self.bigg_pause()
 
         text = """
-Those butterflies sure are tough guys.
-     Take this aiming bullets.        
-      And teach them a lesson!        
+They sure are avoiding well.
+Take those aiming bullets.
+And teach them a lesson!        
         """.splitlines()
-        yield from self.slow_type(text[1])
-        yield from self.slow_type(text[2])
-        yield from self.slow_type(text[3], color="red")
+        yield from self.slow_type(text[1], color="yellow")
+        yield from self.slow_type(text[2].center(len(text[1])), color="yellow")
+        yield from self.slow_type(text[3].center(len(text[1])), color="red")
+
+        self.spawn_powerup(0, 0, "A")
+        yield self.big_pause()
+
+        self.default_ai.radius *= 1.3
+
+        for i in range(20):
+            self.spawn(uniform(-0.3, 0.3), 0)
+            yield self.small_pause()
+        yield self.big_pause()
+
+        yield from self.combine(
+            self.rotating_v_shape(5), self.rotating_v_shape(5, start_angle=pi),
+        )
+        yield self.big_pause()
+
+        self.spawn_powerup(0, 0, "A")
+        yield from self.rotating_circle(5, 30, 1.3)
+        yield self.big_pause()
+
+        self.spawn(0, 0)
+        yield from self.rotating_circle(5, 60, 1.5)
+        self.spawn_powerup(0, 0, "A")
+        yield self.huge_pause()
+
+        yield from self.rotating_circle(
+            8, 100,
+        )
+        self.huge_pause()
+
+        yield from self.rotating_v_shape(4)
+        self.medium_pause()
+        yield from self.rotating_v_shape(4)
 
         # TODO: Check for level clear ?
         yield self.huge_pause()
