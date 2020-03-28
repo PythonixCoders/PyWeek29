@@ -7,8 +7,8 @@ from game.entities.flyer import Flyer
 from game.entities.boss import Boss
 
 
-class Level5(Level):
-    number = 5
+class Level7(Level):
+    number = 7
     name = '"Big Butta"'
     ground = "darkblue"
     sky = "darkred"
@@ -31,7 +31,7 @@ class Level5(Level):
                 e = slot.get()
                 if isinstance(e, Boss):
                     continue
-            yield
+            break
 
         yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)
