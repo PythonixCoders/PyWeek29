@@ -22,7 +22,6 @@ class Credits(State):
 
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
 
         self.time = 0
         self.bg_color = ncolor("darkred")

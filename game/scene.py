@@ -371,7 +371,7 @@ class Scene(Signal):
         """
         if self.delay_t > EPSILON:
             return False
-        print("delay")
+        # print("delay")
 
         self.delay_t = self.delay
 

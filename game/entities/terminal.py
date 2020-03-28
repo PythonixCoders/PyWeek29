@@ -121,7 +121,13 @@ class Terminal(Entity):
             )
 
     def write(
-        self, text, pos=(0, 0), color=(1, 1, 1, 0), offset=(0, 0), align=-1, length=0,
+        self,
+        text,
+        pos=(0, 0),
+        color=vec4(1, 1, 1, 0),
+        offset=(0, 0),
+        align=-1,
+        length=0,
     ):
 
         if isinstance(pos, (int, float)):

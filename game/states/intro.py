@@ -23,8 +23,7 @@ class Intro(State):
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.bigterm = self.scene.add(Terminal(self.app, self.scene, 32))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
-
+        self.scene.ground_color = "darkgreen"
         self.time = 0
 
         rows = 8

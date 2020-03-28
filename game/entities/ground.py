@@ -17,8 +17,9 @@ class Ground(Entity):
         super().__init__(app, scene)
         self.position = vec3(0, height, float("-inf"))
         self._color = pg_color(GREEN)
-        self.delay = 1
+        self.delay = 0.2
         self.delay_t = 0  # time until next redraw
+        self.color = GREEN
 
     def fade_opt(self, c):
         """
