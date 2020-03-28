@@ -198,7 +198,7 @@ def mix(a, b, t):
 
 
 def random_vec3(s=1):
-    return vec3(nrand(s), nrand(s), nrand(s))
+    return glm.normalize(vec3(nrand(), nrand(), nrand())) * s
 
 
 def random_rgb():

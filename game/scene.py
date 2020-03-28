@@ -37,13 +37,15 @@ class Scene(Signal):
         self.ground = None
         self._ground_color = None
         self._script = None
+        self.scripts = Signal(lambda fn: Script(self.app, self, fn))
+        self.lightning_slot = None
+        self.lightning_density = 0
 
         self.player = None
 
         self.rock_slot = None
         self.rain_slot = None
         self.has_clouds = False
-        self.lightning_density = 0
         self.lowest_fps = 1000
 
         self.on_render = Signal()
@@ -121,15 +123,16 @@ class Scene(Signal):
         )
         self.play_sound("lightning.wav")
 
-    # def lightning_script(self, script, density):
-    #     yield
-    #     while True:
-    #         yield scene.sleep(density)
+    def lightning_script(self, script):
+        yield
+        while True:
+            yield script.sleep(1 / self.lightning_density * random.random())
+            self.lightning_strike()
 
-    # def lightning(self, freq=.01):
-    #     assert freq <= 1
-    #     self.lightning_slot = self.when.every(0.1, self.poll_lightning)
-    #     self.lightning_density = freq
+    def lightning(self, density=0.01):
+
+        self.lightning_density = density
+        self.lightning_slot = self.scripts.connect(self.lightning_script)
 
     def add_rock(self):
 
@@ -460,6 +463,16 @@ class Scene(Signal):
             if self.app.fps > 120:
                 self.max_particles = min(self.max_particles * 2, 64)
 
+    def filter_script(self, slot):
+        if isinstance(slot, weakref.ref):
+            wref = slot
+            slot = wref()
+            if not slot:
+                return False
+        if slot.get().done():
+            return False
+        return True
+
     def update(self, dt):
 
         self.time += dt
@@ -471,8 +484,14 @@ class Scene(Signal):
         self.update_collisions(dt)
         self.refresh()
 
+        # main level script
         if self._script:
             self._script.update(dt)
+
+        # extra scripts
+        if self.scripts:
+            self.scripts.each(lambda x, dt: x.update(dt), dt)
+            # self.scripts.slots = list(filter(self.filter_script, self.scripts.slots))
 
         # self.sort(lambda a, b: a.z < b.z)
         self.slots = sorted(self.slots, key=z_compare)

@@ -47,7 +47,7 @@ class Intro(State):
     def change_logo_color(self, script):
         terminal = self.terminal
 
-        msg = "~~~ BUTTERFLY DESTROYERS ~~~"
+        msg = "BUTTERFLY DESTROYERS"
 
         c = glm.mix(self.scene.ground_color, random_rgb(), 0.5)
         terminal.write(msg, (len(msg) / 2 - 1, 1), c * 2)
