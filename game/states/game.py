@@ -15,6 +15,7 @@ from game.entities.camera import Camera
 from game.entities.player import Player
 from game.entities.terminal import Terminal
 from game.entities.powerup import Powerup
+from game.base.enemy import Enemy
 from game.entities.buttabomber import ButtaBomber
 from game.entities.flyer import Flyer
 from game.util import pg_color, ncolor
@@ -41,9 +42,6 @@ class Game(State):
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.player = self.scene.add(Player(app, self.scene))
-
-        # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
-        self.scene.add(Flyer(app, self.scene, vec3(1000, 0, -3000)))
 
         stats = self.stats = self.app.data["stats"] = self.app.data.get(
             "stats", Stats()
@@ -238,6 +236,8 @@ class Game(State):
         Called by player when() event after death
         """
         # clear terminal
+        self.scene.clear_type(Enemy)
+
         for x in range(2, 20):
             self.terminal.clear()
         self.level = self._level  # retriggers

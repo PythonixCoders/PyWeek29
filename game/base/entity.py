@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from typing import TYPE_CHECKING
 
+import pygame
 from glm import ivec2
 from pygame.surface import SurfaceType
 
@@ -263,9 +264,13 @@ class Entity:
             if fade:
                 max_fade_dist = camera.screen_dist * FULL_FOG_DISTANCE
                 alpha = surf_fader(max_fade_dist, camera.distance(pos))
-
-                surf.set_alpha(alpha)
-                surf.set_colorkey(0)
+                # If fade is integer make it bright faster
+                alpha = clamp(int(alpha * fade), 0, 255)
+                if surf.get_flags() & pygame.SRCALPHA:
+                    surf.fill((255, 255, 255, alpha), None, pygame.BLEND_RGBA_MULT)
+                else:
+                    surf.set_alpha(alpha)
+                    surf.set_colorkey(0)
             self.app.screen.blit(surf, ivec2(pos_tl))
 
         # if size.x > 150:
