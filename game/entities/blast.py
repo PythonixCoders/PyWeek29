@@ -23,9 +23,12 @@ class Blast(Entity):
         self.scene = scene
         self.color = ncolor(color)
         self.radius = radius
-        self.damage = 1  # 1dmg/sec
+        self.damage = damage  # 1dmg/sec
         self.spread = spread
         self.parent = None
+
+        # if self.damage:
+        #     self.play_sound('explosion.wav')
 
         self.collision_size = self.size = vec3(radius)
         self.font_size = ivec2(24, 24)

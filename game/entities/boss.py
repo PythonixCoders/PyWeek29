@@ -42,9 +42,7 @@ class Boss(Enemy):
         self.damage = 1
 
         # drift slightly in X/Y plane
-        self.velocity = (
-            vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
-        )
+        self.velocity = nrand()
 
         self.scripts += [self.randomly_fire, self.randomly_charge]
 

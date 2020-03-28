@@ -7,18 +7,17 @@ import pygame
 from glm import vec3, sign
 from random import randint
 
+from game.scene import Scene
 from game.base.inputs import Inputs, Axis, Button, JoyAxis, JoyButton, JoyAxisTrigger
 from game.base.state import State
-from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR, DEBUG
+from game.constants import CAMERA_OFFSET, SCRIPTS_DIR, DEBUG
 from game.entities.camera import Camera
-from game.entities.ground import Ground
 from game.entities.player import Player
 from game.entities.terminal import Terminal
 from game.entities.powerup import Powerup
 from game.entities.buttabomber import ButtaBomber
 from game.entities.flyer import Flyer
 from game.util import pg_color, ncolor
-from game.scene import Scene
 from game.base.signal import SlotList
 from game.base.stats import Stats
 
@@ -32,9 +31,6 @@ class Game(State):
         self.gui = Scene(self.app, self)
         self.slots = SlotList()
         self.paused = False
-        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
-
-        # self.scene.add(Flyer(app, self.scene, vec3(0, 0, -3000)))
 
         # self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
         # self.scene.add(Powerup(app, self.scene, 'star', position=vec3(0, 0, -3000)))
@@ -44,9 +40,10 @@ class Game(State):
 
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
         self.player = self.scene.add(Player(app, self.scene))
+
         # self.msg = self.scene.add(Message(self.app, self.scene, "HELLO"))
+        self.scene.add(Flyer(app, self.scene, vec3(1000, 0, -3000)))
 
         stats = self.stats = self.app.data["stats"] = self.app.data.get(
             "stats", Stats()
@@ -240,4 +237,7 @@ class Game(State):
         """
         Called by player when() event after death
         """
+        # clear terminal
+        for x in range(2, 20):
+            self.terminal.clear()
         self.level = self._level  # retriggers

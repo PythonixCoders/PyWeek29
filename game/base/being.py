@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from game.base.entity import Entity
+from game.base.stats import Stats
 from game.constants import *
 import random
 from glm import vec3
@@ -18,6 +19,7 @@ class Being(Entity):
         self.stats = None
         self.alive = True  # prevent mutliple kill()
         self.friendly = False
+        self.stats = Stats()
 
     def hurt(self, dmg, bullet, damager):
         """
@@ -34,9 +36,10 @@ class Being(Entity):
             if self.hp == 0:
                 killed = self.kill(dmg_taken, bullet, damager)
             if isinstance(damager, Being) and damager.stats:
-                damager.stats.kills = int(killed)
+                damager.stats.kills += int(killed)
+                self.stats.damage_taken += dmg_taken
                 damager.stats.damage_done += dmg_taken
-                damager.score += max(int(dmg_taken), 1)
+                damager.stats.score += max(int(dmg_taken), 1)
         return dmg_taken
 
     def explode(self):

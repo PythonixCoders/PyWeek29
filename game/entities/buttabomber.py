@@ -28,7 +28,7 @@ class ButtaBomber(Enemy):
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
 
-        self.hp = 50
+        self.hp = 3
 
         self.time = 0
         self.frame = 0
@@ -39,7 +39,7 @@ class ButtaBomber(Enemy):
             vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
         )
 
-        self.scripts += [self.charge, self.injured]
+        self.scripts += [self.injured, self.approach]
 
     def get_animation(self, color="red"):
         cache_id = ("blue_lepidopter.gif:frames", color)
@@ -86,13 +86,13 @@ class ButtaBomber(Enemy):
             Blast(
                 self.app,
                 self.scene,
-                10,  # radius
+                2,  # radius
                 "white",
                 1,  # damage
                 100,  # spread
                 position=self.position,
                 velocity=self.velocity,
-                life=1,
+                life=0.2,
             ),
         )
         self.remove()
@@ -144,22 +144,22 @@ class ButtaBomber(Enemy):
                     return
             yield
 
-    def charge(self, script):
-        """
-        Behavior script: Charge towards player randomly
-        """
-        yield  # no call during entity ctor
+    # def charge(self, script):
+    #     """
+    #     Behavior script: Charge towards player randomly
+    #     """
+    #     yield  # no call during entity ctor
 
-        while True:
-            # print('charge')
+    #     while True:
+    #         # print('charge')
 
-            player = self.app.state.player
-            if player and player.alive:
-                to_player = player.position - self.position
-                if glm.length(to_player) < 3000:  # wihin range
-                    to_player = player.position - self.position
-                    self.velocity = glm.normalize(to_player) * 200
-            yield
+    #         player = self.app.state.player
+    #         if player and player.alive:
+    #             to_player = player.position - self.position
+    #             if glm.length(to_player) < 3000:  # wihin range
+    #                 to_player = player.position - self.position
+    #                 self.velocity = glm.normalize(to_player) * 200
+    #         yield
 
     def render(self, camera: Camera):
 
@@ -180,3 +180,19 @@ class ButtaBomber(Enemy):
                     self.frames = self.get_animation(color)
                     yield script.sleep(0.25)
             yield
+
+    def approach(self, script):
+        yield
+
+        self.velocity = Z * 4000
+
+        while True:
+            yield script.sleep(0.2)
+            ppos = self.scene.player.position
+            v = ppos - self.position
+            d = glm.length(v)
+            if d < 2500:
+                self.velocity = vec3(
+                    nrand(20), nrand(20), self.scene.player.velocity.z * nrand(1)
+                )
+                break

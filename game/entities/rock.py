@@ -24,7 +24,7 @@ class Rock(Entity):
         self._surface = pygame.Surface(ivec2(8))
         self._surface.fill(self.color)
 
-        self.velocity = Z * 1000
+        self.velocity = Z * 500
 
     def render(self, camera):
         return super().render(camera, scale=False)

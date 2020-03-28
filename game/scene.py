@@ -14,6 +14,7 @@ from game.entities.cloud import Cloud
 from game.entities.rock import Rock
 from game.entities.rain import Rain
 from game.entities.star import Star
+from game.entities.ground import Ground
 
 from random import randint
 import math
@@ -33,8 +34,11 @@ class Scene(Signal):
         self.when = When()
         self.slotlist = SlotList()
         self._sky_color = None
+        self.ground = None
         self._ground_color = None
         self._script = None
+
+        self.player = None
 
         self.rock_slot = None
         self.rain_slot = None
@@ -109,7 +113,7 @@ class Scene(Signal):
         self.when.once(
             0.1, lambda oldsky=oldsky: self.set_sky_color(oldsky), weak=False
         )
-        self.play_sound("hit.wav")
+        # self.play_sound("lightning.wav")
 
     def poll_lightning(self):
         if self.lightning_density < EPSILON:
@@ -265,8 +269,11 @@ class Scene(Signal):
     def ground_color(self, color):
         self._ground_color = color
         if color:
+            if not self.ground:
+                self.ground = self.add(Ground(self.app, self, GROUND_HEIGHT))
+
             c = ncolor(color)
-            self.app.state.ground.color = pygame.Color(
+            self.ground.color = pygame.Color(
                 int(c[0] * 255), int(c[1] * 255), int(c[2] * 255)
             )
 
@@ -327,7 +334,7 @@ class Scene(Signal):
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slot = weakref.ref(slot)
-        self.slotlist += slot
+        # self.slotlist += slot
         return entity
 
     @property
@@ -372,7 +379,7 @@ class Scene(Signal):
         self.ground_color = ncolor(c) if c else None
 
     def remove(self, entity):
-        self.slotlist -= entity
+        # self.slotlist -= entity
         super().disconnect(entity)
 
     # def resume(self):

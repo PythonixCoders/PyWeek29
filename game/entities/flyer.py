@@ -1,4 +1,5 @@
 from os import path
+import glm
 
 from game.base.enemy import Enemy
 from game.constants import *
@@ -21,42 +22,40 @@ class Flyer(Enemy):
         """
         super().__init__(app, scene, position=pos, ai=ai)
 
-        self.num = num
-        self.frames = self.get_animation(color)
-
-        size = self.frames[0].get_size()
-        self.collision_size = self.size = vec3(*size, min(size))
-
         self.hp = 10
 
         self.time = 0
         self.frame = 0
         self.damage = 3
+        self.speed = 100
+        self.injured = False
 
-        # drift slightly in X/Y plane
-        self.velocity = (
-            vec3(random.random() - 0.5, random.random() - 0.5, 0) * random.random() * 2
-        )
+        self.flipped = (self.scene.player.position.z - self.position.z) < 0
 
-        # self.scripts += [self.charge, self.injured]
+        ppos = self.scene.player.position
+        self.velocity.x = glm.sign(self.scene.player.position.z - self.position.z)
+        self.flipped = self.velocity.x < EPSILON
 
-    def get_animation(self, flipped=False):
+        self.num = num
+        self.frames = [
+            self.get_animation(False, self.flipped),
+            self.get_animation(True, self.flipped),
+        ]
 
-        filename = "flyer.png"
+        size = self.frames[0][0].get_size()
+        self.collision_size = self.size = vec3(*size, min(size))
+
+    def get_animation(self, flipped=False, injured=False):
+
+        if injured:
+            filename = "flyer2.png"
+        else:
+            filename = "flyer.png"
 
         # load an image if its not already in the cache, otherwise grab it
         image: pygame.SurfaceType = self.app.load_img(
             filename, scale=1, flipped=flipped
         )
-
-        # brighter = color
-        # darker = pygame.Color("darkred")
-        # very_darker = pygame.Color("black")
-
-        # palette = [(1, 0, 1), (0, 0, 0), brighter, darker, very_darker]
-
-        # image.set_palette(palette)
-        # image.set_colorkey((1, 0, 1))  # index 0
 
         self.width = image.get_width() // self.NB_FRAMES
         self.height = image.get_height()
@@ -78,10 +77,13 @@ class Flyer(Enemy):
         return True
 
     def hurt(self, damage, bullet, player):
+        self.injured = True
         return super().hurt(damage, bullet, player)
 
     def update(self, dt):
+
         self.time += dt
+
         super().update(dt)
 
     # def injured(self, script):
@@ -137,8 +139,9 @@ class Flyer(Enemy):
             self.remove()
             return
 
-        self.frames = self.get_animation(self.velocity.x >= 0)
-        surf = self.frames[int(self.time * 20 + self.num) % self.NB_FRAMES]
+        surf = self.frames[self.injured][
+            int(self.time * 20 + self.num) % self.NB_FRAMES
+        ]
         super(Flyer, self).render(camera, surf)
 
     # def __call__(self, script):

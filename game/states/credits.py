@@ -60,7 +60,6 @@ class Credits(State):
 
         textdelay = 0.02
 
-        fade = []
         fades = [
             when.fade(
                 10,

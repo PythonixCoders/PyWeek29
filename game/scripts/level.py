@@ -6,6 +6,8 @@ from glm import vec3, ivec2, normalize, vec2
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.ai import CircleAi, CombinedAi
 from game.entities.butterfly import Butterfly
+from game.entities.buttabomber import ButtaBomber
+from game.entities.flyer import Flyer
 from game.entities.camera import Camera
 from game.entities.powerup import Powerup
 from game.scene import Scene
@@ -75,7 +77,7 @@ class Level:
 
         self.scene.add(Powerup(self.app, self.scene, letter, position=pos))
 
-    def spawn(self, x: float = 0, y: float = 0, ai=None):
+    def spawn(self, x: float = 0, y: float = 0, ai=None, Type=Butterfly):
         """
         Spawn a butterfly at position (x, y) at the current max depth
         :param x: float between -1 and 1. 0 is horizontal center of the screen
@@ -94,9 +96,7 @@ class Level:
         ) * vec3(*camera.screen_size / 2, 1)
 
         butt = self.scene.add(
-            Butterfly(
-                self.app, self.scene, pos, random_color(), num=self.spawned, ai=ai
-            )
+            Type(self.app, self.scene, pos, random_color(), num=self.spawned, ai=ai)
         )
 
         self.spawned += 1
@@ -129,11 +129,11 @@ class Level:
     def huge_pause(self):
         return self.pause(self.huge)
 
-    def square(self, c, ai=None):
-        self.spawn(c, c, ai)
-        self.spawn(c, -c, ai)
-        self.spawn(-c, c, ai)
-        self.spawn(-c, -c, ai)
+    def square(self, c, ai=None, Type=Butterfly):
+        self.spawn(c, c, ai, Type)
+        self.spawn(c, -c, ai, Type)
+        self.spawn(-c, c, ai, Type)
+        self.spawn(-c, -c, ai, Type)
 
     def circle(self, n, radius, ai=None):
         """Spawn n butterflies in a centered circle of given radius"""
@@ -144,7 +144,7 @@ class Level:
             yield self.small_pause()
 
     def rotating_circle(
-        self, n, radius, speed_mult=1, center=(0, 0), simultaneous=True
+        self, n, radius, speed_mult=1, center=(0, 0), simultaneous=True, Type=Butterfly
     ):
         speed = self.speed * speed_mult
         for i in range(n):
@@ -157,17 +157,19 @@ class Level:
             else:
                 yield self.small_pause()
 
-    def v_shape(self, n, dir=(1, 0), ai=None):
+    def v_shape(self, n, dir=(1, 0), ai=None, Type=Butterfly):
         dir = normalize(vec2(dir)) * 0.4  # *0.4 so it isn't too spread out
 
         self.spawn(0, 0)
         yield self.small_pause()
         for i in range(1, n):
-            self.spawn(*dir * i / n, ai)
-            self.spawn(*dir * -i / n, ai)
+            self.spawn(*dir * i / n, ai, Type)
+            self.spawn(*dir * -i / n, ai, Type)
             yield self.small_pause()
 
-    def rotating_v_shape(self, n, start_angle=0, angular_mult=1, ai=None):
+    def rotating_v_shape(
+        self, n, start_angle=0, angular_mult=1, ai=None, Type=Butterfly
+    ):
         angular_speed = self.angular_speed * angular_mult
         ai = ai or self.default_ai
 
@@ -178,8 +180,8 @@ class Level:
             # We sync the ai angles
             ai1 = CircleAi(i * 20, angle, angular_speed)
             ai2 = CircleAi(i * 20, angle + pi, angular_speed)
-            butt = self.spawn(0, 0, CombinedAi(ai, ai1))
-            self.spawn(0, 0, CombinedAi(ai, ai2))
+            butt = self.spawn(0, 0, CombinedAi(ai, ai1), Type)
+            self.spawn(0, 0, CombinedAi(ai, ai2), Type)
             yield self.small_pause()
             angle = butt.ai_angle
 
