@@ -127,10 +127,11 @@ class Scene(Signal):
     def lightning_script(self, script):
         yield
         while True:
-            yield script.sleep(1 / self.lightning_density * random.random())
+            yield script.sleep(1)
+            yield script.sleep((1 / self.lightning_density) * random.random())
             self.lightning_strike()
 
-    def lightning(self, density=0.01):
+    def lightning(self, density=0.5):
         if density < EPSILON:
             self.lightning_slot = None
             return

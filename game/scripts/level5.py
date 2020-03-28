@@ -15,17 +15,17 @@ class Level5(Level):
     music = "butterfly2.ogg"
 
     def __call__(self):
-        self.scene.cloudy()
-        self.scene.rocks()
-        self.scene.stars()
-        self.scene.rain()
+        # self.scene.cloudy()
+        # self.scene.rocks()
+        # self.scene.stars()
+        # self.scene.rain()
+        self.scene.lightning()
 
         yield from super().__call__()
 
         self.spawn(0, 0, None, Boss)
 
         while True:
-            print("a")
             for slot in self.scene.slots:
                 e = slot.get()
                 if isinstance(e, Boss):

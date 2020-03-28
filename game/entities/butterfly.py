@@ -11,7 +11,15 @@ class Butterfly(Enemy):
     DEFAULT_SCALE = 5
 
     def __init__(
-        self, app, scene, pos, color=ORANGE, scale=DEFAULT_SCALE, num=0, ai=None
+        self,
+        app,
+        scene,
+        pos,
+        color=ORANGE,
+        scale=DEFAULT_SCALE,
+        num=0,
+        ai=None,
+        **kwargs
     ):
         """
         :param app: our main App object
@@ -19,7 +27,7 @@ class Butterfly(Enemy):
         :param color: RGB tuple
         :param scale:
         """
-        super().__init__(app, scene, position=pos, ai=ai)
+        super().__init__(app, scene, position=pos, ai=ai, **kwargs)
 
         self.num = num
         self.frames = self.get_animation(color)

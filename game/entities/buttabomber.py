@@ -12,7 +12,15 @@ class ButtaBomber(Enemy):
     DEFAULT_SCALE = 10
 
     def __init__(
-        self, app, scene, pos, color=ORANGE, scale=DEFAULT_SCALE, num=0, ai=None
+        self,
+        app,
+        scene,
+        pos,
+        color=ORANGE,
+        scale=DEFAULT_SCALE,
+        num=0,
+        ai=None,
+        **kwargs
     ):
         """
         :param app: our main App object
@@ -20,7 +28,7 @@ class ButtaBomber(Enemy):
         :param color: RGB tuple
         :param scale:
         """
-        super().__init__(app, scene, position=pos, ai=ai)
+        super().__init__(app, scene, position=pos, ai=ai, **kwargs)
 
         self.num = num
         self.frames = self.get_animation(color)
@@ -73,11 +81,11 @@ class ButtaBomber(Enemy):
         self.app.cache[cache_id] = frames
         return frames
 
-    def fall(self):
-        self.frames = self.get_animation(pygame.Color("gray"))
-        self.velocity = -Y * 100
-        self.life = 2  # remove in 2 seconds
-        self.alive = False
+    # def fall(self):
+    #     self.frames = self.get_animation(pygame.Color("gray"))
+    #     self.velocity = -Y * 100
+    #     self.life = 2  # remove in 2 seconds
+    #     self.alive = False
 
     def blast(self):
         self.scripts.clear()
@@ -99,15 +107,18 @@ class ButtaBomber(Enemy):
 
     def kill(self, damage, bullet, player):
 
+        self.remove()
+
         if not self.alive:
             return False
 
-        self.blast()
         return True
 
     def hurt(self, damage, bullet, player):
         self.injured = True
-        self.play_sound("butterfly.wav")
+        self.blast()
+        self.position += 100
+        # bullet.remove()
         return super().hurt(damage, bullet, player)
 
     def update(self, dt):

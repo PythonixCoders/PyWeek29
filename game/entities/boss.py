@@ -9,7 +9,10 @@ from game.base.enemy import Enemy
 from game.base.entity import Entity
 from game.constants import Y, SPRITES_DIR, ORANGE, GRAY
 from game.entities.ai import AI
+from game.entities.butterfly import Butterfly
 from game.entities.bullet import Bullet
+from game.entities.buttabomber import ButtaBomber
+from game.entities.flyer import Flyer
 from game.entities.camera import Camera
 from game.util import *
 from game.constants import *
@@ -39,9 +42,10 @@ class Boss(Enemy):
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
 
+        self.solid = False
         self.time = 0
         self.frame = 0
-        self.hp = 500
+        self.hp = 1000
         self.damage = 1
 
         # drift slightly in X/Y plane
@@ -70,7 +74,7 @@ class Boss(Enemy):
         # image: pygame.SurfaceType = self.app.load_img('BOSS')
         if "BOSS" not in self.app.cache:
             image = pygame.image.load(filename)
-            image = pygame.transform.scale(image, ivec2(256))
+            image = pygame.transform.scale(image, ivec2(1024))
             self.app.cache["BOSS"] = image
         else:
             image = self.app.cache["BOSS"]
@@ -117,8 +121,10 @@ class Boss(Enemy):
         self.fall()
         return True
 
-    # def hurt(self, damage, bullet, player):
-    #     return super().hurt(damage, bullet, player)
+    def hurt(self, damage, bullet, player):
+        self.blast()
+        self.position += 500
+        return super().hurt(damage, bullet, player)
 
     def update(self, dt):
         self.time += dt
@@ -126,7 +132,7 @@ class Boss(Enemy):
         s = 300
         st = 1
         self.position.x = s * math.sin(self.time * st)
-        self.position.y = s * math.sin(self.time * st) / 3
+        self.position.y = s * math.sin(self.time * st) / 3 + 300
 
         super().update(dt)
 
@@ -144,7 +150,7 @@ class Boss(Enemy):
 
         self.velocity = Z * 4000
 
-        while True:
+        while self.scene.player.alive:
             yield script.sleep(0.2)
             ppos = self.scene.player.position
             v = ppos - self.position
@@ -165,7 +171,7 @@ class Boss(Enemy):
             surf=self._surface,
             pos=None,
             scale=True,
-            fade=False,
+            # fade=False,
             cull=False,
             big=True,
         )
@@ -173,14 +179,23 @@ class Boss(Enemy):
     def throw(self, script):
         yield
 
-        # self.velocity = Z * 4000
-
-        # while True:
-        #     yield script.sleep(0.2)
-        #     ppos = self.scene.player.position
-        #     v = ppos - self.position
-        #     d = glm.length(v)
-        #     if d < 2500:
-        #         self.velocity = vec3(
-        #             nrand(20), nrand(20), self.scene.player.velocity.z * nrand(1)
-        #         )
+        while self.scene.player.alive:
+            yield script.sleep(random.random() * 2)
+            assert self.scene.player
+            ppos = self.scene.player.position
+            v = ppos - self.position
+            r = random.randint(0, 3)
+            if r == 0:
+                self.scene.add(
+                    ButtaBomber(self.app, self.scene, self.position, velocity=v)
+                )
+            elif r == 1:
+                for x in range(5):
+                    self.scene.add(
+                        Flyer(self.app, self.scene, self.position, velocity=v)
+                    )
+            elif r == 2:
+                for x in range(2):
+                    self.scene.add(
+                        Butterfly(self.app, self.scene, self.position, velocity=v)
+                    )
