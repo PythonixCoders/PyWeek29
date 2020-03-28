@@ -41,12 +41,12 @@ class Game(State):
 
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.player = self.scene.add(Player(app, self.scene))
-
         stats = self.stats = self.app.data["stats"] = self.app.data.get(
             "stats", Stats()
         )
         self.level = stats.level
+        self.player = self.scene.add(Player(app, self.scene, level=self.level))
+
         # self.scripts += self.score_screen
 
         # self.camera.slots.append(

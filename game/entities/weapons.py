@@ -12,6 +12,7 @@ class Weapon(Entity):
     speed = 4
     max_ammo = 20
     damage = 1
+    level = 100  # Unlock level
 
     def __init__(self, app, scene, player):
         """
@@ -60,6 +61,7 @@ class Pistol(Weapon):
     sound = "shoot.wav"
     speed = 10
     damage = 1
+    level = -1
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -84,6 +86,7 @@ class MachineGun(Weapon):
     sound = "shoot.wav"
     speed = 20
     damage = 1
+    level = 2
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -126,6 +129,7 @@ class LaserGun(Weapon):
     sound = "laser.wav"
     speed = 6
     damage = 2
+    level = 3
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -213,6 +217,7 @@ class TracingGun(Weapon):
     max_ammo = 20
     sound = "shoot.wav"
     speed = 3
+    level = 4
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
