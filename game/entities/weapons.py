@@ -1,9 +1,11 @@
 import pygame
-from glm import vec3, normalize
+from glm import vec3, normalize, length
 
+from game.base.enemy import Enemy
 from game.base.entity import Entity
 from game.constants import BULLET_OFFSET, BULLET_IMAGE_PATH
 from game.entities.bullet import Bullet
+from game.util import debug_log_call
 
 
 class Weapon(Entity):
@@ -128,17 +130,64 @@ class LaserGun(Weapon):
         start = camera.rel_to_world(BULLET_OFFSET)
         direction = aim - start
 
-        for x in range(5):
-            yield Laser(
-                self.app,
-                self.scene,
-                self.parent,
-                start,
-                direction,
-                100,
-                "red",
-                self.damage / 5,
-            )
+        yield Laser(
+            self.app,
+            self.scene,
+            self.parent,
+            start,
+            direction,
+            100,
+            "red",
+            self.damage / 5,
+        )
 
 
-WEAPONS = [Pistol, MachineGun, LaserGun]
+class TracingBullet(Bullet):
+    def update(self, dt):
+        # Find closest enemy
+        dist = float("inf")
+        closest = None
+        for e in self.scene.iter_entities(Enemy):
+            print(e)
+            d = length(e.position - self.position)
+            if d < dist:
+                dist = d
+                closest = e
+
+        if closest:
+            dir = closest.position - self.position
+            xy_dir = normalize(dir.xy)
+            self.acceleration = vec3(xy_dir, 0) * 200
+            print(closest, dir, self.acceleration)
+        else:
+            self.acceleration = vec3(0)
+
+        return super().update(dt)
+
+
+class TracingGun(Weapon):
+    letter = "A"
+    color = "green"
+    max_ammo = 100
+    sound = "shoot.wav"
+
+    def __init__(self, app, scene, player):
+        super().__init__(player, self.max_ammo, 2, 1, app, scene)
+
+    def get_bullets(self, aim):
+        camera = self.app.state.camera
+        start = camera.rel_to_world(BULLET_OFFSET)
+        direction = aim - start
+
+        yield TracingBullet(
+            self.app,
+            self.scene,
+            self.parent,
+            start,
+            direction,
+            self.damage,
+            BULLET_IMAGE_PATH,
+        )
+
+
+WEAPONS = [Pistol, MachineGun, LaserGun, TracingGun]
