@@ -101,7 +101,7 @@ class Credits(State):
                 "    opengameart.org/users/pitrizzo",
             ],
             [
-                "This game was created by Team Pythonix",
+                "This game was created by Team PythonixCoders",
                 "for PyWeek 29, a week-long Python game",
                 "jam, where individuals or groups give",
                 "themselves only one week to create a",
