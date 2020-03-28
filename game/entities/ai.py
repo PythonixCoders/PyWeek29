@@ -89,7 +89,9 @@ class AvoidAi(AI):
         dir.z = 0
         if dir != vec3(0) and length(dir.xy) < self.radius:
             # Too close, go away
-            entity.velocity -= normalize(dir) * self.speed
+            entity.velocity = -vec3(normalize(dir.xy), 0) * self.speed
+        else:
+            entity.velocity = vec3(0)
 
 
 class RandomFireAi(AI):
