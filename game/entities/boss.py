@@ -165,7 +165,7 @@ class Boss(Enemy):
             surf=self._surface,
             pos=None,
             scale=True,
-            fade=True,
+            fade=False,
             cull=False,
             big=True,
         )

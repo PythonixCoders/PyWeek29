@@ -143,7 +143,7 @@ class Scene(Signal):
         velz = self.player.velocity.z if self.player else vec3(0)
         x = randint(-500, 500)
         y = GROUND_HEIGHT - 15
-        z = -9000
+        z = -4000
         ppos = self.player.position if self.player else vec3(0)
         pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
         self.add(Rock(self.app, self, pos, velz))

@@ -155,6 +155,10 @@ def pg_color(c):
         c = vec4(c, 0, 0)
     elif isinstance(c, ivec3):
         c = vec4(c, 0)
+    elif isinstance(c, ivec4):
+        c = vec4(c, 0)
+    elif isinstance(c, tuple):
+        return pygame.Color(*c)
     elif isinstance(c, str):
         return pygame.Color(c)
     c = [int(clamp(x * 255, 0, 255)) for x in c]

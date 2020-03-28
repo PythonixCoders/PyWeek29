@@ -38,14 +38,14 @@ class Ground(Entity):
 
     @color.setter
     def color(self, c):
-        # self._color = c
+        c = self._color = pg_color(c)
         self.texture = pygame.Surface(self.app.size / 8).convert()
-        self.texture.fill(c)
+        self.texture.fill(self._color)
         sky_color = self.scene.sky_color or ncolor("blue")
         for y in range(self.texture.get_height()):
             col = vec4(self.texture.get_at((0, y)).normalize())
             interp = (1 - y / self.texture.get_height()) * 2
-            print(c)
+            # print(c)
             col = glm.mix(col, sky_color, interp)
 
             for x in range(self.texture.get_width()):
