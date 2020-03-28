@@ -86,7 +86,6 @@ class Blast(Entity):
         #     return
 
         screen_pos = pos_tl + size
-        print(screen_pos, size, pos_tl)
         pygame.gfxdraw.filled_circle(
             self.app.screen,
             int(abs(screen_pos.x - size.x / 2)),
