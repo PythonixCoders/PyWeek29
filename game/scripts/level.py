@@ -140,7 +140,7 @@ class Level:
             self.spawn(*dir * -i / n, ai)
             yield self.pause(delay)
 
-    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.05, ai=None):
+    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.5, ai=None):
         ai = ai or self.default_ai
 
         self.spawn(0, 0)
