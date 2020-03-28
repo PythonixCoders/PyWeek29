@@ -20,6 +20,7 @@ class Level6(Level):
         # self.scene.lightning_strike()
 
         yield from super().__call__()
+        self.engine_boost(1.5)
 
         yield from self.slow_type("Welcome to Planet Butter", line=4, delay=0.05)
         yield from self.slow_type(

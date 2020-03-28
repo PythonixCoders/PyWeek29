@@ -28,6 +28,7 @@ class Level4(Level):
         self.default_ai = AvoidAi(50, 40)
 
         yield from super().__call__()
+        self.engine_boost(1.5)
 
         text = """
         The butterflies have been hiding
@@ -64,10 +65,10 @@ Take those aiming bullets.
 And teach them a lesson!        
         """.splitlines()
         yield from self.slow_type(text[1], color="yellow")
-        yield from self.slow_type(text[2].center(len(text[1])), color="yellow")
-        yield from self.slow_type(text[3].center(len(text[1])), color="red")
-
         self.spawn_powerup("A", 0, 0)
+        yield from self.slow_type(text[2].center(len(text[1])), color="green")
+        yield from self.slow_type(text[3].center(len(text[1])), color="yellow")
+
         yield self.big_pause()
 
         self.default_ai.radius *= 1.3

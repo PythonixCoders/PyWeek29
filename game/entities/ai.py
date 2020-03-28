@@ -135,7 +135,6 @@ class RandomFireAi(AI):
                         to_player,
                         entity.damage,
                         BULLET_IMAGE_PATH,
-                        3,
                         300,
                     )
                 )

@@ -78,6 +78,9 @@ class Level:
         :param letter: str powerup letter, None means random powerup
         """
 
+        if self._skip:
+            return
+
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
         pos = vec3(
@@ -140,6 +143,10 @@ class Level:
 
     def huge_pause(self):
         return self.pause(self.huge)
+
+    def engine_boost(self, mult):
+        self.app.state.player.speed.x *= mult
+        self.app.state.player.speed.y *= mult
 
     def square(self, c, ai=None, Type=Butterfly):
         self.spawn(c, c, ai, Type)
