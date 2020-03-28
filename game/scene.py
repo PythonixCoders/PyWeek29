@@ -258,7 +258,7 @@ class Scene(Signal):
     def add(self, entity):
         slot = self.connect(entity, weak=False)
         entity.slot = weakref.ref(slot)
-        self.slots.append(slot)
+        self.slotlist += slot
         return entity
 
     @property
@@ -302,17 +302,8 @@ class Scene(Signal):
         self.ground_color = ncolor(c) if c else None
 
     def remove(self, entity):
+        self.slotlist -= entity
         super().disconnect(entity)
-        # slot = entity.slot
-        # if slot:
-        #     entity.slot = None
-        #     if isinstance(slot, weakref.ref):
-        #         wslot = slot
-        #         slot = wslot()
-        #         if not slot:
-        #             return
-
-        #     super().disconnect(slot)
 
     # def resume(self):
     #     self.script_paused = False
@@ -407,15 +398,6 @@ class Scene(Signal):
 
         if self.sky_color is not None:
             self.app.screen.blit(self.sky, (0, 0))
-
-        # self.app.screen.fill(
-        #     pygame.Color(
-        #         int(self._sky_color[0] * 255),
-        #         int(self._sky_color[1] * 255),
-        #         int(self._sky_color[2] * 255),
-        #         int(self._sky_color[3] * 255),
-        #     )
-        # )
 
         # call render on each entity
         self.each(lambda x: x.render(camera))

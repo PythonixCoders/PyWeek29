@@ -111,7 +111,7 @@ class ButtaBomber(Enemy):
         return super().hurt(damage, bullet, player)
 
     def update(self, dt):
-        self.time += dt * 10
+        self.time += dt
         super().update(dt)
 
     def injured(self, script):

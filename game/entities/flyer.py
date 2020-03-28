@@ -81,7 +81,7 @@ class Flyer(Enemy):
         return super().hurt(damage, bullet, player)
 
     def update(self, dt):
-        self.time += dt * 10
+        self.time += dt
         super().update(dt)
 
     # def injured(self, script):
@@ -138,7 +138,7 @@ class Flyer(Enemy):
             return
 
         self.frames = self.get_animation(self.velocity.x >= 0)
-        surf = self.frames[int(self.time + self.num) % self.NB_FRAMES]
+        surf = self.frames[int(self.time * 20 + self.num) % self.NB_FRAMES]
         super(Flyer, self).render(camera, surf)
 
     # def __call__(self, script):
