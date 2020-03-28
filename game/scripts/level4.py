@@ -8,7 +8,7 @@
 from math import pi
 from random import uniform
 
-from game.entities.ai import CircleAi, ChasingAi, AvoidAi
+from game.entities.ai import AvoidAi
 from game.scripts.level import Level
 
 

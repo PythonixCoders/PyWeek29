@@ -111,6 +111,7 @@ class Player(Being):
         self.hp = 3
         self.visible = True
         self.alive = True
+        self.speed = vec3(PLAYER_SPEED)
 
         for wpn in self.weapons:
             wpn.remove()

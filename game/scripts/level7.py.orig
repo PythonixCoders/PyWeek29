@@ -5,11 +5,16 @@ from game.entities.butterfly import Butterfly
 from game.entities.buttabomber import ButtaBomber
 from game.entities.flyer import Flyer
 from game.entities.boss import Boss
+from game.scripts.level import Level
 
 
 class Level7(Level):
     number = 7
+<<<<<<< HEAD
+    name = '"Big Butta"'
+=======
     name = "The Last Butterfly"
+>>>>>>> start level5
     ground = "darkblue"
     sky = "darkred"
     music = "butterfly2.ogg"
@@ -40,6 +45,3 @@ class Level7(Level):
 
         yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)
-        yield
-
-        self.app.state = "credits"

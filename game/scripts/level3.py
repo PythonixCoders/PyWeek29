@@ -7,7 +7,7 @@ from game.scripts.level import Level
 
 class Level3(Level):
     number = 3
-    name = "The Butterflies Strike Back"
+    name = "Attack of the Butterflies"
     ground = GREEN
     sky = "#040a15"
     music = "butterfly.ogg"

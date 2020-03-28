@@ -1,4 +1,8 @@
+from math import pi
+from random import uniform
+         
 from game.constants import GREEN
+from game.entities.ai import RandomFireAi
 from game.scripts.level import Level
 
 from game.entities.butterfly import Butterfly
@@ -9,7 +13,7 @@ from game.entities.boss import Boss
 
 class Level5(Level):
     number = 5
-    name = "Uh Oh"
+    name = "The Butterflies Strike Back"
     ground = "darkblue"
     sky = "darkred"
     music = "butterfly2.ogg"
