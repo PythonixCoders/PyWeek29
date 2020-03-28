@@ -122,6 +122,7 @@ class Player(Being):
         # TODO: player death
         # self.scene.play_sound('explosion.wav')
         # self.acceleration = -Y * 100
+        self.hp = 0
         self.explode()
         # self.remove()
         self.visible = False

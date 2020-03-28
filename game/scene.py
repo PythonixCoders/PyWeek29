@@ -90,6 +90,12 @@ class Scene(Signal):
 
         self.slotlist += self.when.every(1, self.stabilize, weak=False)
 
+    def iter_entities(self, *types):
+        for slot in self.slots:
+            ent = slot.get()
+            if ent and isinstance(ent, types):
+                yield ent
+
     def cloudy(self):
         if self.has_clouds:
             return
