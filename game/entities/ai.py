@@ -1,8 +1,8 @@
-from math import cos, sin, pi
+from math import cos, sin, pi, acos
 from random import uniform
 
 import glm
-from glm import vec3, normalize, length
+from glm import vec3, normalize, length, sign
 
 from game.constants import BUTTERFLY_MIN_SHOOT_DIST, BULLET_IMAGE_PATH, DEBUG
 from game.entities.bullet import Bullet
@@ -20,6 +20,8 @@ class AI:
 
 
 class CircleAi(AI):
+    """Make an Entity turn in circle around it origin point."""
+
     sets_velocity = True
 
     def __init__(self, radius, start_angle=0, angular_speed=2):
@@ -29,6 +31,7 @@ class CircleAi(AI):
 
     def __call__(self, entity):
         entity.ai_angle = self.start_angle
+        entity.ai_start_pos = vec3(entity.position)
         entity.position += (
             vec3(cos(self.start_angle), sin(self.start_angle), 0) * self.radius
         )
@@ -38,13 +41,19 @@ class CircleAi(AI):
         if not entity.alive:
             return
 
-        entity.ai_angle += self.angular_speed * dt
-        entity.ai_angle %= pi * 2
+        # entity.ai_angle += self.angular_speed * dt
+        # entity.ai_angle %= pi * 2
+
+        # We recompute to better handle other AIs
+        d = (entity.position - entity.ai_start_pos).xy
+        r = length(d)
+        d /= r
+        entity.ai_angle = acos(d.x) * sign(d.y)
 
         entity.velocity = (
             vec3(-sin(entity.ai_angle), cos(entity.ai_angle), 0)
             * self.angular_speed
-            * self.radius
+            * r
         )
 
         # if DEBUG:

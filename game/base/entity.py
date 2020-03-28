@@ -196,7 +196,6 @@ class Entity:
         channel.play(sound, *args)
         return sound, channel, slot
 
-    @debug_log_call
     def update(self, dt):
 
         if self.ai:

@@ -53,6 +53,22 @@ class Level1(Level):
             self.spawn(0, i / 14)
             self.spawn(0, -i / 14)
             yield self.small_pause()
+        yield self.medium_pause()
+
+        yield from self.circle(20, 0.3, instant=True)
+        yield self.bigg_pause()
+        yield from self.circle(20, 0.3, instant=True)
+        yield self.medium_pause()
+
+        self.spawn_powerup(0, 0, "heart")
+        yield from self.combine(self.circle(20, 0.2), self.circle(20, -0.2))
+        self.huge_pause()
+
+        yield from self.circle(10, 0.1, instant=True)
+        self.small_pause()
+        yield from self.circle(5, 0.05, instant=True)
+        self.medium_pause()
+        yield from self.circle(15, 0.15, instant=True)
 
         # TODO: Check for level clear ?
         yield self.huge_pause()

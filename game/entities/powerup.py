@@ -42,6 +42,7 @@ class Powerup(Message):
         assert color
 
         super().__init__(app, scene, self.letter, color, **kwargs)
+        self.velocity.z = 100
 
         self.solid = True
 
@@ -49,6 +50,8 @@ class Powerup(Message):
         self.collision_size = vec3(100, 100, 300)
         self.time = 0
         self.offset = vec3(0)
+        self.velocity.z = 100
+
         self.velocity.z = 100
 
     def __call__(self, script):
