@@ -119,7 +119,5 @@ class Flyer(Enemy):
                 self.play_sound("squeak.wav")
                 v = glm.mix(Z, to_player, 0.75)
                 self.scene.add(
-                    Bullet(
-                        self.app, self.scene, self, self.position, v, life=3, speed=1000
-                    )
+                    Bullet(self.app, self.scene, self, self.position, v, speed=1000)
                 )

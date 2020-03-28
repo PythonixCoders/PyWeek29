@@ -36,6 +36,7 @@ class Bullet(Entity):
         self.solid = True
         self.size.z = BULLET_SIZE  # to prevent tunneling
         self.parent = parent  # whoever shot the bullet
+        self.life = SCREEN_DIST * FULL_FOG_DISTANCE * 1.2 / self.speed
 
     def collision(self, other, dt):
         # enemy vs player or player vs enemy?

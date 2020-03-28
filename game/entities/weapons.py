@@ -163,12 +163,11 @@ class TracingBullet(Bullet):
         direction,
         damage,
         img=BULLET_IMAGE_PATH,
-        life=1,
         speed=BULLET_SPEED,
         **kwargs
     ):
         super().__init__(
-            app, scene, parent, position, direction, damage, img, life, speed, **kwargs
+            app, scene, parent, position, direction, damage, img, speed, **kwargs
         )
 
         self.aim = self.find_aim()

@@ -22,6 +22,7 @@ class Level5(Level):
         self.scene.lightning()
 
         yield from super().__call__()
+        self.engine_boost(1.5)
 
         self.spawn(0, 0, None, Boss)
 
