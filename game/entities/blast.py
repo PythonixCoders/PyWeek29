@@ -28,7 +28,7 @@ class Blast(Entity):
         self.parent = None
 
         if self.damage:
-            self.play_sound('explosion.wav')
+            self.play_sound("explosion.wav")
 
         self.collision_size = self.size = vec3(radius)
         self.font_size = ivec2(24, 24)

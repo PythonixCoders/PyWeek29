@@ -121,16 +121,15 @@ class Scene(Signal):
         )
         self.play_sound("lightning.wav")
 
-    def poll_lightning(self):
-        if self.lightning_density < EPSILON:
-            return
-        if random.random() > 1 / (self.lightning_density * 10):
-            self.lightning_strike()
+    # def lightning_script(self, script, density):
+    #     yield
+    #     while True:
+    #         yield scene.sleep(density)
 
-    def lightning(self, freq=1):
-        assert freq >= 0
-        self.lightning_slot = self.when.every(0.1, self.poll_lightning)
-        self.lightning_density = freq
+    # def lightning(self, freq=.01):
+    #     assert freq <= 1
+    #     self.lightning_slot = self.when.every(0.1, self.poll_lightning)
+    #     self.lightning_density = freq
 
     def add_rock(self):
 
