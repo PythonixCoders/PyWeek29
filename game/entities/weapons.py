@@ -3,13 +3,13 @@ from glm import vec3, normalize, length, dot
 
 from game.base.enemy import Enemy
 from game.base.entity import Entity
-from game.constants import BULLET_OFFSET, BULLET_IMAGE_PATH, BULLET_SPEED
+from game.constants import BULLET_OFFSET, BULLET_IMAGE_PATH, BULLET_SPEED, LASER_SPEED
 from game.entities.bullet import Bullet
 from game.util import debug_log_call, clamp
 
 
 class Weapon(Entity):
-    speed = 2
+    speed = 4
     max_ammo = 20
     damage = 1
 
@@ -58,7 +58,7 @@ class Pistol(Weapon):
     letter = "P"
     max_ammo = -1
     sound = "shoot.wav"
-    speed = 3
+    speed = 10
     damage = 1
 
     def get_bullets(self, aim):
@@ -80,9 +80,9 @@ class Pistol(Weapon):
 class MachineGun(Weapon):
     color = "orange"
     letter = "M"
-    max_ammo = 25
+    max_ammo = 60
     sound = "shoot.wav"
-    speed = 6
+    speed = 20
     damage = 1
 
     def get_bullets(self, aim):
@@ -104,7 +104,9 @@ class MachineGun(Weapon):
 
 class Laser(Bullet):
     def __init__(self, app, scene, parent, position, direction, length, color, damage):
-        super().__init__(app, scene, parent, position, direction, damage)
+        super().__init__(
+            app, scene, parent, position, direction, damage, speed=LASER_SPEED
+        )
         self.color = pygame.Color(color)
         self.size.z = length
 
@@ -120,9 +122,9 @@ class Laser(Bullet):
 class LaserGun(Weapon):
     letter = "L"
     color = "red"
-    max_ammo = 20
+    max_ammo = 30
     sound = "laser.wav"
-    speed = 2
+    speed = 6
     damage = 2
 
     def get_bullets(self, aim):
@@ -136,9 +138,9 @@ class LaserGun(Weapon):
             self.parent,
             start,
             direction,
-            100,
+            300,
             "red",
-            self.damage / 5,
+            self.damage,
         )
 
 
@@ -210,7 +212,7 @@ class TracingGun(Weapon):
     color = "green"
     max_ammo = 100
     sound = "shoot.wav"
-    speed = 2
+    speed = 3
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
