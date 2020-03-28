@@ -132,7 +132,7 @@ class Boss(Enemy):
         s = 300
         st = 1
         self.position.x = s * math.sin(self.time * st)
-        self.position.y = s * math.sin(self.time * st) / 3 + 300
+        self.position.y = s * math.sin(self.time * st) / 3 + 150
 
         super().update(dt)
 

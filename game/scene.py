@@ -61,7 +61,7 @@ class Scene(Signal):
 
         # color change delays when using opt funcs
         self.delay_t = 0
-        self.delay = 0.2
+        self.delay = 0.5
         self.time = 0
 
         self.sky_color = None

@@ -25,6 +25,7 @@ class Intermission(State):
         self.terminal = self.scene.add(Terminal(self.app, self.scene))
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
+        self.terminal.position.z -= 10
 
         self.time = 0
         # self.bg_color = ncolor("darkred")
@@ -132,16 +133,17 @@ class Intermission(State):
                 self.scene.play_sound("hit.wav")
                 yield script.sleep(0.2 if script.keys else 0.4)
 
-        while True:
+        yield script.sleep(3)
+        # while True:
 
-            terminal.write_center("Press any key to continue", 20, "green")
-            yield script.sleep(0.2)
-            if script.keys_down:
-                break
-            terminal.clear(20)
-            yield script.sleep(0.2)
-            if script.keys_down:
-                break
+        #     terminal.write_center("Press any key to continue", 20, "green")
+        #     yield script.sleep(0.2)
+        #     if script.keys_down:
+        #         break
+        #     terminal.clear(20)
+        #     yield script.sleep(0.2)
+        #     if script.keys_down:
+        #         break
 
         self.stats.level += 1
         self.app.state = "game"
