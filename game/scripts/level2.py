@@ -53,7 +53,7 @@ class Level2(Level):
         )
 
         self.spawn_powerup("M", 0, 0)
-        yield self.big_pause()
+        yield self.bigg_pause()
         self.terminal.clear(5)
         self.terminal.clear(15)
         self.terminal.clear(17)
@@ -80,7 +80,7 @@ class Level2(Level):
         yield self.small_pause()
         yield from self.rotating_circle(11, 30)
         yield self.small_pause()
-        yield from self.rotating_circle(15, 40)
+        yield from self.rotating_circle(11, 40)
         yield self.big_pause()
 
         # TODO: Check for level clear ?
