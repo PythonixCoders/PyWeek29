@@ -259,6 +259,10 @@ class Level:
     def slow_type_lines(
         self, text: str, start_line=5, color="white", delay=0.08, clear=True
     ):
+        if self._skip:
+            yield self.pause(0)
+            return
+
         for i, line in enumerate(text.splitlines()):
             yield from self.slow_type(line.strip(), start_line + i, color, delay)
 
