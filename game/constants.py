@@ -56,3 +56,4 @@ be completely transparent.
 AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_DISTANCE
 BUTTERFLY_MIN_SHOOT_DIST = 1500
 DEBUG = False
+"""For abusing prints. Finding info will require grepping"""

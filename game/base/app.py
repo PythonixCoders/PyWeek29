@@ -6,7 +6,7 @@ from glm import ivec2, vec2
 
 from game.base.inputs import Inputs
 from game.base.signal import Signal
-from game.constants import SPRITES_DIR
+from game.constants import SPRITES_DIR, DEBUG
 from game.base.stats import Stats
 
 from game.states.game import Game
@@ -137,6 +137,9 @@ class App:
 
             if self.state is None:
                 break
+
+            if DEBUG:
+                print("FRAME, dt =", dt)
 
             self.inputs.update(dt)
             if self.update(dt) is False:

@@ -6,7 +6,7 @@ import random
 from random import randint
 
 from game.constants import FULL_FOG_DISTANCE, GREEN
-from game.entities.ai import CircleAi
+from game.entities.ai import CircleAi, CombinedAi
 from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.entities.camera import Camera
@@ -127,7 +127,7 @@ class Level:
         for i in range(n):
             angle = i / n * 2 * pi
 
-            self.spawn(center[0], center[1], CircleAi(radius, speed, angle))
+            self.spawn(center[0], center[1], CircleAi(radius, angle, speed / radius))
             yield self.pause(delay)
 
     def v_shape(self, n, delay=1, dir=(1, 0), ai=None):
@@ -140,20 +140,21 @@ class Level:
             self.spawn(*dir * -i / n, ai)
             yield self.pause(delay)
 
-    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.5):
-        ai = CircleAi(0, start_angle=start_angle, angular_speed=angular_speed)
+    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.05, ai=None):
+        ai = ai or self.default_ai
 
-        self.spawn(0, 0, ai)
-        yield self.pause(2)
+        self.spawn(0, 0)
+        yield self.pause(delay)
+        angle = start_angle
         for i in range(1, n):
             # We sync the ai angles
-            ai1 = CircleAi(i * 20, start_angle=ai.angle, angular_speed=angular_speed)
-            ai2 = CircleAi(
-                i * 20, start_angle=ai.angle + pi, angular_speed=angular_speed
-            )
-            self.spawn(0, 0, ai1)
-            self.spawn(0, 0, ai2)
+            ai1 = CircleAi(i * 20, angle, angular_speed)
+            ai2 = CircleAi(i * 20, angle + pi, angular_speed)
+            butt = self.spawn(0, 0, CombinedAi(ai, ai1))
+            self.spawn(0, 0, CombinedAi(ai, ai2))
             yield self.pause(delay)
+            angle = butt.ai_angle
+            print("FUCK", angle, butt.position)
 
     def slow_type(self, text, line, color="white", delay=0.1, clear=False):
         terminal = self.terminal

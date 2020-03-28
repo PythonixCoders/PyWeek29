@@ -9,7 +9,7 @@ from random import randint
 
 from game.base.inputs import Inputs, Axis, Button, JoyAxis, JoyButton, JoyAxisTrigger
 from game.base.state import State
-from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
+from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR, DEBUG
 from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player

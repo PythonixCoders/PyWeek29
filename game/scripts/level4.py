@@ -33,15 +33,16 @@ class Level4(Level):
         While they're still weak!
         """
 
-        yield from self.slow_type_lines(text, 5, "yellow", 0.05)
+        if False:
+            yield from self.slow_type_lines(text, 5, "yellow", 0.05)
 
-        for i in range(10):
-            self.spawn(uniform(-0.5, 0.5), 0)
+            for i in range(10):
+                self.spawn(uniform(-0.5, 0.5), 0)
+                yield self.pause(2)
             yield self.pause(2)
-        yield self.pause(2)
 
-        yield from self.v_shape(4)
-        yield self.pause(4)
+            yield from self.v_shape(4)
+            yield self.pause(4)
 
         yield from self.combine(
             self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)

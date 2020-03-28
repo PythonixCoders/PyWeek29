@@ -5,7 +5,7 @@ from typing import Union, Optional
 import glm  # for mix (conflicts with util.mix)
 from glm import vec3, vec4, normalize, cross, dot, vec2
 
-from game.constants import EPSILON
+from game.constants import EPSILON, DEBUG
 import pygame
 
 
@@ -203,3 +203,17 @@ def random_char():
     Random human-readable char
     """
     return chr(random.randint(32, 126))
+
+
+def debug_log_call(f: "function"):
+    if DEBUG:
+
+        def wrapper(*args, **kwargs):
+            ar = [str(a) for a in args]
+            kw = ["{n}={v}" for n, v in kwargs.items()]
+            print(f"CALL {f.__name__}({', '.join(ar + kw)})")
+            return f(*args, **kwargs)
+
+        return wrapper
+
+    return f

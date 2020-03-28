@@ -9,6 +9,8 @@ from game.entities.bullet import Bullet
 
 
 class AI:
+    sets_velocity = False
+
     def __call__(self, entity):
         """Use it to set initial conditions from the entity"""
         return self
@@ -18,32 +20,40 @@ class AI:
 
 
 class CircleAi(AI):
-    def __init__(self, radius, speed=100, start_angle=0, angular_speed=None):
+    sets_velocity = True
+
+    def __init__(self, radius, start_angle=0, angular_speed=0.5):
         self.radius = radius
-        if angular_speed:
-            self.angular_speed = angular_speed
-        else:
-            self.angular_speed = speed / radius / 2 / pi
-        self.start_pos = vec3(0)
-        self.angle = start_angle
+        self.angular_speed = angular_speed
+        self.start_angle = start_angle
 
     def __call__(self, entity):
-        entity.ai_start_pos = vec3(entity.position)
+        entity.ai_angle = self.start_angle
+        entity.position += (
+            vec3(cos(self.start_angle), sin(self.start_angle), 0) * self.radius
+        )
         return self
 
     def update(self, entity, dt):
         if not entity.alive:
             return
 
-        self.angle += self.angular_speed * dt
-        self.angle %= pi * 2
+        entity.ai_angle += self.angular_speed * dt
+        entity.ai_angle %= pi * 2
 
-        entity.position = entity.ai_start_pos + vec3(
-            cos(self.angle) * self.radius, sin(self.angle) * self.radius, 0
+        entity.velocity = (
+            vec3(-sin(entity.ai_angle), cos(entity.ai_angle), 0)
+            * self.angular_speed
+            * self.radius
         )
+
+        print(entity, entity.ai_angle)
+        # print(entity.velocity / self.radius)
 
 
 class ChasingAi(AI):
+    sets_velocity = True
+
     def __init__(self, speed=20):
         self.speed = speed
 
@@ -56,13 +66,15 @@ class ChasingAi(AI):
         if dir != vec3(0):
             if abs(dir.x) < 40 and abs(dir.y) < 40:
                 # Too close, go away
-                entity.position -= normalize(dir) * self.speed * dt
+                entity.velocity = normalize(dir) * self.speed
             else:
                 # Far get closer
-                entity.position += normalize(dir) * self.speed * dt
+                entity.velocity = normalize(dir) * self.speed
 
 
 class AvoidAi(AI):
+    sets_velocity = True
+
     def __init__(self, speed=20, radius=40):
         self.radius = radius
         self.speed = speed
@@ -76,7 +88,7 @@ class AvoidAi(AI):
         dir.z = 0
         if dir != vec3(0) and length(dir.xy) < self.radius:
             # Too close, go away
-            entity.position -= normalize(dir) * self.speed * dt
+            entity.velocity -= normalize(dir) * self.speed
 
 
 class RandomFireAi(AI):
@@ -86,6 +98,7 @@ class RandomFireAi(AI):
 
     def __call__(self, entity):
         entity.ai_next_fire = uniform(self.min_delay, self.max_delay)
+        return self
 
     def update(self, entity, dt):
         entity.ai_next_fire -= dt
@@ -117,6 +130,8 @@ class RandomFireAi(AI):
 
 
 class RandomChargeAI(AI):
+    sets_velocity = True
+
     def __init__(self, aggressivity=3):
         """
         The entity charges randomly at the player.
@@ -133,6 +148,7 @@ class RandomChargeAI(AI):
     def __call__(self, entity):
         entity.ia_next_charge = self.random_charge()
         entity.ai_charge_time = 0
+        return self
 
     def update(self, entity, dt):
         if entity.ai_charge_time > 0:
@@ -153,3 +169,32 @@ class RandomChargeAI(AI):
 
             if entity.ia_next_charge < 0:
                 entity.ai_charge_time = self.aggressivity ** 2 / 15 + 1
+
+
+class CombinedAi(AI):
+    def __init__(self, *ais):
+        """
+        Combines multiple ais.
+        No checks are made to prevent interferences.
+        """
+
+        self.ais = [ai for ai in ais if ai is not None]
+
+    def __call__(self, entity):
+        for ai in self.ais:
+            ai(entity)
+        return self
+
+    @property
+    def sets_velocity(self):
+        return any(ai.sets_velocity for ai in self.ais)
+
+    def update(self, entity, dt):
+        # Sum velocities if movement AIs
+        vel = vec3(0)
+        for ai in self.ais:
+            ai.update(entity, dt)
+            if ai.sets_velocity:
+                vel += entity.velocity
+        if self.sets_velocity:
+            entity.velocity = vel
