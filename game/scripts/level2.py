@@ -43,6 +43,7 @@ class Level2(Level):
             yield self.big_pause()
 
         yield from self.slow_type("They plan to swarm us.")
+        self.spawn_powerup("M", 0, 0)
         yield from self.slow_type("Take this Machine Gun!", color="green")
         self.terminal.write_center("Press shift to change guns.", 15)
         t = "X / Y on controller"
@@ -52,7 +53,6 @@ class Level2(Level):
             "Y", 17, color="yellow", length=len(t), char_offset=(4, 0)
         )
 
-        self.spawn_powerup("M", 0, 0)
         yield self.bigg_pause()
         self.terminal.clear(5)
         self.terminal.clear(15)

@@ -130,9 +130,9 @@ class Laser(Bullet):
 class LaserGun(Weapon):
     letter = "L"
     color = "red"
-    max_ammo = 30
+    max_ammo = 42
     sound = "laser.wav"
-    speed = 6
+    speed = 8
     damage = 2
     level = 3
 
