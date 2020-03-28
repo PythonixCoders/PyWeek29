@@ -82,10 +82,44 @@ There should be some snipers (butterflies far from the crowd)
 #### Level 6
 **Title**: A new Butterfly
 
+The butterfly try to take an other approch to
+stop you. This level introduces Flyers
+that traverse the screen and shoot at the player.
+It will be a hard level that needs a lot of Aiming bullets
+and hearts.
+
 #### Level 7
-**Title**: Revenge of the Butterfly
-#### Level 8
 **Title**: Return of the Butterfly
+An old war butterfly has finally decided
+to go one more time to the front. 
+And he is willing to give its life to this war.
+It introduce a strong ButtaBomber with a lot of other 
+simple butterflies.
+
+#### Level 8
+**Title**: Revenge of the Butterfly
+The butterflies decide to give everything they have 
+in one last battle. This is the final level
+that will need a bit of every weapon and patterns.
+
 #### Level 9
 **Title**: The Last Butterfly
 
+All the butterflies have been killed.
+But there is one left. Their King.
+And he is FUCKING ANGRY.
+
+This. 
+Is. 
+Bigg Butta.
+
+#### The End
+(text or graphics if we have time)
+
+Bigg Butta dies and explodes in zillions 
+of butterflies that take over the exausted
+ship and make it one of them. 
+The newborn innocent butterflies repopulate
+the earth for the joy of all humanity,  
+that had starteda long time ago to wonder 
+what was the point of this massacre  
