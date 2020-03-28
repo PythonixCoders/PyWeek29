@@ -34,10 +34,10 @@ class Level1(Level):
         self.square(0.25)
         yield self.pause(10)
 
-        yield from self.slow_type("The butterflies are organising !", 5, delay=0.08)
+        yield from self.slow_type("The butterflies are organising!", 5, delay=0.08)
         yield self.pause(2)
         yield from self.slow_type(
-            "Destroy them while we still can !", 5, "red", 0.08, True
+            "Destroy them while we still can!", 5, "red", 0.08, True
         )
 
         yield from self.v_shape(5)

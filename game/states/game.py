@@ -30,7 +30,7 @@ class Game(State):
         self.slots = SlotList()
         self.paused = False
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
-        # self.scene.add(ButtaBomber(app, self.scene, vec3(0,0,-2000)))
+        # self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
 
         # create terminal first since player init() writes to it
         self.terminal = self.gui.add(Terminal(self.app, self.scene))
@@ -45,6 +45,7 @@ class Game(State):
             "stats", Stats()
         )
         self.level = stats.level
+        # self.scripts += self.score_screen
 
         # self.camera.slots.append(
         #     self.player.on_move.connect(lambda: self.camera.update_pos(self.player))
@@ -192,69 +193,3 @@ class Game(State):
         Called by player when() event after death
         """
         self.level = self.level  # retriggers
-
-    def score_screen(self, script):
-        yield
-        self.player.hide_stats += 1
-
-        stats = self.stats
-
-        scene = self.scene
-        color = self.scene.color
-        terminal = self.terminal
-        self.scene.music = "intermission.ogg"
-
-        msg = [
-            ("Damage Done", stats.damage_done),
-            ("Damage Taken", stats.damage_taken),
-            ("Kills", stats.kills),
-            # ("Lives Remaining", stats.lives),
-            None,
-            ("Score", stats.score),
-        ]
-        for y, line in enumerate(msg):
-            if line:
-                scene.ensure_sound("message.wav")
-                for x, m in enumerate(line[0]):
-                    terminal.write(m, (x + 1, y * 2 + 3), "white")
-                    # terminal.write(m[:x], (x + 1, y * 2 + 3), "white")
-                    # terminal.write(m[-1], (x + 1 + len(m) - 1, y * 2 + 3), "red")
-                    if script.keys_down:
-                        yield script.sleep(0.01 if script.keys else 0.05)
-                    else:
-                        yield script.sleep(0.2 if script.keys else 0.05)
-            else:
-                continue
-            delay = 0.1
-            for val in range(0, line[1] + 1):
-                terminal.write(
-                    str(val),
-                    (self.terminal.size.x - len(str(val)) - 1, y * 2 + 3),
-                    "white",
-                )
-                delay **= 1.05
-                yield script.sleep(delay)
-            else:
-                if script.keys_down:
-                    yield script.sleep(0.01 if script.keys else 0.05)
-                else:
-                    yield script.sleep(0.2 if script.keys else 0.05)
-
-        t = 0
-        script.sleep(2)
-
-        # while True:
-
-        #     terminal.write_center("Press any key to continue", 20, "green")
-        #     yield script.sleep(0.2)
-        #     if script.keys_down:
-        #         break
-        #     terminal.clear(20)
-        #     yield script.sleep(0.2)
-        #     if script.keys_down:
-        #         break
-
-        # # self.stats.level += 1
-        # # self.app.state = "game"
-
-        self.player.hide_stats -= 1

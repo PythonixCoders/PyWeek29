@@ -6,24 +6,27 @@ from pygame.camera import Camera
 import random
 from random import randint
 
-from game.constants import FULL_FOG_DISTANCE
+from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.ai import CircleAi
 from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.entities.camera import Camera
 from game.entities.cloud import Cloud
 from game.entities.star import Star
+from game.scene import Scene
 from game.util import random_color
 
 
 class Level:
     sky = "#59ABE3"
+    ground = GREEN
     night_sky = "#00174A"
     name = "A Level"
+    default_ai = None
 
     def __init__(self, app, scene, script):
         self.app = app
-        self.scene = scene
+        self.scene: Scene = scene
         self.script = script
         self.spawned = 0
         self._skip = False
@@ -77,6 +80,8 @@ class Level:
 
         if self._skip:
             return
+
+        ai = ai or self.default_ai
 
         # Assuming the state is Game
         camera: Camera = self.app.state.camera
@@ -136,8 +141,8 @@ class Level:
             self.spawn(*dir * -i / n, ai)
             yield self.pause(delay)
 
-    def rotating_v_shape(self, n, delay=1, angular_speed=0.5):
-        ai = CircleAi(0, angular_speed=angular_speed)
+    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.5):
+        ai = CircleAi(0, start_angle=start_angle, angular_speed=angular_speed)
 
         self.spawn(0, 0, ai)
         yield self.pause(2)
@@ -156,7 +161,7 @@ class Level:
 
         left = ivec2((terminal.size.x - len(text)) / 2, line)
         for i, letter in enumerate(text):
-            terminal.write(letter, left + (i - 1, 0), color)
+            terminal.write(letter, left + (i, 0), color)
             self.scene.play_sound("type.wav")
             yield self.pause(delay)
 
@@ -164,9 +169,49 @@ class Level:
 
         if clear:
             for i, letter in enumerate(text):
-                terminal.clear(left + (i - 1, 0))
+                terminal.clear(left + (i, 0))
                 self.scene.play_sound("type.wav")
                 yield self.pause(delay / 4)
+
+    def slow_type_lines(
+        self, text: str, start_line, color="white", delay=0.08, clear=True
+    ):
+        for i, line in enumerate(text.splitlines()):
+            yield from self.slow_type(line.strip(), start_line + i, color, delay)
+
+        if clear:
+            for i, line in enumerate(text.splitlines()):
+                left = ivec2((self.terminal.size.x - len(line)) / 2, start_line + i)
+                for j in range(len(line)):
+                    self.terminal.clear(left + (j, 0))
+                    self.scene.play_sound("type.wav")
+                    yield self.pause(delay / 4)
+
+    def combine(self, *gens):
+        """
+        Combine the generators so they run at the same time.
+        This assumes they only yield pauses and at least one.
+        """
+
+        infinity = float("inf")
+        pauses = [0] * len(gens)
+
+        while True:
+            for i, gen in enumerate(gens):
+                if pauses[i] == 0:
+                    try:
+                        pauses[i] = next(gen).t
+                    except StopIteration:
+                        pauses[i] = infinity
+
+            m = min(pauses)
+            if m == infinity:
+                # They have all finished
+                return
+
+            yield self.pause(m)
+            for i in range(len(pauses)):
+                pauses[i] -= m
 
     def __call__(self):
         self.scene.sky_color = self.sky

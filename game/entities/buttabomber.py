@@ -3,6 +3,7 @@ from os import path
 from game.base.enemy import Enemy
 from game.constants import *
 from game.entities.camera import Camera
+from game.entities.blast import Blast
 from game.util import *
 
 
@@ -71,6 +72,21 @@ class ButtaBomber(Enemy):
         self.life = 2  # remove in 2 seconds
         self.alive = False
 
+    def blast(self):
+        self.scene.add(
+            Blast(
+                self.app,
+                self.scene,
+                10,  # radius
+                "white",
+                1,  # damage
+                100,  # spread
+                position=self.position,
+                velocity=self.velocity,
+                life=1,
+            ),
+        )
+
     def kill(self, damage, bullet, player):
 
         if not self.alive:
@@ -81,7 +97,7 @@ class ButtaBomber(Enemy):
 
         self.scripts = []
         # self.play_sound("butterfly.wav")
-        self.explode()
+        self.blast()
         self.remove()
         return True
 

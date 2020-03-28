@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 import math
 import pygame
+import glm
 
 from game.base.state import State
 from game.entities.camera import Camera
 from game.entities.terminal import Terminal
+from game.entities.ground import Ground
+from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.base.stats import Stats
 from game.scene import Scene
-from game.util import clamp
+from game.util import clamp, ncolor
 from game.base.stats import Stats
 
 
@@ -16,13 +19,16 @@ class Intermission(State):
 
         super().__init__(app, state, self)
 
-        self.scene = Scene(self.app, self)
-        self.terminal = self.scene.add(Terminal(self.app, self.scene))
-        self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
         self.stats = self.app.data["stats"] = self.app.data.get("stats", Stats())
 
+        self.scene = Scene(self.app, self)
+
+        self.terminal = self.scene.add(Terminal(self.app, self.scene))
+        self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
+        self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
+
         self.time = 0
-        self.bg_color = Scene.color("darkred")
+        self.bg_color = ncolor("darkred")
 
     def pend(self):
         self.app.pend()
@@ -33,7 +39,7 @@ class Intermission(State):
         self.scene.update(dt)
         self.time += dt
         self.bg_color = (
-            Scene.color("darkgreen") + math.sin(self.time % 1 * math.tau * 2) * 0.05
+            ncolor("darkgreen") + math.sin(self.time % 1 * math.tau * 2) * 0.05
         )
 
     def render(self):
@@ -45,18 +51,47 @@ class Intermission(State):
 
     def __call__(self, script):
         yield
-
-        stats = self.app.data.get("stats", Stats())
-
         scene = self.scene
-        color = self.scene.color
         terminal = self.terminal
+        stats = self.stats
         self.scene.music = "intermission.ogg"
+        when = script.when
+
+        # self.scene.sky_color = "#4c0b6b"
+        # self.scene.ground_color = "#e08041"
+        self.scene.stars()
+        self.scene.cloudy()
+
+        textdelay = 0.02
+        fastdelay = 0
+
+        fade = []
+        fades = [
+            when.fade(
+                10,
+                (0, 1),
+                lambda t: scene.set_sky_color(
+                    glm.mix(ncolor("#4c0b6b"), ncolor("#e08041"), t)
+                ),
+            ),
+            when.fade(
+                10,
+                (0, 1),
+                lambda t: scene.set_ground_color(
+                    glm.mix(ncolor("darkgreen"), ncolor("yellow"), t)
+                ),
+                lambda: fades.append(
+                    when.every(0, lambda: scene.set_ground_color(scene.ground_color))
+                ),
+            ),
+        ]
+        yield
 
         msg = [
-            ("Damage Done", stats.damage_done),
-            ("Damage Taken", stats.damage_taken),
-            ("Kills", stats.kills),
+            ("Level " + str(stats.level), "COMPLETED"),
+            ("Damage Done", int(stats.damage_done)),
+            ("Damage Taken", int(stats.damage_taken)),
+            ("Kills", int(stats.kills)),
             # ("Lives Remaining", stats.lives),
             None,
             ("Score", stats.score),
@@ -75,19 +110,29 @@ class Intermission(State):
             else:
                 continue
             delay = 0.1
-            for val in range(0, line[1] + 1):
-                terminal.write(
-                    str(val),
-                    (self.terminal.size.x - len(str(val)) - 1, y * 2 + 3),
-                    "white",
-                )
-                delay **= 1.05
-                yield script.sleep(delay)
-            else:
-                if script.keys_down:
-                    yield script.sleep(0.01 if script.keys else 0.05)
+            if isinstance(line[1], int):  # total
+                for val in range(0, line[1] + 1):
+                    terminal.write(
+                        str(val),
+                        (self.terminal.size.x - len(str(val)) - 1, y * 2 + 3),
+                        "white",
+                    )
+                    delay **= 1.05
+                    yield script.sleep(delay)
                 else:
-                    yield script.sleep(0.2 if script.keys else 0.05)
+                    if script.keys_down:
+                        yield script.sleep(0.01 if script.keys else 0.05)
+                    else:
+                        yield script.sleep(0.2 if script.keys else 0.05)
+            else:
+                yield script.sleep(0.2 if script.keys else 0.4)
+                terminal.write(
+                    str(line[1]),
+                    (self.terminal.size.x - len(str(line[1])) - 1, y * 2 + 3),
+                    "green",
+                )
+                self.scene.play_sound("hit.wav")
+                yield script.sleep(0.2 if script.keys else 0.4)
 
         t = 0
         while True:

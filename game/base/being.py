@@ -39,7 +39,8 @@ class Being(Entity):
         return dmg_taken
 
     def explode(self):
-        # TODO: This is supposed to be an explosion
+        from game.entities.blast import Blast  # hack: cicular inclusion
+
         for x in range(10):
             self.scene.add(
                 Entity(
@@ -57,3 +58,16 @@ class Being(Entity):
                     particle=True,
                 ),
             )
+        self.scene.add(
+            Blast(
+                self.app,
+                self.scene,
+                3,  # radius
+                random.choice(("orange", "yellow")),
+                0,  # no damage, just visual
+                1,  # spread
+                position=self.position,
+                velocity=self.velocity,
+                life=0.3,
+            ),
+        )

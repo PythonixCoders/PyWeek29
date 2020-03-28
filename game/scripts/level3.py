@@ -52,8 +52,7 @@ class Level3(Level):
             "Take this, you'll need it!", 5, color="green", clear=True
         )
 
-        for i in range(3):
-            self.spawn_powerup(0, 0, letter="heart")
+        self.spawn_powerup(0, 0, letter="heart")
         yield self.pause(7)
 
         for i in range(1, 5):

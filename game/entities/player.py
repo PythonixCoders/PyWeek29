@@ -1,29 +1,25 @@
 #!/usr/bin/python
+import math
+import random
 from typing import List
 
-import pygame
-from glm import ivec2, vec2, vec3, sign, length
+from glm import ivec2, vec2, length, vec3
 from pygame.surface import SurfaceType
-from copy import copy
-import random
-import weakref
-import math
 
-from game.base.entity import Entity
 from game.base.being import Being
-from game.base.inputs import Inputs, Axis
-from game.base.script import Script
-from game.util import ncolor
+from game.base.enemy import Enemy
+from game.base.entity import Entity
+from game.base.inputs import Axis
+from game.base.stats import Stats
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.blast import Blast
 from game.entities.butterfly import Butterfly
 from game.entities.butterfly import Butterfly
+from game.entities.message import Message
 from game.entities.powerup import Powerup
-from game.base.enemy import Enemy
 from game.entities.weapons import Weapon, WEAPONS
-from game.base.stats import Stats
-from glm import vec3
+from game.util import ncolor
 
 
 class Player(Being):
@@ -67,7 +63,7 @@ class Player(Being):
         ]
         self.current_weapon = 0
 
-        self.scripts += [self.blink, self.smoke, self.engine]
+        self.scripts += [self.blink, self.smoke]
 
     @property
     def targeting(self):
@@ -125,7 +121,7 @@ class Player(Being):
             return 0
 
         dmg = super().hurt(damage, bullet, enemy)
-        self.scene.add(Message(self.app, self.scene, letter, position=pos))
+        # self.scene.add(Message(self.app, self.scene, letter, position=pos))
         if dmg:
             self.blinking = True
             self.health_flash = 1
@@ -216,6 +212,7 @@ class Player(Being):
 
     def next_gun(self, btn):  # FIXME
         # switch weapon
+        self.weapon_flash = 1
         self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
         self.play_sound("powerup.wav")
 
@@ -289,25 +286,24 @@ class Player(Being):
                 yield script.sleep(self.hp)
             yield
 
-    def engine(self, script):
-        while self.alive:
-            self.scene.add(
-                Entity(
-                    self.app,
-                    self.scene,
-                    "smoke.png",
-                    position=self.position + vec3(0, -20, 0),
-                    velocity=(
-                        vec3(random.random(), random.random(), random.random())
-                        - vec3(0.5)
-                    )
-                    * 2,
-                    life=0.2,
-                    scale=0.1,
-                    particle=True,
-                )
-            )
-            yield script.sleep(0.2)
+    # def engine(self, script):
+    #     while self.alive:
+    #         self.scene.add(
+    #             Entity(
+    #                 self.app,
+    #                 self.scene,
+    #                 "smoke.png",
+    #                 position=self.position + vec3(0, -20, 0),
+    #                 velocity=(
+    #                     vec3(random.random(), random.random(), random.random())
+    #                     - vec3(0.5)
+    #                 )
+    #                 * 2,
+    #                 life=0.2,
+    #                 particle=True,
+    #             )
+    #         )
+    #         yield script.sleep(0.2)
 
     def blink(self, script):
         self.blinking = False
