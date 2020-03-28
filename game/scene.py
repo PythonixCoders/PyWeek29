@@ -119,7 +119,7 @@ class Scene(Signal):
         self.when.once(
             0.1, lambda oldsky=oldsky: self.set_sky_color(oldsky), weak=False
         )
-        # self.play_sound("lightning.wav")
+        self.play_sound("lightning.wav")
 
     def poll_lightning(self):
         if self.lightning_density < EPSILON:
@@ -127,9 +127,9 @@ class Scene(Signal):
         if random.random() > 1 / (self.lightning_density * 10):
             self.lightning_strike()
 
-    def lightning(self, freq=10):
+    def lightning(self, freq=1):
         assert freq >= 0
-        self.lightning_slot = self.when.once(0.1, self.poll_lightning)
+        self.lightning_slot = self.when.every(0.1, self.poll_lightning)
         self.lightning_density = freq
 
     def add_rock(self):
