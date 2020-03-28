@@ -24,7 +24,12 @@ class Weapon(Entity):
         :param damage: damage per bullet
         """
         super().__init__(app, scene, parent=player)
-        self.ammo = self.max_ammo  # current ammo
+
+        # Start we zero ammo on unlock
+        if player.level == self.level:
+            self.ammo = 0
+        else:
+            self.ammo = self.max_ammo  # current ammo
         self.cooldown = 1 / self.speed
 
         self.last_fire = float("inf")
