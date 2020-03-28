@@ -25,8 +25,6 @@ class Powerup(Message):
             powerups = list(w.letter for w in WEAPONS[1:]) + ["♥"]
             self.letter = random.choice(powerups)
 
-        self.velocity.z = 100
-
         self.heart = self.letter == "♥"
         self.star = self.letter == "*"
 
@@ -51,6 +49,8 @@ class Powerup(Message):
         self.collision_size = vec3(100, 100, 300)
         self.time = 0
         self.offset = vec3(0)
+
+        self.velocity.z = 100
 
     def __call__(self, script):
         color = self.color

@@ -1,9 +1,9 @@
 from contextlib import contextmanager
-from math import cos, sin, pi
+from math import cos, sin, pi, tau
 
 from glm import vec3, ivec2, normalize, vec2
 
-from game.constants import FULL_FOG_DISTANCE, GREEN
+from game.constants import FULL_FOG_DISTANCE, GREEN, DEBUG
 from game.entities.ai import CircleAi, CombinedAi
 from game.entities.butterfly import Butterfly
 from game.entities.buttabomber import ButtaBomber
@@ -100,6 +100,9 @@ class Level:
             Type(self.app, self.scene, pos, random_color(), num=self.spawned, ai=ai)
         )
 
+        if DEBUG:
+            print("Spawned", butt)
+
         self.spawned += 1
         return butt
 
@@ -136,13 +139,16 @@ class Level:
         self.spawn(-c, c, ai, Type)
         self.spawn(-c, -c, ai, Type)
 
-    def circle(self, n, radius, ai=None):
+    def circle(self, n, radius, ai=None, instant=False):
         """Spawn n butterflies in a centered circle of given radius"""
 
         for i in range(n):
-            angle = i / n
+            angle = i / n * tau
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
-            yield self.small_pause()
+            if instant:
+                yield self.pause(0)
+            else:
+                yield self.small_pause()
 
     def rotating_circle(
         self,
