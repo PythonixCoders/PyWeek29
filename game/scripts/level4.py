@@ -44,9 +44,26 @@ class Level4(Level):
             yield from self.v_shape(4)
             yield self.pause(4)
 
-        yield from self.combine(
-            self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)
-        )
+            yield from self.combine(
+                self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)
+            )
+            yield self.pause(6)
+
+            yield from self.combine(
+                self.rotating_v_shape(4),
+                self.rotating_v_shape(4, start_angle=pi * 2 / 3),
+                self.rotating_v_shape(4, start_angle=pi * 4 / 3),
+            )
+            yield self.pause(6)
+
+        text = """
+Those butterflies sure are tough guys.
+     Take this aiming bullets.        
+      And teach them a lesson!        
+        """.splitlines()
+        yield from self.slow_type(text[1])
+        yield from self.slow_type(text[2])
+        yield from self.slow_type(text[3], color="red")
 
         # TODO: Check for level clear ?
         yield self.pause(100)

@@ -154,27 +154,31 @@ class Level:
             self.spawn(0, 0, CombinedAi(ai, ai2))
             yield self.pause(delay)
             angle = butt.ai_angle
-            print("FUCK", angle, butt.position)
 
-    def slow_type(self, text, line, color="white", delay=0.1, clear=False):
-        terminal = self.terminal
+    def slow_type(
+        self, text, line=5, color="white", delay=0.1, clear=False, blink=False
+    ):
 
-        left = ivec2((terminal.size.x - len(text)) / 2, line)
         for i, letter in enumerate(text):
-            terminal.write(letter, left + (i, 0), color)
+            self.terminal.write_center(
+                letter, line, color, char_offset=(i, 0), length=len(text)
+            )
             self.scene.play_sound("type.wav")
             yield self.pause(delay)
 
         yield self.pause(delay * 3)
 
+        terminal = self.terminal
+
+        left = ivec2((terminal.size.x - len(text)) / 2, line)
         if clear:
             for i, letter in enumerate(text):
-                terminal.clear(left + (i, 0))
+                terminal.clear(left + (i - 1, 0))
                 self.scene.play_sound("type.wav")
                 yield self.pause(delay / 4)
 
     def slow_type_lines(
-        self, text: str, start_line, color="white", delay=0.08, clear=True
+        self, text: str, start_line=5, color="white", delay=0.08, clear=True
     ):
         for i, line in enumerate(text.splitlines()):
             yield from self.slow_type(line.strip(), start_line + i, color, delay)
