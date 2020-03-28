@@ -8,7 +8,7 @@ from game.util import *
 
 
 class ButtaBomber(Enemy):
-    NB_FRAMES = 4
+    NB_FRAMES = 1
     DEFAULT_SCALE = 10
 
     def __init__(
@@ -46,7 +46,7 @@ class ButtaBomber(Enemy):
         if cache_id in self.app.cache:
             return self.app.cache[cache_id]
 
-        filename = path.join(SPRITES_DIR, "blue_lepidopter.gif")
+        filename = path.join(SPRITES_DIR, "buttabomber.gif")
 
         # load an image if its not already in the cache, otherwise grab it
         image: pygame.SurfaceType = self.app.load_img(filename)
@@ -154,12 +154,9 @@ class ButtaBomber(Enemy):
 
             player = self.app.state.player
             if player and player.alive:
-                if self.position.z > player.position.z:
-                    break
                 to_player = player.position - self.position
                 if glm.length(to_player) < 3000:  # wihin range
                     to_player = player.position - self.position
-                    self.play_sound("squeak.wav")
                     self.velocity = glm.normalize(to_player) * 100
                     break
 

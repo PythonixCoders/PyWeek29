@@ -30,7 +30,8 @@ class Game(State):
         self.slots = SlotList()
         self.paused = False
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
-        # self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
+
+        self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
 
         # create terminal first since player init() writes to it
         self.terminal = self.gui.add(Terminal(self.app, self.scene))
