@@ -144,8 +144,8 @@ class Game(State):
 
     def debug_mode(self, b):
         self.debug = b
-        self.terminal.clear(20)
-        self.terminal.clear(21)
+        for i in range(4):
+            self.terminal.clear(18 + i)
         if not b:
             self.player.write_weapon_stats()
 
@@ -194,6 +194,8 @@ class Game(State):
         # self.terminal.write(pos_display, pos_pos)
 
         if self.debug:
+            self.terminal.write("FPS low: " + str(self.scene.lowest_fps), 18)
+            self.terminal.write("Pmax: " + str(self.scene.max_particles), 19)
             self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
             self.terminal.write("FPS: " + str(self.app.fps), 21)
 
@@ -212,7 +214,9 @@ class Game(State):
             j.init()
 
         inputs = Inputs()
-        inputs["hmove"] = Axis((pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d), JoyAxis(0, 0))
+        inputs["hmove"] = Axis(
+            (pg.K_LEFT, pg.K_a), (pg.K_RIGHT, pg.K_d), JoyAxis(0, 0), smooth=0.1
+        )
         inputs["vmove"] = Axis(
             (pg.K_DOWN, pg.K_s), (pg.K_UP, pg.K_w), JoyAxis(0, 1, True),
         )

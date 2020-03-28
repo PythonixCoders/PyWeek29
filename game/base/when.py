@@ -30,7 +30,6 @@ class When(Signal):
         if slot.start_t != 0:  # not infinite timer
             slot.t -= dt
 
-        # print(slot.t)
         if slot.fade:
             slot.t = max(0.0, slot.t)
             p = 1.0 - (slot.t / slot.start_t)

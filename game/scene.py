@@ -11,6 +11,8 @@ from game.base.script import Script
 from game import util
 from game.util import clamp, ncolor
 from game.entities.cloud import Cloud
+from game.entities.rock import Rock
+from game.entities.rain import Rain
 from game.entities.star import Star
 
 from random import randint
@@ -23,10 +25,9 @@ z_compare = functools.cmp_to_key(lambda a, b: a.get().position.z - b.get().posit
 
 
 class Scene(Signal):
-    MAX_PARTICLES = 16
-
     def __init__(self, app, state, script=None, script_args=None):
         super().__init__()
+        self.max_particles = 32
         self.app = app
         self.state = state
         self.when = When()
@@ -34,6 +35,12 @@ class Scene(Signal):
         self._sky_color = None
         self._ground_color = None
         self._script = None
+
+        self.rock_slot = None
+        self.rain_slot = None
+        self.has_clouds = False
+        self.lightning_density = 0
+        self.lowest_fps = 1000
 
         self.on_render = Signal()
 
@@ -45,6 +52,11 @@ class Scene(Signal):
         # self.star_pos = [
         #     (randint(0, 200), randint(0, 200)) for i in range(star_density)
         # ]
+
+        # color change delays when using opt funcs
+        self.delay_t = 0
+        self.delay = 1
+        self.time = 0
 
         self.sky_color = None
         self.ground_color = None
@@ -72,7 +84,12 @@ class Scene(Signal):
         if script:
             self.script = script  # trigger setter
 
+        self.slotlist += self.when.every(1, self.stabilize, weak=False)
+
     def cloudy(self):
+        if self.has_clouds:
+            return
+
         if hasattr(self.app.state, "player"):
             velz = self.app.state.player.velocity.z
         else:
@@ -83,6 +100,58 @@ class Scene(Signal):
             z = randint(-4000, -1300)
             pos = vec3(x, y, z)
             self.add(Cloud(self.app, self, pos, velz))
+
+        self.has_clouds = True
+
+    def lightning_strike(self):
+        oldsky = vec4(self.sky_color) if self.sky_color else None
+        self.sky_color = "white"
+        self.when.once(
+            0.1, lambda oldsky=oldsky: self.set_sky_color(oldsky), weak=False
+        )
+        self.play_sound("hit.wav")
+
+    def poll_lightning(self):
+        if self.lightning_density < EPSILON:
+            return
+        if random.random() > 1 / (self.lightning_density * 10):
+            self.lightning_strike()
+
+    def lightning(self, freq=10):
+        assert freq >= 0
+        self.lightning_slot = self.when.once(0.1, self.poll_lightning)
+        self.lightning_density = freq
+
+    def add_rock(self):
+
+        velz = self.app.state.player.velocity.z
+        x = randint(-500, 500)
+        y = GROUND_HEIGHT - 15
+        z = -5000
+        ppos = self.app.state.player.position
+        pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
+        self.add(Rock(self.app, self, pos, velz))
+
+    def add_rain_drop(self):
+        velz = self.app.state.player.velocity.z
+        x = randint(-300, 300)
+        y = randint(0, 300)
+        z = randint(-5000, -2000)
+        ppos = self.app.state.player.position
+        pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
+        self.add(Rain(self.app, self, pos, velz, particle=True))
+
+    def rain(self, density=50):
+        if density:
+            self.rain_slot = self.when.every(1 / density, self.add_rain_drop)
+        else:
+            self.rain_slot = None
+
+    def rocks(self, density=10):
+        if density:
+            self.rock_slot = self.when.every(1 / density, self.add_rock)
+        else:
+            self.rock_slot = None
 
     def stars(self):
         if hasattr(self.app.state, "player"):
@@ -287,9 +356,10 @@ class Scene(Signal):
         self.delay_t = self.delay
 
         self._sky_color = ncolor(c) if c else None
-        self.draw_sky()
-        # reset ground gradient (depend on sky color)
-        self.set_ground_color_opt(self.ground_color)
+        if self._sky_color:
+            self.draw_sky()
+            # reset ground gradient (depend on sky color)
+            self.set_ground_color_opt(self.ground_color)
         return True
 
     def set_ground_color(self, c):
@@ -363,7 +433,25 @@ class Scene(Signal):
         if self.blocked == 0:
             self.refresh()
 
+    def stabilize(self):
+        """"
+        Stablize FPS by setting max partilces
+        Called every second (see when.once(1, self.stabilize in init)
+        """
+
+        self.lowest_fps = min(self.app.fps, self.lowest_fps)
+
+        if self.app.fps < 30:
+            self.max_particles = min(self.max_particles / 2, 8)
+
+        if self.lowest_fps >= 60:
+            if self.app.fps > 120:
+                self.max_particles = min(self.max_particles * 2, 64)
+
     def update(self, dt):
+
+        self.time += dt
+        # print(self.time)
 
         # do time-based events
         self.when.update(dt)
@@ -388,7 +476,7 @@ class Scene(Signal):
             e = slot.get()
             if e.particle:
                 particle_count += 1
-                if particle_count >= self.MAX_PARTICLES:
+                if particle_count >= self.max_particles:
                     slot.disconnect()
         self.blocked -= 1
         self.clean()

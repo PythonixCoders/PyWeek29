@@ -413,8 +413,8 @@ class Player(Being):
                     self.targeting = True  # triggers
                 sz = ivec2(vec2(rect[2], rect[3]) * self.crosshair_scale)
                 img = pygame.transform.scale(self.crosshair_surf_green, sz)
-                rect[2] -= sz.x / 2
-                rect[3] -= sz.y / 2
+                rect[2] -= round(sz.x / 2)
+                rect[3] -= round(sz.y / 2)
                 self.app.screen.blit(img, rect)
             else:
                 if self.targeting:

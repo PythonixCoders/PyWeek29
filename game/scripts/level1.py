@@ -19,7 +19,10 @@ class Level1(Level):
 
     def __call__(self):
         self.scene.cloudy()
+        self.scene.rocks()
         self.scene.stars()
+        self.scene.rain()
+        self.scene.lightning()
 
         yield from super().__call__()
 

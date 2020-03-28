@@ -139,7 +139,7 @@ class Signal:
 
     def each(self, func, *args):
         if self.blocked:
-            self.queued.append(lambda func=func: self.each(func, *args))
+            self.queued.append(lambda func=func, args=args: self.each(func, *args))
             return None
 
         self.blocked += 1
@@ -151,7 +151,7 @@ class Signal:
 
     def each_slot(self, func, *args):
         if self.blocked:
-            self.queued.append(lambda func=func: self.each_slot(func, *args))
+            self.queued.append(lambda func=func, args=args: self.each_slot(func, *args))
             return None
 
         self.blocked += 1
