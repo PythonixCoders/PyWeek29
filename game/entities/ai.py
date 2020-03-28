@@ -4,7 +4,12 @@ from random import uniform
 import glm
 from glm import vec3, normalize, length, sign
 
-from game.constants import BUTTERFLY_MIN_SHOOT_DIST, BULLET_IMAGE_PATH, DEBUG
+from game.constants import (
+    BUTTERFLY_MIN_SHOOT_DIST,
+    BULLET_IMAGE_PATH,
+    DEBUG,
+    ENEMY_BULLET_FACTOR,
+)
 from game.entities.bullet import Bullet
 
 
@@ -115,7 +120,7 @@ class RandomFireAi(AI):
     def update(self, entity, dt):
         entity.ai_next_fire -= dt
 
-        if entity.ai_next_fire > 0:
+        if entity.ai_next_fire > 0 or not entity.alive:
             return
 
         entity.ai_next_fire = uniform(self.min_delay, self.max_delay)
@@ -126,7 +131,7 @@ class RandomFireAi(AI):
             to_player = player.position - entity.position
             if BUTTERFLY_MIN_SHOOT_DIST < glm.length(to_player):
                 entity.play_sound("squeak.wav")
-                entity.scene.add(
+                bu = entity.scene.add(
                     Bullet(
                         entity.app,
                         entity.scene,
@@ -138,6 +143,8 @@ class RandomFireAi(AI):
                         300,
                     )
                 )
+                bu.speed *= ENEMY_BULLET_FACTOR
+                bu.velocity *= ENEMY_BULLET_FACTOR
 
 
 class RandomChargeAI(AI):

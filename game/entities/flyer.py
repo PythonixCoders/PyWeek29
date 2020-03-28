@@ -119,5 +119,16 @@ class Flyer(Enemy):
                 self.play_sound("squeak.wav")
                 v = glm.mix(Z, to_player, 0.75)
                 self.scene.add(
+<<<<<<< HEAD
                     Bullet(self.app, self.scene, self, self.position, v, speed=500)
+=======
+                    Bullet(
+                        self.app,
+                        self.scene,
+                        self,
+                        self.position,
+                        v,
+                        speed=BULLET_SPEED * ENEMY_BULLET_FACTOR,
+                    )
+>>>>>>> add level 5
                 )
