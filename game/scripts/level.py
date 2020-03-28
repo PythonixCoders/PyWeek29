@@ -36,6 +36,7 @@ class Level:
         self.script = script
         self.spawned = 0
         self._skip = False
+        self.faster = 1
 
     @property
     def terminal(self):
@@ -61,6 +62,13 @@ class Level:
         self._skip += DEBUG
         yield
         self._skip -= DEBUG
+
+    @contextmanager
+    def set_faster(self, val):
+        old = self.faster
+        self.faster = val
+        yield
+        self.faster = old
 
     def spawn_powerup(self, letter: str = None, x: float = 0, y: float = 0):
         """
@@ -116,7 +124,7 @@ class Level:
         if self._skip:
             duration = 0
 
-        return self.script.sleep(duration)
+        return self.script.sleep(duration / self.faster)
 
     def small_pause(self):
         return self.pause(self.small)
@@ -168,7 +176,7 @@ class Level:
         Type=Butterfly,
     ):
         """
-        Speed should be in PIXELS
+        radius should be in PIXELS
         """
 
         ai = ai or self.default_ai
@@ -185,7 +193,7 @@ class Level:
             else:
                 yield self.small_pause()
 
-    def v_shape(self, n, dir=(1, 0), ai=None, Type=Butterfly):
+    def v_shape(self, n, dir=(1, 0), ai=None, Type=Butterfly, faster=1):
         dir = normalize(vec2(dir)) * 0.4  # *0.4 so it isn't too spread out
 
         self.spawn(0, 0)
@@ -193,7 +201,7 @@ class Level:
         for i in range(1, n):
             self.spawn(*dir * i / n, ai, Type)
             self.spawn(*dir * -i / n, ai, Type)
-            yield self.small_pause()
+            yield self.pause(self.small / faster)
 
     def rotating_v_shape(
         self, n, start_angle=0, angular_mult=1, ai=None, Type=Butterfly
@@ -231,8 +239,7 @@ class Level:
             self.scene.play_sound("type.wav")
             yield self.pause(delay)
 
-        yield self.pause(delay * 3)
-
+        yield self.pause(delay * clear)
         terminal = self.terminal
 
         left = ivec2((terminal.size.x - len(text)) / 2, line)
