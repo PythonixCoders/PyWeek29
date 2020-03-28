@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+##!/usr/bin/env python
 # from .abstract.entity import Entity
 from glm import normalize
 
@@ -15,15 +15,14 @@ class Bullet(Entity):
         parent,
         position,
         direction,
-        damage,
+        damage=1,
         img=BULLET_IMAGE_PATH,
         life=1,
         speed=BULLET_SPEED,
         **kwargs
     ):
-
-        velocity = normalize(direction) * speed
         self.speed = speed
+        velocity = normalize(direction) * speed
         super().__init__(
             app,
             scene,

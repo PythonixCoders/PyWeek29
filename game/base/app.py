@@ -82,7 +82,7 @@ class App:
                 w, h = img.get_size()
                 img = pygame.transform.scale(img, ivec2(vec2(w, h) * scale))
                 if flipped:
-                    pygame.transform.flip(img, False, True)
+                    img = pygame.transform.flip(img, True, False)
             return img
 
         return self.load((filename, scale, flipped), load_fn)
@@ -112,9 +112,9 @@ class App:
             cur_t = time.time_ns()
             dt += (cur_t - last_t) / (1000 * 1000 * 1000)
 
-            if dt < 0.001:
-                time.sleep(1 / 300)
-                continue  # accumulate dt for skipped frames
+            # if dt < 0.001:
+            #     time.sleep(1 / 300)
+            #     continue  # accumulate dt for skipped frames
 
             last_t = cur_t
             accum += dt
@@ -124,10 +124,6 @@ class App:
                 frames = 0
                 accum -= 1
 
-            # dt = self.clock.tick(0) / 1000
-            # print(t)
-
-            # time.sleep(0.0001)
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:

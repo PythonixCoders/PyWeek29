@@ -18,11 +18,15 @@ class Level5(Level):
         self.scene.rocks()
         self.scene.stars()
         self.scene.rain()
-        self.scene.lightning(50)
+        # self.scene.lightning(50)
 
         yield from super().__call__()
 
-        self.square(0.25, 0, ButtaBomber)
+        for x in range(5):
+            self.square(0.25, 0, ButtaBomber)
+            yield self.small_pause()
+            self.square(0.25, 0, Flyer)
+            yield self.big_pause()
 
         # for i in range(1, 4):
         #     self.spawn(i / 14, 0)

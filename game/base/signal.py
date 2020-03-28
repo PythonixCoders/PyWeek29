@@ -264,6 +264,22 @@ class Signal:
 
         return False
 
+    def clear_type(self, Type):
+        self.blocked += 1
+        for slot in self.scene.slots:
+            if isinstance(slot.get(), Type):
+                slot.disconnect()
+        self.blocked -= 1
+        self.clean()
+
+    def filter(self, func):
+        self.blocked += 1
+        for slot in self.scene.slots:
+            if func(slot.get()):
+                slot.disconnect()
+        self.blocked -= 1
+        self.clean()
+
     def clear(self):
         if self.blocked:
             self.queued.append(lambda: self.clear())

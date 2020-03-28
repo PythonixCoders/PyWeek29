@@ -123,11 +123,10 @@ class RandomFireAi(AI):
                         entity.scene,
                         entity,
                         entity.position,
-                        to_player,
+                        glm.normalize(to_player) * 300,
                         entity.damage,
                         BULLET_IMAGE_PATH,
                         3,
-                        300,
                     )
                 )
 

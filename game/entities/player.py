@@ -216,8 +216,8 @@ class Player(Being):
             else:
                 ammo = f"{wpn.letter} {wpn.ammo}/{wpn.max_ammo}"
 
-            if len(ammo) < 8:
-                ammo += " " * (8 - len(ammo))  # pad
+            if len(ammo) < 10:
+                ammo += " " * (10 - len(ammo))  # pad
 
             col = glm.mix(ncolor(wpn.color), ncolor("white"), self.weapon_flash)
             self.game_state.terminal.write("      ", (1, ty), col)
