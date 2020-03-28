@@ -82,7 +82,7 @@ class Game(State):
     @staticmethod
     @lru_cache(maxsize=1)
     def level_count():
-        level_regex = re.compile("level(\d+).py")
+        level_regex = re.compile("level(\\d+).py")
         count = 0
         for path in os.listdir(SCRIPTS_DIR):
             if re.match(level_regex, path):

@@ -45,14 +45,12 @@ class Blast(Entity):
         self.radius += t * self.spread
 
     def collision(self, other, dt):
+        from game.entities.player import Player
+
         # enemy vs player or player vs enemy?
-        if isinstance(other, Being):
-            # if self.parent.friendly != other.friendly:
-            dmg = other.hurt(self.damage, self, self.parent) * dt
-            if not other.friendly:
-                # damage indicator
-                if not other.alive:
-                    pass
+        if isinstance(other, Player):
+            # warning: this would trigger every frame if player didn't have blink
+            other.hurt(self.damage, self, self.parent)
 
     def render(self, camera):
         if not self.visible:

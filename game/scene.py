@@ -274,7 +274,29 @@ class Scene(Signal):
     def set_sky_color(self, c):
         self.sky_color = ncolor(c) if c else None
 
+    def set_sky_color_opt(self, c):
+        """
+        Optimized for fades.
+        """
+        if self.delay_t < self.delay:
+            self.set_ground_color_opt(self.ground_color)
+            return False
+
+        self.delay_t = self.delay
+
+        self._sky_color = ncolor(c) if c else None
+        self.draw_sky()
+        # reset ground gradient (depend on sky color)
+        self.set_ground_color_opt(self.ground_color)
+        return True
+
     def set_ground_color(self, c):
+        self.ground_color = ncolor(c) if c else None
+
+    def set_ground_color_opt(self, c):
+        """
+        Optimized for fades.
+        """
         self.ground_color = ncolor(c) if c else None
 
     def remove(self, entity):

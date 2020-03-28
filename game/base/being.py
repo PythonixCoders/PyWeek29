@@ -32,7 +32,7 @@ class Being(Entity):
             killed = False
             if self.hp == 0:
                 killed = self.kill(dmg_taken, bullet, damager)
-            if damager.stats:
+            if isinstance(damager, Being) and damager.stats:
                 damager.stats.kills = int(killed)
                 damager.stats.damage_done += dmg_taken
                 damager.score += max(int(dmg_taken), 1)

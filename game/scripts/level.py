@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from math import cos, sin, pi
 
 from glm import vec3, ivec2, normalize, vec2
-from pygame.camera import Camera
 import random
 from random import randint
 

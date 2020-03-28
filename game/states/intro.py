@@ -44,35 +44,13 @@ class Intro(State):
 
         self.scene.render(self.camera)
 
-    def logo_color(self, script):
-        rng = [0.5, 1]
-        msg = "Butterfly Destroyers"
-        when = script.when
+    def change_logo_color(self, script):
         terminal = self.terminal
-        fadetime = 0.2
-        while not self.scene.ground_color:
-            yield
-        while True:
-            c = glm.mix(self.scene.ground_color, random_rgb(), 0.5)
-            terminal.write(msg, (len(msg) / 2 - 1, 1), pg_color(c * 2))
-            yield
 
-    def waitkey(self):
-        while True:
-            terminal.write_center("Press any key to continue", 20, "green")
-            yield script.sleep(0.3)
-            if script.keys_down:
-                break
-            terminal.clear(20)
-            yield script.sleep(0.3)
-            if script.keys_down:
-                break
+        msg = "BUTTERFLY DESTROYERS"
 
-        for x in range(30):
-            terminal.write_center("Press any key to continue", 20, "green")
-            yield script.sleep(0.01)
-
-        self.app.state = "game"
+        c = glm.mix(self.scene.ground_color, random_rgb(), 0.5)
+        terminal.write(msg, (len(msg) / 2 - 1, 1), c * 2)
 
     def __call__(self, script):
         yield
@@ -88,7 +66,6 @@ class Intro(State):
         self.scene.cloudy()
 
         textdelay = 0.02
-        fastdelay = 0
 
         fade = []
         fades = [
@@ -102,11 +79,13 @@ class Intro(State):
             when.fade(
                 10,
                 (0, 1),
-                lambda t: scene.set_ground_color(
+                lambda t: scene.set_ground_color_opt(
                     glm.mix(ncolor("darkgreen"), ncolor("yellow"), t)
                 ),
                 lambda: fades.append(
-                    when.every(0, lambda: scene.set_ground_color(scene.ground_color))
+                    when.every(
+                        0, lambda: scene.set_ground_color_opt(scene.ground_color)
+                    )
                 ),
             ),
         ]
@@ -122,7 +101,9 @@ class Intro(State):
         #     # scene.ensure_sound("type.wav")
         # yield script.sleep(0.002)
 
-        script.push(self.logo_color)
+        # script.push(self.logo_color)
+
+        self.change_logo_color(script)
 
         msg = [
             "In the year 20XX, the butterfly",
@@ -140,6 +121,32 @@ class Intro(State):
                 cursor = (x + 2, y * 2 + 4)
                 terminal.write(m, (x + 1, y * 2 + 4), "white")
                 # scene.ensure_sound("type.wav")
+                self.change_logo_color(script)
                 if not script.keys_down:
+                    yield
+                else:
                     yield script.sleep(textdelay)
             terminal.clear(cursor)
+
+        when = script.when
+        scene = self.scene
+        terminal = self.terminal
+
+        yield
+
+        while True:
+            terminal.write_center("Press any key to continue", 20, "green")
+            self.change_logo_color(script)
+            yield script.sleep(0.1)
+            if script.keys_down:
+                break
+            terminal.clear(20)
+            self.change_logo_color(script)
+            yield script.sleep(0.1)
+            if script.keys_down:
+                break
+
+        terminal.clear()
+        terminal.write_center("Loading...", 10)
+
+        self.app.state = "game"

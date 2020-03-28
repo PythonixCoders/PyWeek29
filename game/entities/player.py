@@ -15,7 +15,6 @@ from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.blast import Blast
 from game.entities.butterfly import Butterfly
-from game.entities.butterfly import Butterfly
 from game.entities.message import Message
 from game.entities.powerup import Powerup
 from game.entities.weapons import Weapon, WEAPONS
@@ -99,6 +98,22 @@ class Player(Being):
     #             self.score_light = False
     #         yield
 
+    def restart(self):
+
+        self.hp = 3
+        self.visible = True
+
+        for wpn in self.weapons:
+            wpn.remove()
+
+        self.weapons: List[Weapon] = [
+            self.scene.add(gun(self.app, self.scene, self)) for gun in WEAPONS
+        ]
+
+        self.current_weapon = 0
+
+        self.app.state.restart()
+
     def kill(self, damage, bullet, enemy):
         # TODO: player death
         # self.scene.play_sound('explosion.wav')
@@ -107,7 +122,7 @@ class Player(Being):
         self.remove()
         self.alive = False
         self.app.state.terminal.write_center("Game Over", 10, "red")
-        self.scene.slotlist += self.scene.when.once(1, lambda: self.app.state.restart())
+        self.scene.slotlist += self.scene.when.once(1, lambda: self.restart())
         return False
 
     def hurt(self, damage, bullet, enemy):
@@ -349,9 +364,16 @@ class Player(Being):
         if self.visible:
             # stretch player graphic
             sz = ivec2(*self._surface.get_size())
-            if self.velocity.y:
+
+            img = self._surface
+            if self.velocity:
                 sz.y += self.velocity.y / self.speed.y * 10
-            img = pygame.transform.scale(self._surface, sz)
+                img = pygame.transform.scale(self._surface, sz)
+
+            if self.velocity.x:
+                rot = -self.velocity.x / self.speed.x * 30
+                img = pygame.transform.rotate(img, rot)
+
             nrect = (rect[0], rect[1], *sz)
             self.app.screen.blit(img, nrect)
 

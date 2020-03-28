@@ -17,10 +17,25 @@ class Ground(Entity):
         super().__init__(app, scene)
         self.position = vec3(0, height, float("-inf"))
         self.color = GREEN
+        self.delay = 0.5
+        self.delay_t = 0  # time until next redraw
 
     @property
     def color(self):
         return self._color
+
+    @color.setter
+    def fade_opt(self, c):
+        """
+        Sets color only if it hasn't change for self.delay seconds
+        """
+        if self.delay_t < self.delay:
+            return False
+
+        self.delay_t = self.delay
+
+        self.color(c)
+        return True
 
     @color.setter
     def color(self, c):
@@ -41,6 +56,10 @@ class Ground(Entity):
                 pgc = pygame.Color(*c)
                 self.texture.set_at((x, y), pgc)
         self.texture = pygame.transform.scale(self.texture, self.app.size)
+
+    def update(self, t):
+        super().update(t)
+        self.delay_t = max(0, self.delay - t)
 
     def render(self, camera: Camera):
         super().render(camera)

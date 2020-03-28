@@ -141,7 +141,7 @@ class Script:
                 for name, cls in lib.__dict__.items():
                     if name.startswith("Level"):
                         try:
-                            num = int(name[len("Level") :])
+                            int(name[len("Level") :])
                         except ValueError:
                             continue  # not a level number
                         if self.script_args:

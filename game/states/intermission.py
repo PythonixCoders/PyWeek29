@@ -11,7 +11,6 @@ from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.base.stats import Stats
 from game.scene import Scene
 from game.util import clamp, ncolor
-from game.base.stats import Stats
 
 
 class Intermission(State):
@@ -63,7 +62,6 @@ class Intermission(State):
         self.scene.cloudy()
 
         textdelay = 0.02
-        fastdelay = 0
 
         fade = []
         fades = [
@@ -134,7 +132,6 @@ class Intermission(State):
                 self.scene.play_sound("hit.wav")
                 yield script.sleep(0.2 if script.keys else 0.4)
 
-        t = 0
         while True:
 
             terminal.write_center("Press any key to continue", 20, "green")

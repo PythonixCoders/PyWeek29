@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import random
-
 import pygame
 from glm import vec3
 import random
@@ -21,7 +19,7 @@ class Powerup(Message):
         if self.letter == "heart":
             self.letter = "♥"
 
-        if letter == None:  # random powerup
+        if letter is None:  # random powerup
             # no default weapon and  add hearts
             powerups = list(w.letter for w in WEAPONS[1:]) + ["♥"]
             self.letter = random.choice(powerups)

@@ -42,7 +42,7 @@ class Bullet(Entity):
         # enemy vs player or player vs enemy?
         if isinstance(other, Being):
             if self.parent.friendly != other.friendly:
-                dmg = other.hurt(self.damage, self, self.parent)  # apply dmg
+                other.hurt(self.damage, self, self.parent)  # apply dmg
                 if not other.friendly:
                     # damage indicator
                     if not other.alive:
