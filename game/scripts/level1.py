@@ -5,6 +5,7 @@
 # Use scene.when to schedule events.
 # Yield when you want to wait until the next event.
 # This is a generator.  Using a busy loop will halt the game.
+from random import uniform
 
 from game.constants import GREEN
 from game.scripts.level import Level
@@ -34,7 +35,13 @@ class Level1(Level):
         yield self.medium_pause()
 
         self.square(0.25)
-        yield self.huge_pause()
+        yield self.medium_pause()
+
+        for i in range(10):
+            self.spawn(uniform(-0.3, 0.3), uniform(-0.2, 0.2))
+            yield self.small_pause()
+
+        self.medium_pause()
 
         yield from self.slow_type("The butterflies are organising!", 5, delay=0.08)
         yield self.medium_pause()

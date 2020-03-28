@@ -98,6 +98,7 @@ simple butterflies.
 
 #### Level 8
 **Title**: Revenge of the Butterfly
+
 The butterflies decide to give everything they have 
 in one last battle. This is the final level
 that will need a bit of every weapon and patterns.
