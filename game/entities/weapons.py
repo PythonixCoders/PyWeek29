@@ -1,15 +1,19 @@
 import pygame
-from glm import vec3, normalize, length
+from glm import vec3, normalize, length, dot
 
 from game.base.enemy import Enemy
 from game.base.entity import Entity
-from game.constants import BULLET_OFFSET, BULLET_IMAGE_PATH
+from game.constants import BULLET_OFFSET, BULLET_IMAGE_PATH, BULLET_SPEED
 from game.entities.bullet import Bullet
-from game.util import debug_log_call
+from game.util import debug_log_call, clamp
 
 
 class Weapon(Entity):
-    def __init__(self, player, ammo, speed, damage, app, scene):
+    speed = 2
+    max_ammo = 20
+    damage = 1
+
+    def __init__(self, app, scene, player):
         """
         A generic weapon.
 
@@ -19,9 +23,8 @@ class Weapon(Entity):
         :param damage: damage per bullet
         """
         super().__init__(app, scene, parent=player)
-        self.ammo = ammo  # current ammo
-        self.cooldown = 1 / speed
-        self.damage = damage
+        self.ammo = self.max_ammo  # current ammo
+        self.cooldown = 1 / self.speed
 
         self.last_fire = float("inf")
 
@@ -55,9 +58,8 @@ class Pistol(Weapon):
     letter = "P"
     max_ammo = -1
     sound = "shoot.wav"
-
-    def __init__(self, app, scene, player):
-        super(Pistol, self).__init__(player, self.max_ammo, 3, 1, app, scene)
+    speed = 3
+    damage = 1
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -80,9 +82,8 @@ class MachineGun(Weapon):
     letter = "M"
     max_ammo = 25
     sound = "shoot.wav"
-
-    def __init__(self, app, scene, player):
-        super(MachineGun, self).__init__(player, self.max_ammo, 6, 1, app, scene)
+    speed = 6
+    damage = 1
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -121,9 +122,8 @@ class LaserGun(Weapon):
     color = "red"
     max_ammo = 20
     sound = "laser.wav"
-
-    def __init__(self, app, scene, player):
-        super(LaserGun, self).__init__(player, self.max_ammo, 2, 2, app, scene)
+    speed = 2
+    damage = 2
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -143,24 +143,64 @@ class LaserGun(Weapon):
 
 
 class TracingBullet(Bullet):
-    def update(self, dt):
+    def __init__(
+        self,
+        app,
+        scene,
+        parent,
+        position,
+        direction,
+        damage,
+        img=BULLET_IMAGE_PATH,
+        life=1,
+        speed=BULLET_SPEED,
+        **kwargs
+    ):
+        super().__init__(
+            app, scene, parent, position, direction, damage, img, life, speed, **kwargs
+        )
+
+        self.aim = self.find_aim()
+        self.initial_vel = vec3(self.velocity)
+        self.t = 0
+
+    def find_aim(self):
         # Find closest enemy
         dist = float("inf")
         closest = None
         for e in self.scene.iter_entities(Enemy):
-            print(e)
+            if not e.alive or e.position.z > self.position.z:
+                continue
+
+            dir = e.position - self.position
+            v = vec3(self.velocity.xy * 10, self.velocity.z)
+            d = vec3(dir.xy * 10, dir.z)
+            if abs(dot(normalize(v), normalize(d))) < 0.9:
+                # Angles are too different
+                continue
+
             d = length(e.position - self.position)
-            if d < dist:
+            if 300 < d < dist:
                 dist = d
                 closest = e
+        return closest
 
-        if closest:
-            dir = closest.position - self.position
-            xy_dir = normalize(dir.xy)
-            self.acceleration = vec3(xy_dir, 0) * 200
-            print(closest, dir, self.acceleration)
-        else:
-            self.acceleration = vec3(0)
+    def update(self, dt):
+        if self.aim is None:
+            self.aim = self.find_aim()
+            self.t = 0
+            self.initial_vel = vec3(self.velocity)
+            if self.aim is None:
+                return super().update(dt)
+
+        if self.aim.position.z > self.position.z:
+            self.aim = None
+            return super().update(dt)
+
+        self.t = clamp(self.t + dt * 5, 0, 1)
+
+        vel = self.speed * normalize(self.aim.position - self.position)
+        self.velocity = vel * self.t + self.initial_vel * (1 - self.t)
 
         return super().update(dt)
 
@@ -170,9 +210,7 @@ class TracingGun(Weapon):
     color = "green"
     max_ammo = 100
     sound = "shoot.wav"
-
-    def __init__(self, app, scene, player):
-        super().__init__(player, self.max_ammo, 2, 1, app, scene)
+    speed = 2
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
