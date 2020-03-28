@@ -172,9 +172,10 @@ class Player(Being):
             if other.heart:
                 self.hp = self.max_hp
             else:
-                for wpn in self.weapons:
+                for i, wpn in enumerate(self.weapons):
                     if wpn.letter == other.letter:
                         wpn.ammo = wpn.max_ammo
+                        self.current_weapon = i
                         break
             # print("powerup")
             self.play_sound("powerup.wav")
