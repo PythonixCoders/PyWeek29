@@ -126,7 +126,7 @@ class Game(State):
         for path in os.listdir(SCRIPTS_DIR):
             if re.match(level_regex, path):
                 count += 1
-        return count
+        return count + 1
 
     @property
     def level(self):
