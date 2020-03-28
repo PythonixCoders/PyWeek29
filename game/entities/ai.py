@@ -4,7 +4,7 @@ from random import uniform
 import glm
 from glm import vec3, normalize, length
 
-from game.constants import BUTTERFLY_MIN_SHOOT_DIST, BULLET_IMAGE_PATH
+from game.constants import BUTTERFLY_MIN_SHOOT_DIST, BULLET_IMAGE_PATH, DEBUG
 from game.entities.bullet import Bullet
 
 
@@ -47,7 +47,8 @@ class CircleAi(AI):
             * self.radius
         )
 
-        print(entity, entity.ai_angle)
+        # if DEBUG:
+        #     print(entity, entity.ai_angle)
         # print(entity.velocity / self.radius)
 
 
@@ -198,3 +199,5 @@ class CombinedAi(AI):
                 vel += entity.velocity
         if self.sets_velocity:
             entity.velocity = vel
+            if DEBUG:
+                print("Combined", len(self.ais), "AIs")

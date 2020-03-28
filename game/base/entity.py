@@ -224,8 +224,6 @@ class Entity:
             )
 
         self.on_update(dt)
-        if self.ai:
-            self.ai.update(self, dt)
 
     def render(self, camera, surf=None, pos=None, scale=True, fade=True):
         """
