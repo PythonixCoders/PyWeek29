@@ -259,6 +259,8 @@ class Player(Being):
         # switch weapon
         self.weapon_flash = 1
         self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
+        while self.weapon.ammo == 0:
+            self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
         self.play_sound("powerup.wav")
 
     def set_vel_x(self, axis: Axis):
