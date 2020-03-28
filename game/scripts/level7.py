@@ -9,7 +9,7 @@ from game.entities.boss import Boss
 
 class Level7(Level):
     number = 7
-    name = '"???"'
+    name = '"Big Butta"'
     ground = "darkblue"
     sky = "darkred"
     music = "butterfly2.ogg"
@@ -30,7 +30,7 @@ class Level7(Level):
             if not boss.alive:
                 break
             self.terminal.write("                   ", 20)
-            self.terminal.write("|" * (boss.hp // 3), 20, "red")
+            self.terminal.write("|" * (boss.hp // 2), 20, "red")
             yield
 
         while True:

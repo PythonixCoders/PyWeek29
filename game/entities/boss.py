@@ -45,7 +45,7 @@ class Boss(Enemy):
         self.solid = False
         self.time = 0
         self.frame = 0
-        self.hp = 100
+        self.hp = 50
         self.damage = 1
 
         # drift slightly in X/Y plane
