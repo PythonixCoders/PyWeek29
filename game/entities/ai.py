@@ -22,7 +22,7 @@ class AI:
 class CircleAi(AI):
     sets_velocity = True
 
-    def __init__(self, radius, start_angle=0, angular_speed=0.5):
+    def __init__(self, radius, start_angle=0, angular_speed=2):
         self.radius = radius
         self.angular_speed = angular_speed
         self.start_angle = start_angle

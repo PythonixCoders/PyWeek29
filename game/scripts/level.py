@@ -123,7 +123,7 @@ class Level:
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
             yield self.pause(delay)
 
-    def rotating_circle(self, n, radius, speed=60, delay=0, center=(0, 0)):
+    def rotating_circle(self, n, radius, speed=240, delay=0, center=(0, 0)):
         for i in range(n):
             angle = i / n * 2 * pi
 

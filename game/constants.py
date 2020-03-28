@@ -41,8 +41,8 @@ Z = glm.vec3(0, 0, 1)
 
 EPSILON = 0.0001  # for floating point comparisons
 GROUND_HEIGHT = -300
-PLAYER_SPEED = glm.vec3(80, 80, -200)
-BULLET_SPEED = 6000
+PLAYER_SPEED = glm.vec3(150, 150, -400)
+BULLET_SPEED = 15000
 BULLET_SIZE = 200
 BULLET_OFFSET = glm.vec3(0, -20, -300)
 CAMERA_OFFSET = glm.vec3(0, 0, 300)
