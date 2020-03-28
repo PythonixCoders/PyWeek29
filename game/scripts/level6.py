@@ -37,7 +37,7 @@ class Level6(Level):
         # yield from self.slow_type("you might have a hard time...", line=7, delay=0.05)
         # yield self.pause(1)
         # self.terminal.clear()
-        
+
         # self.spawn_powerup(0, 0, "star")
         # yield self.pause(10)
 

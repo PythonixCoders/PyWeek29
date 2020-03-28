@@ -144,6 +144,12 @@ class Signal:
 
         self.blocked += 1
         for s in self.slots:
+            if isinstance(s, weakref.ref):
+                wref = s
+                s = wref()
+                if not func:
+                    self.disconnect(wref)
+                    continue
             s.with_item(func, *args)
         self.blocked -= 1
 
@@ -266,7 +272,7 @@ class Signal:
 
     def clear_type(self, Type):
         self.blocked += 1
-        for slot in self.scene.slots:
+        for slot in self.slots:
             if isinstance(slot.get(), Type):
                 slot.disconnect()
         self.blocked -= 1
@@ -274,7 +280,7 @@ class Signal:
 
     def filter(self, func):
         self.blocked += 1
-        for slot in self.scene.slots:
+        for slot in self.slots:
             if func(slot.get()):
                 slot.disconnect()
         self.blocked -= 1

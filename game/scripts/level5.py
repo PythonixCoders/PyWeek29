@@ -18,7 +18,7 @@ class Level5(Level):
         self.scene.rocks()
         self.scene.stars()
         self.scene.rain()
-        # self.scene.lightning(50)
+        self.scene.lightning(0)
 
         yield from super().__call__()
 

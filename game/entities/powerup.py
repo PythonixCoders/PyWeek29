@@ -50,6 +50,7 @@ class Powerup(Message):
         self.collision_size = vec3(100, 100, 300)
         self.time = 0
         self.offset = vec3(0)
+        self.velocity.z = 100
 
         self.velocity.z = 100
 

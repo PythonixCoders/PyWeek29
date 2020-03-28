@@ -28,7 +28,7 @@ class ButtaBomber(Enemy):
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
 
-        self.hp = 3
+        self.hp = 10
 
         self.time = 0
         self.frame = 0
@@ -89,7 +89,7 @@ class ButtaBomber(Enemy):
                 2,  # radius
                 "white",
                 1,  # damage
-                100,  # spread
+                200,  # spread
                 position=self.position,
                 velocity=self.velocity,
                 life=0.2,
@@ -121,20 +121,16 @@ class ButtaBomber(Enemy):
             if self.injured:
                 player = self.app.state.player
                 if player and player.alive:
-                    to_player = player.position - self.position
-                    self.acceleration = -glm.normalize(to_player) * 20
-                    self.acceleration += vec3(
-                        (random.random() - 0.5) * 10, (random.random() - 0.5) * 10, 0
-                    )
-                    # def dash(t):
-                    #     self.position += vec3(
-                    #         random.random() * 100 * script.dt,
-                    #         random.random() * 100 * script.dt,
-                    #         random.random() * 100 * script.dt,
-                    #     )
-                    #     if math.isclose(t, 1):
-                    #         script.resume()
-                    # yield script.when.fade(1, dash)
+                    to_player = glm.normalize(player.position - self.position)
+                    self.velocity = vec3(nrand(10), nrand(10), 0)
+                    self.velocity += to_player * 20
+
+                    # ppos = self.scene.player.position
+                    # pvel = self.scene.player.velocity
+                    # v = ppos - self.position
+                    # d = glm.length(v)
+                    # self.velocity = to_player * nrand(20)
+
                     for x in range(100):
                         self.frames = self.get_animation("yellow")
                         yield script.sleep(0.1)
