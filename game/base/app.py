@@ -34,6 +34,7 @@ class App:
         Initializes pygame and the initial state.
         """
 
+        # pygame.mixer.pre_init(44100, 16, 2, 4096)
         pygame.init()
 
         self.size = ivec2(1920, 1080) / 2

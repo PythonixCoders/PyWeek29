@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pygame
 import pygame.gfxdraw
 from glm import vec3, vec4
@@ -6,7 +7,6 @@ import random
 
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.camera import Camera
-from game.scene import Scene
 from game.util import clamp, ncolor
 
 from game.base.entity import Entity
@@ -32,6 +32,7 @@ class Ground(Entity):
         if self.delay_t < self.delay:
             return False
 
+        print("???")
         self.delay_t = self.delay
 
         self.color(c)

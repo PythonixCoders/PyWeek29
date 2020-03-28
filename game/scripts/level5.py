@@ -11,7 +11,11 @@ class Level5(Level):
     default_ai = ChasingAi
 
     def __call__(self):
+        self.scene.cloudy()
+        self.scene.rocks()
         self.scene.stars()
+        self.scene.rain()
+        self.scene.lightning(50)
 
         yield from super().__call__()
 

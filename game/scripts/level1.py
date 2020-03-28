@@ -22,7 +22,6 @@ class Level1(Level):
         self.scene.rocks()
         self.scene.stars()
         self.scene.rain()
-        self.scene.lightning()
 
         yield from super().__call__()
 

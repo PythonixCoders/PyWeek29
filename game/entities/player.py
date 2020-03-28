@@ -29,7 +29,9 @@ class Player(Being):
         # persistant stats for score screen
         self.stats = self.app.data["stats"] = self.app.data.get("stats", Stats())
 
-        self.hp = 3
+        self.scene.player = self
+
+        self.max_hp = self.hp = 3
         self.friendly = True  # determines what Beings you can damage
         self.crosshair_surf: SurfaceType = app.load_img(CROSSHAIR_IMAGE_PATH, 3)
         self.crosshair_surf_green = app.load_img(CROSSHAIR_GREEN_IMAGE_PATH, 3)
@@ -120,6 +122,7 @@ class Player(Being):
         # TODO: player death
         # self.scene.play_sound('explosion.wav')
         # self.acceleration = -Y * 100
+        self.hp = 0
         self.explode()
         # self.remove()
         self.visible = False
@@ -163,7 +166,7 @@ class Player(Being):
             other.kill(other.hp, None, self)
         elif isinstance(other, Powerup):
             if other.heart:
-                self.hp = 3
+                self.hp = self.max_hp
             else:
                 for wpn in self.weapons:
                     if wpn.letter == other.letter:
@@ -225,7 +228,10 @@ class Player(Being):
             #     " " + "♥" * self.hp + " " * (3 - self.hp), 1, "red"
             # )
             self.game_state.terminal.write_center("      ", ty + 1, col)
-            self.game_state.terminal.write_center("♥" * self.hp, ty, "red", ofs)
+            self.game_state.terminal.write_center("      ", ty, col)
+            self.game_state.terminal.write_center(
+                "♥" * self.hp + " " * (self.hp - self.max_hp), ty, "red", ofs
+            )
 
             # Render Player's Score
             score_display = "Score: {}".format(self.stats.score)

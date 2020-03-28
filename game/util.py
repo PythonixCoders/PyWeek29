@@ -177,6 +177,13 @@ def ncolor(c):
     return c
 
 
+def nrand(s=1.0):
+    """
+    normalized random scalar, scaled by S
+    """
+    return (random.random() * 2 - 1) * s
+
+
 def mix(a, b, t):
     """
     interpolate a -> b @ t
@@ -190,8 +197,8 @@ def mix(a, b, t):
     return glm.mix(ncolor(a), ncolor(b), t)
 
 
-def random_vec3():
-    return vec3(random.random(), random.random(), random.random())
+def random_vec3(s=1):
+    return vec3(nrand(s), nrand(s), nrand(s))
 
 
 def random_rgb():
