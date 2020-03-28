@@ -67,7 +67,7 @@ And teach them a lesson!
         yield from self.slow_type(text[2].center(len(text[1])), color="yellow")
         yield from self.slow_type(text[3].center(len(text[1])), color="red")
 
-        self.spawn_powerup(0, 0, "A")
+        self.spawn_powerup("A", 0, 0)
         yield self.big_pause()
 
         self.default_ai.radius *= 1.3
@@ -82,13 +82,13 @@ And teach them a lesson!
         )
         yield self.big_pause()
 
-        self.spawn_powerup(0, 0, "A")
+        self.spawn_powerup("A", 0, 0)
         yield from self.rotating_circle(5, 30, 1.3)
         yield self.big_pause()
 
         self.spawn(0, 0)
         yield from self.rotating_circle(5, 60, 1.5)
-        self.spawn_powerup(0, 0, "A")
+        self.spawn_powerup("A", 0, 0)
         yield self.huge_pause()
 
         yield from self.rotating_circle(

@@ -87,9 +87,9 @@ class Pistol(Weapon):
 class MachineGun(Weapon):
     color = "orange"
     letter = "M"
-    max_ammo = 60
+    max_ammo = 99
     sound = "shoot.wav"
-    speed = 20
+    speed = 25
     damage = 1
     level = 2
 

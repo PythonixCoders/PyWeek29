@@ -131,8 +131,20 @@ class Entity:
         if v is None:
             v = vec3(0)
 
+        if v.x != v.x:
+            raise ValueError
+
         self._position = vec3(*v)
         self.on_move()
+
+    @property
+    def velocity(self):
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, value):
+        assert value == value
+        self._velocity = value
 
     def remove(self):
         if not self.removed:

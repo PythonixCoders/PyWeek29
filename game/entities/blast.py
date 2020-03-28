@@ -38,7 +38,6 @@ class Blast(Entity):
             font_fn + ":" + str(self.font_size.y),
             lambda: pygame.font.Font(font_fn, self.font_size.y, bold=True),
         )
-
         self.solid = True
 
         self.play_sound("hurt.wav")
@@ -87,6 +86,7 @@ class Blast(Entity):
         #     return
 
         screen_pos = pos_tl + size
+        print(screen_pos, size, pos_tl)
         pygame.gfxdraw.filled_circle(
             self.app.screen,
             int(abs(screen_pos.x - size.x / 2)),

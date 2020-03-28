@@ -67,7 +67,7 @@ class Level1(Level):
         yield from self.circle(20, 0.3, instant=True)
         yield self.medium_pause()
 
-        self.spawn_powerup(0, 0, "heart")
+        self.spawn_powerup("heart", 0, 0)
         yield from self.combine(self.circle(20, 0.2), self.circle(20, -0.2))
         self.huge_pause()
 
