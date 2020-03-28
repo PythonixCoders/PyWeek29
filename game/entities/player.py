@@ -16,6 +16,8 @@ from game.base.script import Script
 from game.util import ncolor
 from game.constants import *
 from game.entities.bullet import Bullet
+from game.entities.blast import Blast
+from game.entities.butterfly import Butterfly
 from game.entities.butterfly import Butterfly
 from game.entities.powerup import Powerup
 from game.base.enemy import Enemy

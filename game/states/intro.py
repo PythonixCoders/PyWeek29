@@ -57,6 +57,23 @@ class Intro(State):
             terminal.write(msg, (len(msg) / 2 - 1, 1), pg_color(c * 2))
             yield
 
+    def waitkey(self):
+        while True:
+            terminal.write_center("Press any key to continue", 20, "green")
+            yield script.sleep(0.3)
+            if script.keys_down:
+                break
+            terminal.clear(20)
+            yield script.sleep(0.3)
+            if script.keys_down:
+                break
+
+        for x in range(30):
+            terminal.write_center("Press any key to continue", 20, "green")
+            yield script.sleep(0.01)
+
+        self.app.state = "game"
+
     def __call__(self, script):
         yield
 
@@ -126,21 +143,3 @@ class Intro(State):
                 if not script.keys_down:
                     yield script.sleep(textdelay)
             terminal.clear(cursor)
-
-        t = 0
-        while True:
-
-            terminal.write_center("Press any key to continue", 20, "green")
-            yield script.sleep(0.3)
-            if script.keys_down:
-                break
-            terminal.clear(20)
-            yield script.sleep(0.3)
-            if script.keys_down:
-                break
-
-        for x in range(20):
-            terminal.write_center("Press any key to continue", 20, "green")
-            yield script.sleep(0.05)
-
-        self.app.state = "game"
