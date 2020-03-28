@@ -27,55 +27,60 @@ class Level4(Level):
         # As it is changed throughout the level
         self.default_ai = AvoidAi(50, 40)
 
-        yield from super().__call__()
-        self.engine_boost(1.5)
+        with self.skip():
+            yield from super().__call__()
+            self.engine_boost(1.5)
 
-        text = """
-        The butterflies have been hiding
-        in the great Desert.
-        
-        Put it an end
-        While they're still weak!
-        """
-        yield from self.slow_type_lines(text, 5, "yellow", 0.05)
+            text = """The butterflies have been hiding
 
-        for i in range(10):
-            self.spawn(uniform(-0.5, 0.5), 0)
+            in the great Desert.
+
+
+            Put it an end
+
+            While they're still weak!
+            """
+            yield from self.slow_type_lines(text, 5, "yellow", 0.05)
+
+            for i in range(10):
+                self.spawn(uniform(-0.5, 0.5), 0)
+                yield self.medium_pause()
             yield self.medium_pause()
-        yield self.medium_pause()
 
-        yield from self.v_shape(4)
-        yield self.medium_pause()
+            yield from self.v_shape(4)
+            yield self.medium_pause()
 
         yield from self.combine(
-            self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)
+            self.rotating_v_shape(4, angular_mult=0.5),
+            self.rotating_v_shape(4, start_angle=pi / 2, angular_mult=0.5),
         )
         yield self.bigg_pause()
 
         yield from self.combine(
-            self.rotating_v_shape(4),
-            self.rotating_v_shape(4, start_angle=pi * 2 / 3),
-            self.rotating_v_shape(4, start_angle=pi * 4 / 3),
+            self.rotating_v_shape(4, angular_mult=0.4),
+            self.rotating_v_shape(4, start_angle=pi * 2 / 3, angular_mult=0.4),
+            self.rotating_v_shape(4, start_angle=pi * 4 / 3, angular_mult=0.4),
         )
         yield self.bigg_pause()
 
         text = """
 They sure are avoiding well.
 Take those aiming bullets.
-And teach them a lesson!        
-        """.splitlines()
+And teach them a lesson!""".splitlines()
         yield from self.slow_type(text[1], color="yellow")
-        self.spawn_powerup("A", 0, 0)
         yield from self.slow_type(text[2].center(len(text[1])), color="green")
+        self.spawn_powerup("A", 0, 0)
         yield from self.slow_type(text[3].center(len(text[1])), color="yellow")
 
         yield self.big_pause()
+        self.terminal.clear()
 
         self.default_ai.radius *= 1.3
 
-        for i in range(20):
-            self.spawn(uniform(-0.3, 0.3), 0)
-            yield self.small_pause()
+        with self.set_faster(2):
+            for i in range(20):
+                self.spawn(uniform(-0.3, 0.3), 0)
+                yield self.small_pause()
         yield self.big_pause()
 
         yield from self.combine(
