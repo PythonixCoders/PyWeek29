@@ -441,8 +441,8 @@ class Scene(Signal):
 
         self.lowest_fps = min(self.app.fps, self.lowest_fps)
 
-        if self.app.fps < 30:
-            self.max_particles = min(self.max_particles / 2, 8)
+        if self.app.fps < 45:
+            self.max_particles = max(self.max_particles / 2, 8)
 
         if self.lowest_fps >= 60:
             if self.app.fps > 120:
