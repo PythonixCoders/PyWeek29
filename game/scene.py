@@ -508,7 +508,7 @@ class Scene(Signal):
         # self.sort(lambda a, b: a.z < b.z)
         # self.slots = sorted(self.slots, key=z_compare)
         self.slots.sort(key=z_compare)
-        # self.slots = list(filter(lambda x: not x.get().removed, self.slots))
+        self.slots = list(filter(lambda x: not x.get().removed, self.slots))
 
         # call update(dt) on each entity
         self.each(lambda x, dt: x.update(dt), dt)

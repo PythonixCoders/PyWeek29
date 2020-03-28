@@ -237,6 +237,7 @@ class Game(State):
         """
         # clear terminal
         self.scene.clear_type(Enemy)
+        self.scene.clear_type(Powerup)
 
         for x in range(2, 20):
             self.terminal.clear()
