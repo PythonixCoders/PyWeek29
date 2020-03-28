@@ -8,7 +8,7 @@ from game.util import *
 
 
 class ButtaBomber(Enemy):
-    NB_FRAMES = 1
+    NB_FRAMES = 4
     DEFAULT_SCALE = 10
 
     def __init__(
@@ -41,7 +41,11 @@ class ButtaBomber(Enemy):
 
         self.scripts += [self.charge, self.injured]
 
-    def get_animation(self, color=pygame.Color("red")):
+    def get_animation(self, color="red"):
+        cache_id = ("blue_lepidopter.gif:frames", "color")
+        if cache_id in self.app.cache:
+            return self.app.cache[cache_id]
+
         filename = path.join(SPRITES_DIR, "blue_lepidopter.gif")
 
         # load an image if its not already in the cache, otherwise grab it
@@ -64,6 +68,7 @@ class ButtaBomber(Enemy):
             for i in range(self.NB_FRAMES)
         ]
 
+        self.app.cache[cache_id] = frames
         return frames
 
     def fall(self):

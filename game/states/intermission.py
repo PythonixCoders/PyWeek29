@@ -27,7 +27,7 @@ class Intermission(State):
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
 
         self.time = 0
-        self.bg_color = ncolor("darkred")
+        # self.bg_color = ncolor("darkred")
 
     def pend(self):
         self.app.pend()
@@ -37,15 +37,15 @@ class Intermission(State):
 
         self.scene.update(dt)
         self.time += dt
-        self.bg_color = (
-            ncolor("darkgreen") + math.sin(self.time % 1 * math.tau * 2) * 0.05
-        )
+        # self.bg_color = (
+        #     ncolor("darkgreen") + math.sin(self.time % 1 * math.tau * 2) * 0.05
+        # )
 
     def render(self):
 
-        self.app.screen.fill(
-            pygame.Color(*[int(clamp(x * 255, 0, 255)) for x in self.bg_color])
-        )
+        # self.app.screen.fill(
+        #     pygame.Color(*[int(clamp(x * 255, 0, 255)) for x in self.bg_color])
+        # )
         self.scene.render(self.camera)
 
     def __call__(self, script):

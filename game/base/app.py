@@ -12,13 +12,20 @@ from game.base.stats import Stats
 from game.states.game import Game
 from game.states.intro import Intro
 from game.states.menu import Menu
+from game.states.credits import Credits
 from game.states.intermission import Intermission
 import time
 
 
 class App:
 
-    STATES = {"intro": Intro, "game": Game, "menu": Menu, "intermission": Intermission}
+    STATES = {
+        "intro": Intro,
+        "game": Game,
+        "menu": Menu,
+        "intermission": Intermission,
+        "credits": Credits,
+    }
     # MAX_KEYS = 512
 
     def __init__(self, initial_state):
