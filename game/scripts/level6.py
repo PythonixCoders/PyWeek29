@@ -6,7 +6,7 @@ from game.scripts.level import Level
 
 class Level6(Level):
     number = 6
-    name = "The Last Butterfly"
+    name = "The Return of the Butterfly"
     ground = "#F0E149"
     sky = "#562A85"
     music = "butterfly.ogg"
@@ -20,32 +20,14 @@ class Level6(Level):
         # self.scene.lightning_strike()
 
         yield from super().__call__()
-        self.engine_boost(1.5)
+        self.engine_boost(1.5 ** 2)
 
-        yield from self.slow_type("Welcome to Planet Butter", line=4, delay=0.05)
-        yield from self.slow_type(
-            "You killed all the other butterflies", line=5, delay=0.05
-        )
-        yield from self.slow_type("Big Butta and his minions", line=6, delay=0.05)
-        yield from self.slow_type("are the only ones left!", line=7, delay=0.05)
-        yield self.pause(1)
-        self.terminal.clear()
-        yield from self.slow_type(
-            "You should be careful here!", delay=0.05, color="red", blink=True
-        )
-        yield from self.slow_type(
-            "This is the home planet of Butterflies.", line=6, delay=0.05
-        )
-        yield self.pause(2)
-        self.terminal.clear()
+        self.slow_type("This level is still in construction")
+        self.slow_type("Sorry", 7, "red")
 
-        yield from self.slow_type("The planet is also made of butter", delay=0.05)
-        yield from self.slow_type(
-            "so Big Butta is most powerful here,", line=6, delay=0.05
-        )
-        yield from self.slow_type("you might have a hard time...", line=7, delay=0.05)
-        yield self.pause(1)
-        self.terminal.clear()
+        self.slow_type("Here is some missing content")
+
+        self.medium_pause()
 
         self.spawn_powerup("star", 0, 0)
         yield self.pause(10)
