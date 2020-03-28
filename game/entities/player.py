@@ -102,6 +102,7 @@ class Player(Being):
 
         self.hp = 3
         self.visible = True
+        self.alive = True
 
         for wpn in self.weapons:
             wpn.remove()
@@ -111,6 +112,7 @@ class Player(Being):
         ]
 
         self.current_weapon = 0
+        self.app.state.terminal.clear(10)  # clear try again
 
         self.app.state.restart()
 
@@ -119,10 +121,13 @@ class Player(Being):
         # self.scene.play_sound('explosion.wav')
         # self.acceleration = -Y * 100
         self.explode()
-        self.remove()
+        # self.remove()
+        self.visible = False
         self.alive = False
-        self.app.state.terminal.write_center("Game Over", 10, "red")
-        self.scene.slotlist += self.scene.when.once(1, lambda: self.restart())
+        self.stats.deaths += 1
+        self.app.state.terminal.write_center("Oops! Try Again!", 10, "red")
+        # restart game in 2 seconds
+        self.scene.slotlist += self.scene.when.once(2, lambda: self.restart())
         return False
 
     def hurt(self, damage, bullet, enemy):
@@ -132,7 +137,7 @@ class Player(Being):
 
         if self.hp <= 0:
             return 0
-        if self.blinking:  # invulnerable
+        if self.blinking or not self.alive:
             return 0
 
         dmg = super().hurt(damage, bullet, enemy)
@@ -189,6 +194,8 @@ class Player(Being):
                     return entity
 
     def write_weapon_stats(self):
+        if not self.alive:
+            return
         if not self.hide_stats:
             terminal = self.app.state.terminal
 
@@ -232,9 +239,13 @@ class Player(Being):
         self.play_sound("powerup.wav")
 
     def set_vel_x(self, axis: Axis):
+        if not self.alive:
+            return
         self.velocity.x = axis.value * self.speed.x
 
     def set_vel_y(self, axis: Axis):
+        if not self.alive:
+            return
         self.velocity.y = axis.value * self.speed.y
 
     def find_aim(self):
@@ -269,6 +280,10 @@ class Player(Being):
             # too high ?
             self.velocity.y = min(0, self.velocity.y)
             self.position.y = 300
+
+        if not self.alive:
+            self.velocity.x = 0
+            self.velocity.y = 0
 
         if self.targeting:
             self.crosshair_t = (self.crosshair_t + dt) % 1
@@ -378,18 +393,19 @@ class Player(Being):
             self.app.screen.blit(img, nrect)
 
         # Crosshair
-        rect = self.crosshair_surf.get_rect()
-        rect.center = self.app.size / 2
+        if self.alive:
+            rect = self.crosshair_surf.get_rect()
+            rect.center = self.app.size / 2
 
-        if self.find_enemy_in_crosshair():
-            if not self.targeting:
-                self.targeting = True  # triggers
-            sz = ivec2(vec2(rect[2], rect[3]) * self.crosshair_scale)
-            img = pygame.transform.scale(self.crosshair_surf_green, sz)
-            rect[2] -= sz.x / 2
-            rect[3] -= sz.y / 2
-            self.app.screen.blit(img, rect)
-        else:
-            if self.targeting:
-                self.targeting = False  # triggers
-            self.app.screen.blit(self.crosshair_surf, rect)
+            if self.find_enemy_in_crosshair():
+                if not self.targeting:
+                    self.targeting = True  # triggers
+                sz = ivec2(vec2(rect[2], rect[3]) * self.crosshair_scale)
+                img = pygame.transform.scale(self.crosshair_surf_green, sz)
+                rect[2] -= sz.x / 2
+                rect[3] -= sz.y / 2
+                self.app.screen.blit(img, rect)
+            else:
+                if self.targeting:
+                    self.targeting = False  # triggers
+                self.app.screen.blit(self.crosshair_surf, rect)

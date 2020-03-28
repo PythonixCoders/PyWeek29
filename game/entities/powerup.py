@@ -18,17 +18,22 @@ class Powerup(Message):
 
         if self.letter == "heart":
             self.letter = "♥"
-
+        if self.letter == "star":
+            self.letter = "*"
         if letter is None:  # random powerup
             # no default weapon and  add hearts
             powerups = list(w.letter for w in WEAPONS[1:]) + ["♥"]
             self.letter = random.choice(powerups)
 
         self.heart = self.letter == "♥"
+        self.star = self.letter == "*"
 
         # get color of item
         if self.heart:
             color = pygame.Color("red")
+        elif self.star:
+            color = pygame.Color("white")
+
         else:
             for wpn in WEAPONS:
                 if self.letter == wpn.letter:
@@ -40,7 +45,7 @@ class Powerup(Message):
 
         self.solid = True
 
-        self.collision_size = self.size = vec3(500)
+        self.collision_size = self.size = vec3(3000)
         self.time = 0
         self.offset = vec3(0)
 
@@ -58,4 +63,4 @@ class Powerup(Message):
         self.offset.y = math.sin(self.time * math.tau)
 
     def render(self, camera):
-        super().render(camera)
+        super().render(camera, None, self.position + self.offset)

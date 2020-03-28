@@ -21,7 +21,7 @@ class Message(Entity):
         self.app = app
         self.scene = scene
 
-        self.collision_size = self.size = vec3(24 * len(text), 24, 24)
+        self.collision_size = self.size = vec3(24 * len(text), 24, 150)
         self.font_size = ivec2(24, 24)
         font_fn = "data/PressStart2P-Regular.ttf"
 
@@ -48,6 +48,8 @@ class Message(Entity):
 
         self.offsets = [vec3(2, -2, 0), vec3(-2, 3, 0), vec3(0, 0, 0)]
 
-    def render(self, camera):
+    def render(self, camera, surf=None, pos=None, scale=True, fade=True):
+        if not pos:
+            pos = self.position
         for i, img in enumerate(self.surfaces):
-            super().render(camera, self.surfaces[i], self.position + self.offsets[i])
+            super().render(camera, self.surfaces[i], pos + self.offsets[i], scale, fade)

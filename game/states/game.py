@@ -14,6 +14,7 @@ from game.entities.camera import Camera
 from game.entities.ground import Ground
 from game.entities.player import Player
 from game.entities.terminal import Terminal
+from game.entities.powerup import Powerup
 from game.entities.buttabomber import ButtaBomber
 from game.scene import Scene
 from game.base.signal import SlotList
@@ -32,6 +33,7 @@ class Game(State):
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
 
         # self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
+        # self.scene.add(Powerup(app, self.scene, 'star', position=vec3(0, 0, -3000)))
 
         # create terminal first since player init() writes to it
         self.terminal = self.gui.add(Terminal(self.app, self.scene))
@@ -193,4 +195,4 @@ class Game(State):
         """
         Called by player when() event after death
         """
-        self.level = self.level  # retriggers
+        self.level = self._level  # retriggers

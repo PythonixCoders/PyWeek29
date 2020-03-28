@@ -42,9 +42,11 @@ class ButtaBomber(Enemy):
         self.scripts += [self.charge, self.injured]
 
     def get_animation(self, color="red"):
-        cache_id = ("blue_lepidopter.gif:frames", "color")
+        cache_id = ("blue_lepidopter.gif:frames", color)
         if cache_id in self.app.cache:
             return self.app.cache[cache_id]
+
+        color = pg_color(color)
 
         filename = path.join(SPRITES_DIR, "buttabomber.gif")
 
@@ -78,6 +80,8 @@ class ButtaBomber(Enemy):
         self.alive = False
 
     def blast(self):
+        self.scripts.clear()
+        self.frames = self.get_animation(GRAY)
         self.scene.add(
             Blast(
                 self.app,
@@ -91,19 +95,14 @@ class ButtaBomber(Enemy):
                 life=1,
             ),
         )
+        self.remove()
 
     def kill(self, damage, bullet, player):
 
         if not self.alive:
             return False
 
-        # ButtaBomber will turn gray when killed
-        self.frames = self.get_animation(GRAY)
-
-        self.scripts = []
-        # self.play_sound("butterfly.wav")
         self.blast()
-        self.remove()
         return True
 
     def hurt(self, damage, bullet, player):
@@ -136,11 +135,12 @@ class ButtaBomber(Enemy):
                     #         script.resume()
                     # yield script.when.fade(1, dash)
                     for x in range(100):
-                        self.frames = self.get_animation(pygame.Color("yellow"))
+                        self.frames = self.get_animation("yellow")
                         yield script.sleep(0.1)
-                        self.frames = self.get_animation(pygame.Color("purple"))
+                        self.frames = self.get_animation("purple")
                         yield script.sleep(0.1)
-                    self.injured = False
+                    self.blast()
+                    return
             yield
 
     def charge(self, script):
@@ -150,15 +150,15 @@ class ButtaBomber(Enemy):
         yield  # no call during entity ctor
 
         while True:
-            yield script.sleep(random.random() * 10)
+            # print('charge')
 
             player = self.app.state.player
             if player and player.alive:
                 to_player = player.position - self.position
                 if glm.length(to_player) < 3000:  # wihin range
                     to_player = player.position - self.position
-                    self.velocity = glm.normalize(to_player) * 100
-                    break
+                    self.velocity = glm.normalize(to_player) * 200
+            yield
 
     def render(self, camera: Camera):
 
@@ -176,6 +176,6 @@ class ButtaBomber(Enemy):
             for color in ["darkred", "white"]:
                 if not self.injured:
                     # if self.activated:
-                    self.frames = self.get_animation(pygame.Color(color))
+                    self.frames = self.get_animation(color)
                     yield script.sleep(0.25)
             yield
