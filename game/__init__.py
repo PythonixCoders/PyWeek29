@@ -13,7 +13,7 @@ def main():
 
     from game.base.app import App
 
-    state = sys.argv[-1] if len(sys.argv) >= 2 else "game"
+    state = sys.argv[-1] if len(sys.argv) >= 2 else "intro"
     return App(state).run()
 
 
