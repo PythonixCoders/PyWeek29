@@ -201,7 +201,7 @@ class Level:
         left = ivec2((terminal.size.x - len(text)) / 2, line)
         if clear:
             for i, letter in enumerate(text):
-                terminal.clear(left + (i - 1, 0))
+                terminal.clear(left + (i, 0))
                 self.scene.play_sound("type.wav")
                 yield self.pause(delay / 4)
 
