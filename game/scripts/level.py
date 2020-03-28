@@ -2,16 +2,12 @@ from contextlib import contextmanager
 from math import cos, sin, pi
 
 from glm import vec3, ivec2, normalize, vec2
-import random
-from random import randint
 
 from game.constants import FULL_FOG_DISTANCE, GREEN
 from game.entities.ai import CircleAi, CombinedAi
 from game.entities.butterfly import Butterfly
-from game.entities.powerup import Powerup
 from game.entities.camera import Camera
-from game.entities.cloud import Cloud
-from game.entities.star import Star
+from game.entities.powerup import Powerup
 from game.scene import Scene
 from game.util import random_color
 
@@ -22,6 +18,15 @@ class Level:
     night_sky = "#00174A"
     name = "A Level"
     default_ai = None
+
+    # Pause times
+    small = 1
+    medium = 2
+    big = 4
+    huge = 10
+    # velocities
+    angular_speed = 2
+    speed = 60
 
     def __init__(self, app, scene, script):
         self.app = app
@@ -109,42 +114,65 @@ class Level:
 
         return self.script.sleep(duration)
 
+    def small_pause(self):
+        return self.pause(self.small)
+
+    def medium_pause(self):
+        return self.pause(self.medium)
+
+    def big_pause(self):
+        return self.pause(self.big)
+
+    def bigg_pause(self):
+        return self.pause((self.big + self.huge) / 2)
+
+    def huge_pause(self):
+        return self.pause(self.huge)
+
     def square(self, c, ai=None):
         self.spawn(c, c, ai)
         self.spawn(c, -c, ai)
         self.spawn(-c, c, ai)
         self.spawn(-c, -c, ai)
 
-    def circle(self, n, radius, delay=0, ai=None):
+    def circle(self, n, radius, ai=None):
         """Spawn n butterflies in a centered circle of given radius"""
 
         for i in range(n):
             angle = i / n
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
-            yield self.pause(delay)
+            yield self.small_pause()
 
-    def rotating_circle(self, n, radius, speed=240, delay=0, center=(0, 0)):
+    def rotating_circle(
+        self, n, radius, speed_mult=1, center=(0, 0), simultaneous=True
+    ):
+        speed = self.speed * speed_mult
         for i in range(n):
             angle = i / n * 2 * pi
 
             self.spawn(center[0], center[1], CircleAi(radius, angle, speed / radius))
-            yield self.pause(delay)
 
-    def v_shape(self, n, delay=1, dir=(1, 0), ai=None):
+            if simultaneous:
+                yield self.pause(0)
+            else:
+                yield self.small_pause()
+
+    def v_shape(self, n, dir=(1, 0), ai=None):
         dir = normalize(vec2(dir)) * 0.4  # *0.4 so it isn't too spread out
 
         self.spawn(0, 0)
-        yield self.pause(1)
+        yield self.small_pause()
         for i in range(1, n):
             self.spawn(*dir * i / n, ai)
             self.spawn(*dir * -i / n, ai)
-            yield self.pause(delay)
+            yield self.small_pause()
 
-    def rotating_v_shape(self, n, delay=1, start_angle=0, angular_speed=0.5, ai=None):
+    def rotating_v_shape(self, n, start_angle=0, angular_mult=1, ai=None):
+        angular_speed = self.angular_speed * angular_mult
         ai = ai or self.default_ai
 
         self.spawn(0, 0)
-        yield self.pause(delay)
+        yield self.small_pause()
         angle = start_angle
         for i in range(1, n):
             # We sync the ai angles
@@ -152,7 +180,7 @@ class Level:
             ai2 = CircleAi(i * 20, angle + pi, angular_speed)
             butt = self.spawn(0, 0, CombinedAi(ai, ai1))
             self.spawn(0, 0, CombinedAi(ai, ai2))
-            yield self.pause(delay)
+            yield self.small_pause()
             angle = butt.ai_angle
 
     def slow_type(

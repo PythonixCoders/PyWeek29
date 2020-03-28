@@ -29,32 +29,31 @@ class Level4(Level):
         The butterflies have been hiding
         in the great Desert.
         
-        Put it and end
+        Put it an end
         While they're still weak!
         """
 
-        if False:
-            yield from self.slow_type_lines(text, 5, "yellow", 0.05)
+        yield from self.slow_type_lines(text, 5, "yellow", 0.05)
 
-            for i in range(10):
-                self.spawn(uniform(-0.5, 0.5), 0)
-                yield self.pause(2)
-            yield self.pause(2)
+        for i in range(10):
+            self.spawn(uniform(-0.5, 0.5), 0)
+            yield self.medium_pause()
+        yield self.medium_pause()
 
-            yield from self.v_shape(4)
-            yield self.pause(4)
+        yield from self.v_shape(4)
+        yield self.medium_pause()
 
-            yield from self.combine(
-                self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)
-            )
-            yield self.pause(6)
+        yield from self.combine(
+            self.rotating_v_shape(4), self.rotating_v_shape(4, start_angle=pi / 2)
+        )
+        yield self.bigg_pause()
 
-            yield from self.combine(
-                self.rotating_v_shape(4),
-                self.rotating_v_shape(4, start_angle=pi * 2 / 3),
-                self.rotating_v_shape(4, start_angle=pi * 4 / 3),
-            )
-            yield self.pause(6)
+        yield from self.combine(
+            self.rotating_v_shape(4),
+            self.rotating_v_shape(4, start_angle=pi * 2 / 3),
+            self.rotating_v_shape(4, start_angle=pi * 4 / 3),
+        )
+        yield self.bigg_pause()
 
         text = """
 Those butterflies sure are tough guys.
@@ -66,5 +65,5 @@ Those butterflies sure are tough guys.
         yield from self.slow_type(text[3], color="red")
 
         # TODO: Check for level clear ?
-        yield self.pause(100)
+        yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)
