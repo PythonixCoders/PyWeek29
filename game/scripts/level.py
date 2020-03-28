@@ -139,11 +139,11 @@ class Level:
         self.spawn(-c, c, ai, Type)
         self.spawn(-c, -c, ai, Type)
 
-    def circle(self, n, radius, ai=None, instant=False):
+    def circle(self, n, radius, start_angle=0, ai=None, instant=False):
         """Spawn n butterflies in a centered circle of given radius"""
 
         for i in range(n):
-            angle = i / n * tau
+            angle = i / n * tau + start_angle
             self.spawn(radius * cos(angle), radius * sin(angle), ai)
             if instant:
                 yield self.pause(0)
