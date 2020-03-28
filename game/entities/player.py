@@ -179,7 +179,9 @@ class Player(Being):
         camera = self.app.state.camera
         screen_center = camera.screen_size / 2
         crosshair_radius = self.crosshair_surf.get_width() / 2
-        for entity in self.scene.slots:
+
+        # Entities are sorted from far to close and we want the closest
+        for entity in reversed(self.scene.slots):
             entity = entity.get()
             if (
                 isinstance(entity, Enemy)
@@ -363,19 +365,6 @@ class Player(Being):
     #         self.stats_visible = not self.stats_visible
     #         yield script.sleep(.1)
     #     self.stats_visible = True
-
-    def heading(self):
-
-        camera = self.app.state.camera
-        butt = self.find_enemy_in_crosshair()
-        if butt is None:
-            aim = camera.rel_to_world(vec3(0, 0, -camera.screen_dist))
-        else:
-            aim = butt.position
-
-        start = camera.rel_to_world(BULLET_OFFSET)
-        direction = aim - start
-        return start, aim, direction
 
     def render(self, camera):
         self.write_weapon_stats()

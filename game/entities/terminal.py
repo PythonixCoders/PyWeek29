@@ -190,10 +190,18 @@ class Terminal(Entity):
         self.dirty = True
 
     def write_center(
-        self, text, pos=0, color=vec4(1, 1, 1, 0), offset=(0, 0), length=0
+        self,
+        text,
+        pos=0,
+        color=vec4(1, 1, 1, 0),
+        offset=(0, 0),
+        length=0,
+        char_offset=(0, 0),
     ):
         """
         write() to screen center X on row `pos`
+
+        :param char_offset: Shift the text by this offset after centering
         """
         if isinstance(pos, (int, float)):
             # if pos is int, set col number
@@ -202,7 +210,8 @@ class Terminal(Entity):
             pos = ivec2(pos[0], pos[1])
 
         # print(pos)
-        pos.x -= self.size.x / 2 + 1
+        pos.x -= self.size.x / 2
+        pos += char_offset
         return self.write(text, pos, color, offset, 0, length)
 
     def write_right(self, text, pos=0, color=vec4(1, 1, 1, 0), offset=(0, 0), length=0):

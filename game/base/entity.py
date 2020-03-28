@@ -96,7 +96,7 @@ class Entity:
     #     return script
 
     def __str__(self):
-        return f"{self.__class__.__name__}(pos: {self.position})"
+        return f"{self.__class__.__name__}(pos: {self.position}, id: {id(self)})"
 
     # def once(self, duration, func)
     #     """
@@ -195,6 +195,7 @@ class Entity:
         channel.play(sound, *args)
         return sound, channel, slot
 
+    @debug_log_call
     def update(self, dt):
 
         if self.ai:
@@ -223,8 +224,6 @@ class Entity:
             )
 
         self.on_update(dt)
-        if self.ai:
-            self.ai.update(self, dt)
 
     def render(self, camera, surf=None, pos=None, scale=True, fade=True):
         """

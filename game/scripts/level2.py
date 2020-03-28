@@ -26,28 +26,28 @@ class Level2(Level):
         yield from super().__call__()
 
         self.spawn(0, 0)
-        yield from self.rotating_circle(2, 30, 20)
-        yield self.pause(4)
+        yield from self.rotating_circle(2, 30, 0.5)
+        yield self.big_pause()
 
         self.spawn(0, 0)
-        yield from self.rotating_circle(2, -30, 40)
-        yield self.pause(4)
+        yield from self.rotating_circle(2, -30, 0.8)
+        yield self.big_pause()
 
         self.spawn(0, 0)
         yield from self.rotating_circle(3, 30)
-        yield self.pause(4)
+        yield self.big_pause()
 
         yield from self.v_shape(5)
-        yield self.pause(5)
+        yield self.big_pause()
 
-        yield from self.rotating_v_shape(4, delay=1.5)
-        yield self.pause(5)
+        yield from self.rotating_v_shape(4)
+        yield self.big_pause()
 
         for i in range(3):
             self.spawn(0, 0)
             yield from self.rotating_circle(5, -40)
-            yield self.pause(3)
+            yield self.big_pause()
 
         # TODO: Check for level clear ?
-        yield self.pause(10)
-        yield from self.slow_type("Well done !", 5, "green", clear=True)
+        yield self.big_pause()
+        yield from self.slow_type("Well done!", 5, "green", clear=True)
