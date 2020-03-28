@@ -19,7 +19,7 @@ class Level0(Level):
     music = "butterfly.ogg"
 
     def __call__(self):
-        self.cloudy()
+        # self.scene.cloudy()
 
         yield from super().__call__()
 

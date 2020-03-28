@@ -27,7 +27,6 @@ class Ground(Entity):
         """
         if self.delay_t > EPSILON:
             return False
-        print("fade")
 
         self.delay_t = self.delay
 

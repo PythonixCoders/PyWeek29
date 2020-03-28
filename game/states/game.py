@@ -140,7 +140,7 @@ class Game(State):
     def debug_mode(self, b):
         self.debug = b
         for i in range(4):
-            self.terminal.clear(18 + i)
+            self.terminal.clear(13 + i)
         if not b:
             self.player.write_weapon_stats()
 

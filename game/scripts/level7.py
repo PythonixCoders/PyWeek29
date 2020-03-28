@@ -9,7 +9,7 @@ from game.entities.boss import Boss
 
 class Level7(Level):
     number = 7
-    name = '"Big Butta"'
+    name = '"???"'
     ground = "darkblue"
     sky = "darkred"
     music = "butterfly2.ogg"
@@ -24,14 +24,18 @@ class Level7(Level):
         yield from super().__call__()
         self.engine_boost(1.5)
 
-        self.spawn(0, 0, None, Boss)
+        boss = self.spawn(0, 0, None, Boss)
 
         while True:
-            for slot in self.scene.slots:
-                e = slot.get()
-                if isinstance(e, Boss):
-                    continue
-            break
+            if not boss.alive:
+                break
+            self.terminal.write("                   ", 20)
+            self.terminal.write("|" * (boss.hp // 3), 20, "red")
+            yield
+
+        while True:
+            self.terminal.write_center("To Be Continued...", 10)
+            yield
 
         yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)

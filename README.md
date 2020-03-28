@@ -14,4 +14,7 @@ A Game Project for the PyWeek29 game jam, built in one week by Team PythonixCode
 
 ## How to Play
 
-You can play this game by running `run.py`. You can also run specific parts of the game by going to the terminal and entering `./run.py intro` and run levels with `./run.py 1` or `./run.py 3`. Make sure you have navigated to the project directory be running these commands.
+```
+pip install -r requirements.txt
+python ./run.py
+```
