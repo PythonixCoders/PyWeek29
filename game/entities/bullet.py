@@ -4,7 +4,6 @@ from glm import normalize
 
 from game.base.being import Being
 from game.base.entity import Entity
-from game.entities.message import Message
 from game.constants import *
 
 
@@ -24,6 +23,7 @@ class Bullet(Entity):
     ):
 
         velocity = normalize(direction) * speed
+        self.speed = speed
         super().__init__(
             app,
             scene,
