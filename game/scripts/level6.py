@@ -1,5 +1,6 @@
 from game.entities.ai import ChasingAi, AvoidAi, RandomFireAi
 from game.entities.buttabomber import ButtaBomber
+from game.entities.flyer import Flyer
 from game.scripts.level import Level
 
 
@@ -37,13 +38,14 @@ class Level6(Level):
         # yield self.pause(1)
         # self.terminal.clear()
         
-        self.spawn_powerup(0, 0, "star")
-        yield self.pause(10)
+        # self.spawn_powerup(0, 0, "star")
+        # yield self.pause(10)
 
-        for i in range(5):
-            self.spawn(0, 0, RandomFireAi(), ButtaBomber)
-            yield 
+        for i in range(1, 5):
+            self.square(i * 0.1, None, ButtaBomber)
+            self.square(0.25, None, Flyer)
+            yield self.pause(5)
 
         # TODO: Check for level clear ?
-        yield self.pause(5)
+        yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)
