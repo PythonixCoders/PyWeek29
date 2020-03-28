@@ -80,7 +80,6 @@ class ButtaBomber(Enemy):
         self.alive = False
 
     def blast(self):
-        print("blast")
         self.scripts.clear()
         self.frames = self.get_animation(GRAY)
         self.scene.add(

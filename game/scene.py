@@ -130,6 +130,9 @@ class Scene(Signal):
             self.lightning_strike()
 
     def lightning(self, density=0.01):
+        if density < EPSILON:
+            self.lightning_slot = None
+            return
 
         self.lightning_density = density
         self.lightning_slot = self.scripts.connect(self.lightning_script)
