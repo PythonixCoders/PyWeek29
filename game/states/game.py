@@ -41,12 +41,12 @@ class Game(State):
 
         self.app.inputs = self.build_inputs()
         self.camera = self.scene.add(Camera(app, self.scene, self.app.size))
-        self.player = self.scene.add(Player(app, self.scene))
-
         stats = self.stats = self.app.data["stats"] = self.app.data.get(
             "stats", Stats()
         )
         self.level = stats.level
+        self.player = self.scene.add(Player(app, self.scene, level=self.level))
+
         # self.scripts += self.score_screen
 
         # self.camera.slots.append(
@@ -189,10 +189,10 @@ class Game(State):
         # self.terminal.write(pos_display, pos_pos)
 
         if self.debug:
-            self.terminal.write("FPS low: " + str(self.scene.lowest_fps), 18)
-            self.terminal.write("Pmax: " + str(self.scene.max_particles), 19)
-            self.terminal.write("Entities: " + str(len(self.scene.slots)), 20)
-            self.terminal.write("FPS: " + str(self.app.fps), 21)
+            self.terminal.write(f"FPS low:  {self.scene.lowest_fps}    ", 18)
+            self.terminal.write(f"Pmax:     {self.scene.max_particles}    ", 19)
+            self.terminal.write(f"Entities: {len(self.scene.slots)}   ", 20)
+            self.terminal.write(f"FPS:      {self.app.fps}    ", 21)
 
         self.scene.render(self.camera)
         self.gui.render(self.camera)

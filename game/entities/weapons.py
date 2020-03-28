@@ -12,6 +12,7 @@ class Weapon(Entity):
     speed = 4
     max_ammo = 20
     damage = 1
+    level = 100  # Unlock level
 
     def __init__(self, app, scene, player):
         """
@@ -23,7 +24,12 @@ class Weapon(Entity):
         :param damage: damage per bullet
         """
         super().__init__(app, scene, parent=player)
-        self.ammo = self.max_ammo  # current ammo
+
+        # Start we zero ammo on unlock
+        if player.level == self.level:
+            self.ammo = 0
+        else:
+            self.ammo = self.max_ammo  # current ammo
         self.cooldown = 1 / self.speed
 
         self.last_fire = float("inf")
@@ -60,6 +66,7 @@ class Pistol(Weapon):
     sound = "shoot.wav"
     speed = 10
     damage = 1
+    level = -1
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -80,10 +87,11 @@ class Pistol(Weapon):
 class MachineGun(Weapon):
     color = "orange"
     letter = "M"
-    max_ammo = 60
+    max_ammo = 99
     sound = "shoot.wav"
-    speed = 20
+    speed = 25
     damage = 1
+    level = 2
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -126,6 +134,7 @@ class LaserGun(Weapon):
     sound = "laser.wav"
     speed = 6
     damage = 2
+    level = 3
 
     def get_bullets(self, aim):
         camera = self.app.state.camera
@@ -213,6 +222,7 @@ class TracingGun(Weapon):
     max_ammo = 20
     sound = "shoot.wav"
     speed = 3
+    level = 4
 
     def get_bullets(self, aim):
         camera = self.app.state.camera

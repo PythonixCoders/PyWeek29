@@ -22,7 +22,7 @@ from game.util import ncolor
 
 
 class Player(Being):
-    def __init__(self, app, scene, speed=PLAYER_SPEED):
+    def __init__(self, app, scene, speed=PLAYER_SPEED, level=0):
         super().__init__(app, scene, filename=SHIP_IMAGE_PATH)
         self.game_state = self.scene.state
 
@@ -59,9 +59,8 @@ class Player(Being):
         self.weapon_flash = 0.0
         self.health_flash = 0.0
 
-        self.weapons: List[Weapon] = [
-            self.scene.add(gun(app, scene, self)) for gun in WEAPONS
-        ]
+        self.level = level
+        self.weapons: List[Weapon] = self.get_guns()
         self.current_weapon = 0
 
         self.scripts += [self.blink, self.smoke]
@@ -100,6 +99,13 @@ class Player(Being):
     #             self.score_light = False
     #         yield
 
+    def get_guns(self):
+        return [
+            self.scene.add(gun(self.app, self.scene, self))
+            for gun in WEAPONS
+            if gun.level <= self.level
+        ]
+
     def restart(self):
 
         self.hp = 3
@@ -109,12 +115,10 @@ class Player(Being):
         for wpn in self.weapons:
             wpn.remove()
 
-        self.weapons: List[Weapon] = [
-            self.scene.add(gun(self.app, self.scene, self)) for gun in WEAPONS
-        ]
+        self.weapons: List[Weapon] = self.get_guns()
 
         self.current_weapon = 0
-        self.app.state.terminal.clear(10)  # clear try again
+        self.app.state.terminal.clear()
 
         self.app.state.restart()
 
@@ -168,9 +172,10 @@ class Player(Being):
             if other.heart:
                 self.hp = self.max_hp
             else:
-                for wpn in self.weapons:
+                for i, wpn in enumerate(self.weapons):
                     if wpn.letter == other.letter:
                         wpn.ammo = wpn.max_ammo
+                        self.current_weapon = i
                         break
             # print("powerup")
             self.play_sound("powerup.wav")
@@ -255,6 +260,8 @@ class Player(Being):
         # switch weapon
         self.weapon_flash = 1
         self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
+        while self.weapon.ammo == 0:
+            self.current_weapon = (self.current_weapon + 1) % len(self.weapons)
         self.play_sound("powerup.wav")
 
     def set_vel_x(self, axis: Axis):

@@ -48,8 +48,13 @@ class CircleAi(AI):
         d = (entity.position - entity.ai_start_pos).xy
         r = length(d)
         d /= r
-        entity.ai_angle = acos(d.x) * sign(d.y)
 
+        # print(d, acos(d.x), sign(d.y))
+        entity.ai_angle = acos(d.x) * sign(d.y)
+        # print("AI", entity.ai_start_pos, entity.ai_angle, self.angular_speed, r)
+        # print("AI", entity.velocity, entity.position)
+        # print(self.angular_speed, entity.ai_angle, r)
+        # print(entity.position, entity.ai_start_pos)
         entity.velocity = (
             vec3(-sin(entity.ai_angle), cos(entity.ai_angle), 0)
             * self.angular_speed

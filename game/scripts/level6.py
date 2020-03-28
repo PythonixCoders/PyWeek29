@@ -46,7 +46,7 @@ class Level6(Level):
         yield self.pause(1)
         self.terminal.clear()
 
-        self.spawn_powerup(0, 0, "star")
+        self.spawn_powerup("star", 0, 0)
         yield self.pause(10)
 
         for i in range(1, 5):

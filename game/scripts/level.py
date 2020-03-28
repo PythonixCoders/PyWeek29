@@ -62,7 +62,7 @@ class Level:
         yield
         self._skip -= DEBUG
 
-    def spawn_powerup(self, x: float, y: float, letter: str = None):
+    def spawn_powerup(self, letter: str = None, x: float = 0, y: float = 0):
         """
         Spawn a powerup at position (x, y) at the current max depth
         :param x: float between -1 and 1. 0 is horizontal center of the screen
@@ -139,6 +139,13 @@ class Level:
         self.spawn(-c, c, ai, Type)
         self.spawn(-c, -c, ai, Type)
 
+    def wall(self, qte_x, qte_y, w, h, ai=None, Type=Butterfly):
+        for i in range(qte_x):
+            for j in range(qte_y):
+                self.spawn(
+                    (i / (qte_x - 1) - 0.5) * w, (j / (qte_y - 1) - 0.5) * h, ai, Type
+                )
+
     def circle(self, n, radius, start_angle=0, ai=None, instant=False):
         """Spawn n butterflies in a centered circle of given radius"""
 
@@ -160,14 +167,18 @@ class Level:
         ai=None,
         Type=Butterfly,
     ):
+        """
+        Speed should be in PIXELS
+        """
+
         ai = ai or self.default_ai
 
-        speed = self.speed * speed_mult
+        aspeed = self.angular_speed * speed_mult
         for i in range(n):
             angle = i / n * 2 * pi
 
-            a = CircleAi(radius, angle, speed / radius)
-            self.spawn(center[0], center[1], CombinedAi(a, ai))
+            a = CircleAi(radius, angle, aspeed)
+            self.spawn(center[0], center[1], CombinedAi(a, ai), Type)
 
             if simultaneous:
                 yield self.pause(0)
