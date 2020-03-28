@@ -66,7 +66,7 @@ class App:
             return r
         return self.cache[filename]
 
-    def load_img(self, filename, scale=1):
+    def load_img(self, filename, scale=1, flipped=False):
         """
         Load the image at the given path in a pygame surface.
         The file name is the name of the file without the full path.
@@ -80,9 +80,11 @@ class App:
             if scale != 1:
                 w, h = img.get_size()
                 img = pygame.transform.scale(img, ivec2(vec2(w, h) * scale))
+                if flipped:
+                    pygame.transform.flip(img, False, True)
             return img
 
-        return self.load((filename, scale), load_fn)
+        return self.load((filename, scale, flipped), load_fn)
 
     # def pend(self):
 

@@ -16,6 +16,8 @@ from game.entities.player import Player
 from game.entities.terminal import Terminal
 from game.entities.powerup import Powerup
 from game.entities.buttabomber import ButtaBomber
+from game.entities.flyer import Flyer
+from game.util import pg_color, ncolor
 from game.scene import Scene
 from game.base.signal import SlotList
 from game.base.stats import Stats
@@ -31,6 +33,8 @@ class Game(State):
         self.slots = SlotList()
         self.paused = False
         self.ground = self.scene.add(Ground(app, self.scene, GROUND_HEIGHT))
+
+        # self.scene.add(Flyer(app, self.scene, vec3(0, 0, -3000)))
 
         # self.scene.add(ButtaBomber(app, self.scene, vec3(0, 0, -3000)))
         # self.scene.add(Powerup(app, self.scene, 'star', position=vec3(0, 0, -3000)))
@@ -64,6 +68,43 @@ class Game(State):
         ]
 
         self.time = 0
+
+        # score backdrop
+        backdrop_h = int(24 * 1.8)
+
+        # draw a score backdrop
+        rows = 8
+        for i in range(rows):
+            h = int(backdrop_h) // rows
+            y = h * i
+            backdrop = pygame.Surface((self.app.size.x, h))
+            interp = i / rows
+            interp_inv = 1 - i / rows
+            backdrop.set_alpha(255 * interp * 0.4)
+            # backdrop.fill((0))
+            backdrop.fill(pg_color(ncolor("white") * interp_inv))
+            self.scene.on_render += lambda _, y=y, backdrop=backdrop: self.app.screen.blit(
+                backdrop, (0, y)
+            )
+
+        # backdrop = pygame.Surface((self.app.size.x, h))
+        # backdrop.set_alpha(255 * interp)
+        # backdrop.fill((0))
+
+        # backdrop_h = int(24)
+        # rows = 4
+        # for i in range(rows, 0, -1):
+        #     h = (int(backdrop_h) // rows)
+        #     y = h * i
+        #     backdrop = pygame.Surface((self.app.size.x, h))
+        #     interp = i/rows
+        #     interp_inv = 1 - i/rows
+        #     backdrop.set_alpha(200 * interp_inv)
+        #     backdrop.fill((0))
+        #     # backdrop.fill(pg_color(ncolor('black')*interp_inv))
+        #     self.scene.on_render += lambda _, y=y,backdrop=backdrop: self.app.screen.blit(backdrop, (0,self.app.size.y-y))
+
+        # self.scene.on_render += lambda _: self.app.screen.blit(self.backdrop, (0,int(self.app.size.y-backdrop_h)))
 
         # self.scripts += self.score_screen
 

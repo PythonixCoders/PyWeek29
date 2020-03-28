@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from game.base.entity import Entity
+from game.constants import *
 import random
 from glm import vec3
 
@@ -54,8 +55,9 @@ class Being(Entity):
                         - vec3(0.5)
                     )
                     * 100,
-                    life=1,
+                    life=1 + random.random() * 2,
                     particle=True,
+                    acceleration=-Y * 100,
                 ),
             )
         self.scene.add(

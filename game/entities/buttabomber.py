@@ -107,6 +107,7 @@ class ButtaBomber(Enemy):
 
     def hurt(self, damage, bullet, player):
         self.injured = True
+        self.play_sound("butterfly.wav")
         return super().hurt(damage, bullet, player)
 
     def update(self, dt):

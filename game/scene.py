@@ -35,6 +35,8 @@ class Scene(Signal):
         self._ground_color = None
         self._script = None
 
+        self.on_render = Signal()
+
         # self.script_paused = False
         # self.script_slots = []
         # self.stars_visible = 0
@@ -405,14 +407,17 @@ class Scene(Signal):
 
         if self.sky_color is not None:
             self.app.screen.blit(self.sky, (0, 0))
-            # self.app.screen.fill(
-            #     pygame.Color(
-            #         int(self._sky_color[0] * 255),
-            #         int(self._sky_color[1] * 255),
-            #         int(self._sky_color[2] * 255),
-            #         int(self._sky_color[3] * 255),
-            #     )
-            # )
+
+        # self.app.screen.fill(
+        #     pygame.Color(
+        #         int(self._sky_color[0] * 255),
+        #         int(self._sky_color[1] * 255),
+        #         int(self._sky_color[2] * 255),
+        #         int(self._sky_color[3] * 255),
+        #     )
+        # )
 
         # call render on each entity
         self.each(lambda x: x.render(camera))
+
+        self.on_render(camera)

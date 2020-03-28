@@ -259,6 +259,11 @@ class Terminal(Entity):
                     ),
                 )
 
+            for y in range(len(self.chars)):
+
+                if not self.dirty_line[y]:
+                    continue
+
                 for x in range(len(self.chars[y])):
                     ch = self.chars[y][x]
                     if ch:

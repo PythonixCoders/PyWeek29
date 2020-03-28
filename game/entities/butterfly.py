@@ -31,8 +31,6 @@ class Butterfly(Enemy):
         self.frame = 0
         self.damage = 1
 
-        self.scripts += []
-
     def get_animation(self, color):
 
         filename = path.join(SPRITES_DIR, "butterfly-orange.png")

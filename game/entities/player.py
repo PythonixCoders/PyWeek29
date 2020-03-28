@@ -182,7 +182,7 @@ class Player(Being):
         for entity in self.scene.slots:
             entity = entity.get()
             if (
-                isinstance(entity, Butterfly)
+                isinstance(entity, Enemy)
                 and camera.distance(entity.position) < AIM_MAX_DIST
             ):
                 center = camera.world_to_screen(entity.position)
@@ -196,32 +196,44 @@ class Player(Being):
     def write_weapon_stats(self):
         if not self.alive:
             return
+
         if not self.hide_stats:
+            ty = 0
+            ofs = ivec2(0, 10)
+
             terminal = self.app.state.terminal
 
             wpn = self.weapons[self.current_weapon]
             # extra space here to clear terminal
+
             if wpn.max_ammo < 0:
-                ammo = " " * 5  # spacing
+                ammo = wpn.letter + " ∞"
             else:
-                ammo = f"{wpn.ammo}/{wpn.max_ammo}   "
+                ammo = f"{wpn.letter} {wpn.ammo}/{wpn.max_ammo}"
+
+            if len(ammo) < 8:
+                ammo += " " * (8 - len(ammo))  # pad
 
             col = glm.mix(ncolor(wpn.color), ncolor("white"), self.weapon_flash)
-            self.game_state.terminal.write(" " + wpn.letter + " " + ammo, (1, 21), col)
+            self.game_state.terminal.write("      ", (1, ty), col)
+            self.game_state.terminal.write(ammo, (1, ty), col, ofs)
 
             col = glm.mix(ncolor("red"), ncolor("white"), self.health_flash)
-            self.game_state.terminal.write(
-                " " + "♥" * self.hp + " " * (3 - self.hp), 1, "red"
-            )
+            # self.game_state.terminal.write(
+            #     " " + "♥" * self.hp + " " * (3 - self.hp), 1, "red"
+            # )
+            self.game_state.terminal.write_center("      ", ty + 1, col)
+            self.game_state.terminal.write_center("♥" * self.hp, ty, "red", ofs)
 
             # Render Player's Score
-            score_display = "Score: {} ".format(self.stats.score)
+            score_display = "Score: {}".format(self.stats.score)
             score_pos = (
                 terminal.size.x - len(score_display) - 1,
-                1,
+                ty,
             )
             col = glm.mix(ncolor("white"), ncolor("yellow"), self.score_flash)
-            self.game_state.terminal.write(score_display, score_pos, col)
+            self.game_state.terminal.write("        ", score_pos + ivec2(0, 1), col)
+            self.game_state.terminal.write(score_display, score_pos, col, ofs)
 
             # self.game_state.terminal.write("WPN " + wpn.letter, (0,20), wpn.color)
             # if wpn.max_ammo == -1:
@@ -229,8 +241,7 @@ class Player(Being):
             # else:
             #     self.game_state.terminal.write("AMMO n/a  ", (0,21), wpn.color)
         else:
-            self.game_state.terminal.clear(1)
-            self.game_state.terminal.clear(21)
+            self.game_state.terminal.clear(0)
 
     def next_gun(self, btn):  # FIXME
         # switch weapon
