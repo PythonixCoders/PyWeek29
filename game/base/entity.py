@@ -89,6 +89,9 @@ class Entity:
                 "kwrgs for Entity have not all been consumed. Left:", kwargs
             )
 
+    def clear_scripts(self):
+        self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
+
     # def add_script(self, fn):
     #     """
     #     :param fn: add script `fn` (cls, func, or filename)

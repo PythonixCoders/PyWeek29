@@ -111,7 +111,10 @@ class Player(Being):
         self.hp = 3
         self.visible = True
         self.alive = True
+        self.blinking = False
         self.speed = vec3(PLAYER_SPEED)
+        self.clear_scripts()
+        self.scripts += [self.blink, self.smoke]
 
         for wpn in self.weapons:
             wpn.remove()
