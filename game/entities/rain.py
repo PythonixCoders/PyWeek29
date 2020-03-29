@@ -22,9 +22,7 @@ class Rain(Entity):
             "RAIN", lambda: pygame.Surface(ivec2(2, 24)).convert()
         )
         if not filled:
-            self._surface.fill(
-                pg_color(glm.mix(ncolor("lightgray"), self.scene.sky_color, 0.5))
-            )
+            self._surface.fill(pg_color("lightgray"))
 
         self.velocity = vec3(0, -1000, 1000 + z_vel)
 

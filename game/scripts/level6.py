@@ -19,24 +19,26 @@ class Level6(Level):
         self.scene.rain()
         # self.scene.lightning_strike()
 
-        with self.skip():
-            yield from super().__call__()
-            self.engine_boost(1.5 ** 2)
+        yield from super().__call__()
 
-            yield from self.slow_type("This level is still in construction")
-            yield from self.slow_type("Sorry", 7, "red")
+        # with self.skip():
+        #     self.engine_boost(1.5 ** 2)
 
-        yield from self.slow_type("Here is some missing content", 9)
+        #     yield from self.slow_type("This level is still in construction")
+        #     yield from self.slow_type("Sorry", 7, "red")
 
-        yield self.medium_pause()
+        # yield from self.slow_type("Here is some missing content", 9)
 
-        self.spawn_powerup("star", 0, 0)
-        yield self.pause(10)
+        # yield self.medium_pause()
 
-        for i in range(1, 5):
-            self.square(i * 0.1, None, ButtaBomber)
-            self.square(0.25, None, Flyer)
-            yield self.pause(5)
+        # self.spawn_powerup("star", 0, 0)
+        # yield self.pause(10)
+
+        for x in range(3):
+            for i in range(1, 5):
+                self.square(i * 0.1, None, ButtaBomber)
+                self.square(0.25, None, Flyer)
+                yield self.pause(5)
 
         # TODO: Check for level clear ?
         yield self.huge_pause()

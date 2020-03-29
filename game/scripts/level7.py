@@ -32,14 +32,12 @@ class Level7(Level):
             self.terminal.write("                             ", 20)
             self.terminal.write("|" * (boss.hp // 2), 20, "red")
             boss.hp -= 1
+            if boss.hp <= 0:
+                boss.explode()
+                boss.remove()
+                break
             yield self.script.sleep(1)
 
-        while True:
-            self.terminal.write_center("To Be Continued...", 10)
-            yield
-
-        yield self.huge_pause()
-        yield from self.slow_type("Well done !", 5, "green", clear=True)
-        yield
+        yield self.script.sleep(1)
 
         self.app.state = "credits"
