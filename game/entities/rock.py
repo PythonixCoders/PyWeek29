@@ -34,9 +34,10 @@ class Rock(Entity):
                 self._surface = self.app.cache["ROCK"]
 
     def update(self, t):
-        super().update(t)
         if not self._surface or self.position.z > self.scene.player.position.z:
             self.remove()
+            return
+        super().update(t)
 
     def render(self, camera):
         return super().render(camera, fade=False)
