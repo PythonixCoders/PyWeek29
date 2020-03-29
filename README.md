@@ -46,6 +46,17 @@ correct mappings on others.
 
 ## Content
 
+One of the most important thing missing is
+a way to select the levels. I you quit the game and
+want to start at a certain level, just pass the number of 
+the level to the command line. For instance:
+
+```shell script
+python run_game.py 4  # Any number between 1 and 7 included
+python run_game.py intro
+python run_game.py credits
+```
+
 Most of the game is done, but as the deadline approched,
 we did not have enough time to make all the levels we wanted
 and the last levels need a lot more love that they received.
