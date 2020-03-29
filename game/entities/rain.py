@@ -18,7 +18,7 @@ class Rain(Entity):
 
         self._surface = self.app.load(
             "RAIN", lambda: pygame.Surface(ivec2(2, 24)).convert()
-        ).copy()
+        )
         self._surface.fill(
             pg_color(glm.mix(ncolor("lightgray"), self.scene.sky_color, 0.5))
         )
