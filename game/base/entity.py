@@ -30,7 +30,7 @@ class Entity:
         self.slot = None  # weakref
         self.slots = SlotList()
         self.scripts = Signal(lambda fn: Script(self.app, self, fn, use_input=False))
-        self._life = kwargs.pop("life", None)  # particle life (length of time to exist)
+        self.life = kwargs.pop("life", None)  # particle life (length of time to exist)
         self.on_move = Signal()
         self.on_update = Signal()
         self.on_remove = Signal()
@@ -224,9 +224,9 @@ class Entity:
         if self.velocity != vec3(0):
             self.position += self.velocity * dt
 
-        if self._life is not None:
-            self._life -= dt
-            if self._life <= 0:
+        if self.life is not None:
+            self.life -= dt
+            if self.life <= 0:
                 self.remove()
                 return
 

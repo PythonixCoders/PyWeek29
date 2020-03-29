@@ -126,5 +126,6 @@ class Flyer(Enemy):
                         self.position,
                         v,
                         speed=BULLET_SPEED * ENEMY_BULLET_FACTOR,
+                        life=3,
                     )
                 )
