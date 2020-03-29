@@ -9,6 +9,7 @@ from game.constants import (
     BULLET_IMAGE_PATH,
     DEBUG,
     ENEMY_BULLET_FACTOR,
+    BULLET_SPEED,
 )
 from game.entities.bullet import Bullet
 
@@ -143,11 +144,11 @@ class RandomFireAi(AI):
                         to_player,
                         entity.damage,
                         BULLET_IMAGE_PATH,
-                        300,
+                        ENEMY_BULLET_FACTOR * BULLET_SPEED,
                     )
                 )
-                bu.speed *= ENEMY_BULLET_FACTOR
-                bu.velocity *= ENEMY_BULLET_FACTOR
+                # bu.speed *= ENEMY_BULLET_FACTOR
+                # bu.velocity *= ENEMY_BULLET_FACTOR
 
 
 class RandomChargeAI(AI):

@@ -25,11 +25,12 @@ class Level6(Level):
             self.engine_boost(1.5 ** 2)
 
             yield from self.slow_type("This level is still in construction")
-            yield from self.slow_type("Sorry :(", 7, "red")
+            yield from self.slow_type("Sorry :(", 7, "red", 0.3)
 
         yield from self.slow_type("Here is some missing content", 9)
 
         yield self.medium_pause()
+        self.terminal.clear()
 
         # self.spawn_powerup("star", 0, 0)
         # yield self.pause(10)

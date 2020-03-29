@@ -1,5 +1,5 @@
 from math import pi
-from random import uniform
+from random import uniform, choice
 
 from game.constants import GREEN
 from game.entities.ai import RandomFireAi
@@ -62,7 +62,9 @@ class Level5(Level):
                 if i % 20 == 10:
                     self.spawn_powerup("heart", uniform(-0.3, 0.2), uniform(-0.2, 0.2))
                 if i % 20 == 19:
-                    self.spawn_powerup("A", uniform(-0.3, 0.2), uniform(-0.2, 0.2))
+                    self.spawn_powerup(
+                        choice("AM"), uniform(-0.3, 0.2), uniform(-0.2, 0.2)
+                    )
 
             yield from self.rotating_circle(10, 20)
             self.big_pause()
