@@ -21,15 +21,16 @@ class Level6(Level):
 
         yield from super().__call__()
 
-        # with self.skip():
-        #     self.engine_boost(1.5 ** 2)
+        with self.skip():
+            self.engine_boost(1.5 ** 2)
 
-        #     yield from self.slow_type("This level is still in construction")
-        #     yield from self.slow_type("Sorry", 7, "red")
+            yield from self.slow_type("This level is still in construction")
+            yield from self.slow_type("Sorry :(", 7, "red", 0.3)
 
-        # yield from self.slow_type("Here is some missing content", 9)
+        yield from self.slow_type("Here is some missing content", 9)
 
-        # yield self.medium_pause()
+        yield self.medium_pause()
+        self.terminal.clear()
 
         # self.spawn_powerup("star", 0, 0)
         # yield self.pause(10)
@@ -37,8 +38,9 @@ class Level6(Level):
         for x in range(3):
             for i in range(1, 5):
                 self.square(i * 0.1, None, ButtaBomber)
+                yield self.small_pause()
                 self.square(0.25, None, Flyer)
-                yield self.pause(5)
+                yield self.bigg_pause()
 
         # TODO: Check for level clear ?
         yield self.huge_pause()

@@ -58,4 +58,4 @@ AIM_MAX_DIST = 3500  # Knowing that butterflies spawn at SCREEN_DIST * FULL_FOG_
 BUTTERFLY_MIN_SHOOT_DIST = 1500
 DEBUG = False
 """For abusing prints. Finding info will require grepping"""
-ENEMY_BULLET_FACTOR = 1 / 12
+ENEMY_BULLET_FACTOR = 1 / 6

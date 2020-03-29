@@ -112,7 +112,7 @@ class Flyer(Enemy):
     def __call__(self, script):
         yield
         while self.alive:
-            yield script.sleep(random.random() * 2)
+            yield script.sleep(1 + random.random() * 4)
 
             to_player = self.scene.player.position - self.position
             if BUTTERFLY_MIN_SHOOT_DIST < glm.length(to_player):

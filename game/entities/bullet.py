@@ -17,7 +17,6 @@ class Bullet(Entity):
         direction,
         damage=1,
         img=BULLET_IMAGE_PATH,
-        life=1,
         speed=BULLET_SPEED,
         **kwargs
     ):
@@ -29,14 +28,13 @@ class Bullet(Entity):
             BULLET_IMAGE_PATH,
             position=position,
             velocity=velocity,
-            life=life,
+            life=SCREEN_DIST * FULL_FOG_DISTANCE * 1.2 / self.speed,
             **kwargs
         )
         self.damage = damage
         self.solid = True
         self.size.z = BULLET_SIZE  # to prevent tunneling
         self.parent = parent  # whoever shot the bullet
-        self.life = SCREEN_DIST * FULL_FOG_DISTANCE * 1.2 / self.speed
 
     def collision(self, other, dt):
         # enemy vs player or player vs enemy?

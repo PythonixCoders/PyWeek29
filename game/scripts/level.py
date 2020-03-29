@@ -243,7 +243,8 @@ class Level:
             self.terminal.write_center(
                 letter, line, color, char_offset=(i, 0), length=len(text)
             )
-            self.scene.play_sound("type.wav")
+            if letter != " ":
+                self.scene.play_sound("type.wav")
             yield self.pause(delay)
 
         yield self.pause(delay * clear)
