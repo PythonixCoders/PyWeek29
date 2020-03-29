@@ -63,3 +63,5 @@ Ship graphic: https://opengameart.org/users/pitrizzo
 
 Font: https://www.dafont.com/press-start-2p.font
  
+ 
+ ![thanks for playing !](data/thanks_for_playing.png)
