@@ -47,7 +47,7 @@ correct mappings on others.
 ## Content
 
 One of the most important thing missing is
-a way to select the levels. I you quit the game and
+a way to select the levels. If you quit the game and
 want to start at a certain level, just pass the number of 
 the level to the command line. For instance:
 
