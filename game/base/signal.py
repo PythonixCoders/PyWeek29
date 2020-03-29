@@ -7,6 +7,9 @@ class SlotList:
     def __init__(self):
         self._slots = []
 
+    def __str__(self):
+        return f"SlotList({self._slots}, len={len(self)})"
+
     def clear(self):
         self._slots = []
 
@@ -47,6 +50,11 @@ class Slot:
         self.sig = weakref.ref(sig)
         self.once = False
         self.count = 0
+
+    def __str__(self):
+        return (
+            f"Slot({self.func}, sig={self.sig}, once={self.once}, count={self.count})"
+        )
 
     def __call__(self, *args):
         func = self.func
@@ -102,6 +110,9 @@ class Signal:
         self.slots = []
         self.blocked = 0
         self.queued = []
+
+    def __str__(self):
+        return f"Signal({self.slots}, queued={self.queued}, blocked={self.blocked}, adpated={self.adapter}, nb_slots={len(self)}, nb_queue={len(self.queued)})"
 
     def __len__(self):
         return len(self.slots)
