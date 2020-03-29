@@ -10,7 +10,7 @@ from game.entities.ground import Ground
 from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.base.stats import Stats
 from game.scene import Scene
-from game.util import clamp, ncolor
+from game.util import clamp, ncolor, pg_color
 
 
 class Credits(State):
@@ -40,9 +40,7 @@ class Credits(State):
 
     def render(self):
 
-        self.app.screen.fill(
-            pygame.Color(*[int(clamp(x * 255, 0, 255)) for x in self.bg_color])
-        )
+        self.app.screen.fill(pg_color(self.bg_color))
         self.scene.render(self.camera)
 
     def __call__(self, script):

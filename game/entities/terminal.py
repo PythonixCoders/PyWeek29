@@ -13,12 +13,7 @@ from os import path
 
 class Char:
     def __init__(
-        self,
-        text,
-        imgs,
-        pos=ivec2(0, 0),
-        color=pygame.Color(255, 255, 255, 0),
-        offset=ivec2(0, 0),
+        self, text, imgs, pos=ivec2(0, 0), color=(255, 255, 255, 0), offset=ivec2(0, 0),
     ):
         self.imgs = imgs
         self.text = text

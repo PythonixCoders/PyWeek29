@@ -148,23 +148,21 @@ def estimate_3d_size(size_2d):
 
 
 def pg_color(c):
-    if isinstance(c, pygame.Color):
+    tc = type(c)
+    if tc == pygame.Color:
         return c
-    elif isinstance(c, vec3):
+    elif tc == vec3:
         c = vec4(c, 0)
-    elif isinstance(c, ivec2):
-        c = vec4(c, 0, 0)
-    elif isinstance(c, ivec3):
+    elif tc == ivec3:
         c = vec4(c, 0)
-    elif isinstance(c, ivec4):
+    elif tc == ivec4:
         c = vec4(c, 0)
-    elif isinstance(c, tuple):
-        return pygame.Color(*c)
-    elif isinstance(c, str):
+    elif tc == tuple:
+        return c
+    elif tc == str:
         return pygame.Color(c)
-    c = [int(clamp(x * 255, 0, 255)) for x in c]
-    pgc = pygame.Color(*c)
-    return pgc
+    c = tuple(int(clamp(x * 255, 0, 255)) for x in c)
+    return c
 
 
 def ncolor(c):
@@ -173,15 +171,16 @@ def ncolor(c):
     Given a color string, a pygame color, or vec3,
     return that as a normalized vec4 color
     """
-    if isinstance(c, str):
+    tc = type(c)
+    if tc == str:
         c = vec4(*pygame.Color(c)) / 255.0
-    elif isinstance(c, tuple):
+    elif tc == tuple:
         c = vec4(*c, 0) / 255.0
-    elif isinstance(c, pygame.Color):
+    elif tc == c or tc == pygame.Color:
         c = vec4(*c) / 255.0
-    elif isinstance(c, vec3):
+    elif tc == vec3:
         c = vec4(*c, 0)
-    elif isinstance(c, (float, int)):
+    elif tc == float or tc == int:
         c = vec4(c, c, c, 0)
     elif c is None:
         c = vec4(0)
