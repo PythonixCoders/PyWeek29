@@ -16,12 +16,15 @@ class Rain(Entity):
 
         super().__init__(app, scene, None, position=pos, **kwargs)
 
+        filled = "RAIN" in self.app.cache
+
         self._surface = self.app.load(
             "RAIN", lambda: pygame.Surface(ivec2(2, 24)).convert()
         )
-        self._surface.fill(
-            pg_color(glm.mix(ncolor("lightgray"), self.scene.sky_color, 0.5))
-        )
+        if not filled:
+            self._surface.fill(
+                pg_color(glm.mix(ncolor("lightgray"), self.scene.sky_color, 0.5))
+            )
 
         self.velocity = vec3(0, -1000, 1000 + z_vel)
 
