@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import math
+from math import log
+
 import pygame
 import glm
 
@@ -106,17 +108,18 @@ class Intermission(State):
                     yield script.sleep(0.01)
             else:
                 continue
-            delay = 0.1
             if isinstance(line[1], int):  # total
+                dd = 0
                 for val in range(0, line[1] + 1):
                     terminal.write(
                         str(val),
                         (self.terminal.size.x - len(str(val)) - 1, y * 2 + 3),
                         "white",
                     )
-                    delay **= 1.2
-                    if delay > EPSILON:
-                        yield script.sleep(delay)
+                    dd += 0.6 / (val + 2)
+                    if dd > 1 / max(self.app.fps, 10):
+                        yield script.sleep(dd)
+                        dd = 0
             else:
                 yield script.sleep(0.1)
                 terminal.write(

@@ -136,7 +136,7 @@ class App:
                 break
 
             if DEBUG:
-                print("FRAME, dt =", dt)
+                print("FRAME, dt =", dt, "FPS,", self.fps)
 
             self.inputs.update(dt)
             if self.update(dt) is False:

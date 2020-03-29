@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from functools import lru_cache
+
 import pygame
 import pygame.gfxdraw
 from glm import vec3, vec4
@@ -39,24 +41,20 @@ class Ground(Entity):
 
     @color.setter
     def color(self, c):
-        c = self._color = pg_color(c)
         self.texture = pygame.Surface(self.app.size / 8).convert()
-        self.texture.fill(self._color)
-        sky_color = self.scene.sky_color or ncolor("blue")
-        for y in range(self.texture.get_height()):
-            col = vec4(self.texture.get_at((0, y)).normalize())
-            interp = (1 - y / self.texture.get_height()) * 2
-            # print(c)
-            col = glm.mix(col, sky_color, interp)
+        width, height = self.texture.get_size()
 
-            for x in range(self.texture.get_width()):
-                randvec = random_rgb()
-                c = col
-                c = glm.mix(col, randvec, 0.05)
-                # c = [int(clamp(x * 255, 0, 255)) for x in c]
-                # print(c)
-                pgc = pg_color(c)
-                self.texture.set_at((x, y), pgc)
+        ground = self._color = pg_color(c)
+        sky = self.scene.sky_color or ncolor("blue")
+
+        # Draw gradient
+        for y in range(height):
+            interp = (1 - y / height) * 2
+            base = rgb_mix(ground, sky, interp)
+            pygame.draw.line(self.texture, base, (0, y), (width, y))
+
+        noise = noise_surf(self.texture.get_size(), random.randrange(5))
+        self.texture.blit(noise, (0, 0))
         self.texture = pygame.transform.scale(self.texture, self.app.size)
 
     def update(self, t):

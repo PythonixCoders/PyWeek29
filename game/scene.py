@@ -1,15 +1,27 @@
 #!/usr/bin/env python
 
 import functools
+
+import glm
+import pygame
+
 from game.base.signal import Signal, Slot, SlotList
 from game.base.when import When
 from os import path
 from pygame import Color
 from game.constants import *
-from glm import vec3, vec4, ivec4
+from glm import vec3, vec4, ivec4, ivec3
 from game.base.script import Script
 from game import util
-from game.util import clamp, ncolor, pg_color
+from game.util import (
+    clamp,
+    ncolor,
+    pg_color,
+    rand_RGB,
+    rgb_mix,
+    noise_surf,
+    noise_surf_dense_bottom,
+)
 from game.entities.cloud import Cloud
 from game.entities.rock import Rock
 from game.entities.rain import Rain
@@ -184,21 +196,36 @@ class Scene(Signal):
             self.add(Star(self.app, self, pos, velz))
 
     def draw_sky(self):
-        self.sky = pygame.Surface(self.app.size / 8).convert()
+        width, height = self.app.size / 8
+
+        self.sky = pygame.Surface((width, height))
         sky_color = self.sky_color or ncolor(pygame.Color("blue"))
+        sky_color = [255 * s for s in sky_color]
 
-        self.sky.fill((0, 0, 0))
+        # for y in range(height):
+        #     interp = (1 - y / height) * 2
+        #     for x in range(width):
+        #         rand = rand_RGB()
+        #         color = rgb_mix(sky_color, rand, 0.02)
+        #           c = (sk * 0.98 + rand * 0.02) / i**1.1
 
-        for y in range(self.sky.get_height()):
-            interp = (1 - y / self.sky.get_height()) * 2
-            for x in range(self.sky.get_width()):
-                randvec = vec4(vec3(random.random()), 0)
-                col = sky_color
-                c = glm.mix(col, randvec, 0.02)
-                c /= interp ** 1.1
-                c = [int(clamp(x * 255, 0, 255)) for x in c]
-                pgc = pygame.Color(*c)
-                self.sky.set_at((x, y), pgc)
+        #         if interp == 0:
+        #             color = (255, 255, 255)
+        #         else:
+        #             color = [min(int(c / interp ** 1.1), 255) for c in color]
+        #         self.sky.set_at((x, y), color)
+
+        # Draw gradient
+        for y in range(height):
+            interp = (1 - y / height) * 2
+            base = [min(int(c / interp ** 1.1), 255) for c in sky_color]
+            pygame.draw.line(self.sky, base, (0, y), (width, y))
+
+        noise = noise_surf_dense_bottom(self.sky.get_size(), random.randrange(5))
+        self.sky.blit(
+            noise, (0, 0), None,
+        )
+        self.sky = pygame.transform.scale(self.sky, self.app.size)
 
         # if self.stars_visible:
         #     self.draw_stars(self.sky, self.star_pos)

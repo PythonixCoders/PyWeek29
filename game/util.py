@@ -1,5 +1,6 @@
 from colorsys import rgb_to_hsv, hsv_to_rgb
 import random
+from functools import lru_cache
 from typing import Union, Optional
 
 import glm  # for mix (conflicts with util.mix)
@@ -187,6 +188,19 @@ def ncolor(c):
     return c
 
 
+def rgb_mix(a, b, t):
+    if t >= 1:
+        return b
+    if t <= 0:
+        return a
+
+    return (
+        int(a[0] * (1 - t) + b[0] * t),
+        int(a[1] * (1 - t) + b[1] * t),
+        int(a[2] * (1 - t) + b[2] * t),
+    )
+
+
 def nrand(s=1.0):
     """
     normalized random scalar, scaled by S
@@ -220,6 +234,43 @@ def random_char():
     Random human-readable char
     """
     return chr(random.randint(32, 126))
+
+
+def rand_RGB():
+    return (
+        random.randrange(255),
+        random.randrange(255),
+        random.randrange(255),
+    )
+
+
+@lru_cache(15)
+def noise_surf(size, num=0):
+    surf = pygame.Surface(size)
+    for y in range(size[1]):
+        for x in range(size[0]):
+            surf.set_at((x, y), rand_RGB())
+    surf.set_alpha(12)
+    return surf
+
+
+@lru_cache(15)
+def noise_surf_dense_bottom(size, num=0):
+    surf = pygame.Surface(size).convert_alpha()
+    for y in range(size[1]):
+        interp = 1 - y / size[1]
+        alpha = min(int(0.02 / interp * 255), 255)
+        for x in range(size[0]):
+            surf.set_at(
+                (x, y),
+                (
+                    min(random.randrange(10, 255) / interp / 6, 255),
+                    min(random.randrange(10, 255) / interp / 6, 255),
+                    min(random.randrange(10, 255) / interp / 6, 255),
+                    alpha,
+                ),
+            )
+    return surf
 
 
 def debug_log_call(f: "function"):
