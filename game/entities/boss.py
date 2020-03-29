@@ -125,6 +125,11 @@ class Boss(Enemy):
     #     return super().hurt(damage, bullet, player)
 
     def update(self, dt):
+        if not self.alive:
+            self.velocity.z = -1000
+            super().update(dt)
+            return
+
         self.time += dt
 
         s = 300
