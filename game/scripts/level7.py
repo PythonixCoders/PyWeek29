@@ -29,9 +29,10 @@ class Level7(Level):
         while True:
             if not boss.alive:
                 break
-            self.terminal.write("                   ", 20)
+            self.terminal.write("                             ", 20)
             self.terminal.write("|" * (boss.hp // 2), 20, "red")
-            yield
+            boss.hp -= 1
+            yield self.script.sleep(1)
 
         while True:
             self.terminal.write_center("To Be Continued...", 10)
