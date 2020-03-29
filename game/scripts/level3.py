@@ -67,12 +67,39 @@ class Level3(Level):
             )
             yield self.big_pause()
 
-            self.wall(4, 4, 0.3, 0.3)
-            yield self.bigg_pause()
+        yield from self.slow_type("They're going damn fast!", delay=0.05)
+        yield from self.slow_type("We have to hit them faster than light!", delay=0.05)
+
+        self.spawn_powerup("L")
+        yield self.small_pause()
+        self.scene.lightning_strike()
+        yield from self.slow_type("So Laser Gun it is!", 7, "green", 0.01)
+        yield self.medium_pause()
+        yield from self.slow_type("...", 12)
+        yield self.small_pause()
+        yield from self.slow_type("And engine boost!", 14, "green")
+        self.engine_boost(1.5)
+        yield self.big_pause()
+        self.terminal.clear()
 
         self.spawn()
-        for i in range(3):
-            yield from self.circle(5, 10 * i)
+        for i in range(2):
+            center = uniform(-0.3, 0.3), uniform(-0.2, 0.2)
+            self.spawn(*center)
+            yield from self.rotating_circle(5, 20, speed_mult=3, center=center)
+            yield self.medium_pause()
+        self.spawn_powerup("L")
+        yield self.big_pause()
+
+        yield from self.rotating_v_shape(3, angular_mult=4)
+        yield self.medium_pause()
+        self.spawn_powerup("L")
+        yield self.medium_pause()
+
+        yield from self.combine(
+            self.rotating_v_shape(3, angular_mult=4),
+            self.rotating_v_shape(3, angular_mult=4, start_angle=pi),
+        )
 
         # TODO: Check for level clear ?
         yield self.huge_pause()
