@@ -210,6 +210,9 @@ class Entity:
 
     def update(self, dt):
 
+        # if len(self.slots) > 10:
+        #     print(len(self.slots))
+
         if self.ai:
             self.ai.update(self, dt)
 

@@ -50,7 +50,7 @@ class Slot:
 
     def __call__(self, *args):
         func = self.func
-        if isinstance(self.func, weakref.ref):
+        if type(func) == weakref.ref:
             func = func()
             if not func:
                 self.disconnect()
@@ -63,7 +63,7 @@ class Slot:
 
     def with_item(self, action, *args):
         func = self.func
-        if isinstance(func, weakref.ref):
+        if type(func) == weakref.ref:
             func = func()
             if not func:
                 return None
@@ -71,7 +71,7 @@ class Slot:
 
     def with_slot(self, action, *args):
         func = self.func
-        if isinstance(func, weakref.ref):
+        if type(func) == weakref.ref:
             func = func()
             if not func:
                 return None
@@ -85,7 +85,7 @@ class Slot:
 
     def get(self):
         func = self.func
-        if isinstance(func, weakref.ref):
+        if type(func) == weakref.ref:
             func = func()
         return func
 
@@ -110,7 +110,7 @@ class Signal:
 
         self.blocked += 1
         for slot in self.slots:
-            if isinstance(slot, weakref.ref):
+            if type(slot) == weakref.ref:
                 wref = slot
                 slot = wref()
                 if slot is None:
@@ -124,11 +124,11 @@ class Signal:
     def clean(self):
         if self.blocked == 0:
             for wref in self.slots:
-                if isinstance(wref, weakref.ref):
+                if type(wref) == weakref.ref:
                     slot = wref()
                     if not slot:
                         self.disconnect(wref)
-                    elif isinstance(slot.func, weakref.ref):
+                    elif type(slot.func) == weakref.ref:
                         wfunc = slot.func()
                         if not wfunc:
                             self.disconnect(wref)
@@ -147,7 +147,7 @@ class Signal:
 
         self.blocked += 1
         for s in self.slots:
-            if isinstance(s, weakref.ref):
+            if type(s) == weakref.ref:
                 wref = s
                 s = wref()
                 if not func:
@@ -165,7 +165,7 @@ class Signal:
 
         self.blocked += 1
         for s in self.slots:
-            if isinstance(s, weakref.ref):
+            if type(s) == weakref.ref:
                 s = s()
                 if not s:
                     continue
@@ -238,7 +238,7 @@ class Signal:
         elif isinstance(slot, Slot):
             for i in range(len(self.slots)):
                 islot = self.slots[i]
-                if isinstance(islot, weakref.ref):
+                if type(islot) == weakref.ref:
                     islot = islot()
                     if not islot:
                         return True
@@ -255,7 +255,7 @@ class Signal:
             value = slot
             for i in range(len(self.slots)):
                 slot = self.slots[i]
-                if isinstance(slot, weakref.ref):
+                if type(slot) == weakref.ref:
                     wref = slot
                     slot = slot()
                     if not slot:

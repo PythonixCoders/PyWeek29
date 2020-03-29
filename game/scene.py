@@ -102,7 +102,7 @@ class Scene(Signal):
         if script:
             self.script = script  # trigger setter
 
-        self.slotlist += self.when.every(1, self.stabilize, weak=False)
+        self.when.every(1, self.stabilize, weak=False)
 
     def iter_entities(self, *types):
         for slot in self.slots:
@@ -139,6 +139,8 @@ class Scene(Signal):
     def lightning_script(self, script):
         yield
         while True:
+            if self.lowest_fps <= 25:
+                break
             yield script.sleep(1)
             yield script.sleep((1 / self.lightning_density) * random.random())
             self.lightning_strike()
@@ -148,10 +150,16 @@ class Scene(Signal):
             self.lightning_slot = None
             return
 
+        if self.lowest_fps <= 25:
+            return
+
         self.lightning_density = density
         self.lightning_slot = self.scripts.connect(self.lightning_script)
 
     def add_rock(self):
+
+        if self.lowest_fps <= 25:
+            return
 
         velz = self.player.velocity.z if self.player else vec3(0)
         x = randint(-500, 500)

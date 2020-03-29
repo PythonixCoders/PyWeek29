@@ -25,5 +25,10 @@ class Rain(Entity):
 
         self.velocity = vec3(0, -1000, 1000 + z_vel)
 
+    def update(self, t):
+        super().update(t)
+        if self.position.y < -300:
+            self.remove()
+
     def render(self, camera):
         return super().render(camera, scale=False, fade=False)

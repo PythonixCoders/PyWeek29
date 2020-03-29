@@ -48,6 +48,7 @@ class When(Signal):
                 return
         else:
             # not a fade
+            i = 0
             while slot.t < EPSILON:
                 if not slot.once or slot.count == 0:
                     slot()
@@ -56,7 +57,8 @@ class When(Signal):
                     return
                 if slot.start_t == 0:
                     break
-                slot.t += slot.start_t  # wrap
+                slot.t = max(0, slot.t + slot.start_t)  # wrap
+                break
 
     def update(self, dt):
         """
