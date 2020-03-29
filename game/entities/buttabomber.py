@@ -37,6 +37,7 @@ class ButtaBomber(Enemy):
         self.collision_size = self.size = vec3(*size, min(size))
 
         self.hp = 10
+        self.speed = 100
 
         self.time = 0
         self.frame = 0

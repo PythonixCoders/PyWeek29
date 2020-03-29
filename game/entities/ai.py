@@ -70,7 +70,10 @@ class ChasingAi(AI):
     sets_velocity = True
 
     def __init__(self, speed=20):
-        self.speed = speed
+        if type(speed) == int or type(speed) == float:
+            self.speed = speed
+        else:
+            self.speed = 20
 
     def update(self, entity, dt):
         if not entity.alive:
