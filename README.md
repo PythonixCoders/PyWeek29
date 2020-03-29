@@ -17,7 +17,7 @@ A Game Project for the PyWeek29 game jam, built in one week by Team PythonixCode
 
 ```
 pip install -r requirements.txt
-python ./run.py
+python ./run_game.py
 ```
 
 Or in a virtual environement :
@@ -28,7 +28,7 @@ cd butterfly-destroyer
 python -m venv .env
 source .env/bin/activate
 pip install -r requirements.txt
-python run.py
+python run_game.py
 ```
 
 The keyboard controls are simple : 
