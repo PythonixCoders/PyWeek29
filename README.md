@@ -12,6 +12,10 @@ A Game Project for the PyWeek29 game jam, built in one week by Team PythonixCode
 4. [tamwile](https://github.com/tamwile/)
 5. [jtiai](https://github.com/jtiai/)
 
+Ship graphic: https://opengameart.org/users/pitrizzo
+
+Font: https://www.dafont.com/press-start-2p.font
+
 ## How to Play
 
 ```
