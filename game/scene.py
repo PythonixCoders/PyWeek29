@@ -173,12 +173,12 @@ class Scene(Signal):
         velz = self.player.velocity.z if self.player else 0
         x = randint(-400, 400)
         y = randint(0, 300)
-        z = randint(-5000, -2000)
+        z = randint(-3000, -2000)
         ppos = self.player.position if self.player else vec3(0)
         pos = vec3(ppos.x, 0, ppos.z) + vec3(x, y, z)
         self.add(Rain(self.app, self, pos, velz, particle=True))
 
-    def rain(self, density=50):
+    def rain(self, density=25):
         if density:
             self.rain_slot = self.when.every(1 / density, self.add_rain_drop)
         else:
