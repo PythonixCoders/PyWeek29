@@ -497,7 +497,8 @@ class Scene(Signal):
         Called every second (see when.once(1, self.stabilize in init)
         """
 
-        self.lowest_fps = min(self.app.fps, self.lowest_fps)
+        if self.app.fps > 1:
+            self.lowest_fps = min(self.app.fps, self.lowest_fps)
 
         if self.app.fps < 45:
             self.max_particles = max(self.max_particles / 2, 4)
