@@ -44,6 +44,20 @@ correct mappings on others.
  - A/B or RB/LB to shoot
  - X/Y to change weapons after unlock
 
+## Content
+
+Most of the game is done, but as the deadline approched,
+we did not have enough time to make all the levels we wanted
+and the last levels need a lot more love that they received.
+Some of them were even abandoned in a hurry. 
+Let's have a minute of silence for them. 
+
+If you want to know what the rest of the game would
+have looked like, you can check the [scenario](data/scenario.md)
+and use your imagination to design good levels with well balanced
+*ButtaBombers* and *Flyers*. Also imagine the final boss with nice
+paterns.
+
 ## Credits
 Ship graphic: https://opengameart.org/users/pitrizzo
 
