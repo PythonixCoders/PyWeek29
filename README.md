@@ -38,7 +38,7 @@ The keyboard controls are simple :
 
 But the game is better with a controler, 
 however it was only tested with an Xbox controler
-and there is no garanty that it will work with
+and there is no guarantee that it will work with
 correct mappings on others.
  - Main sticks to move
  - A/B or RB/LB to shoot
