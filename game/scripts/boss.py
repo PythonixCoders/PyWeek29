@@ -1,6 +1,6 @@
 from math import pi
 from random import uniform
-         
+
 from game.constants import GREEN
 from game.entities.ai import RandomFireAi
 from game.scripts.level import Level

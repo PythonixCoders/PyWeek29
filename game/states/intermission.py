@@ -9,6 +9,7 @@ from game.entities.terminal import Terminal
 from game.entities.ground import Ground
 from game.constants import GROUND_HEIGHT, CAMERA_OFFSET, SCRIPTS_DIR
 from game.base.stats import Stats
+from game.constants import EPSILON
 from game.scene import Scene
 from game.util import clamp, ncolor
 
@@ -102,10 +103,7 @@ class Intermission(State):
                     terminal.write(m, (x + 1, y * 2 + 3), "white")
                     # terminal.write(m[:x], (x + 1, y * 2 + 3), "white")
                     # terminal.write(m[-1], (x + 1 + len(m) - 1, y * 2 + 3), "red")
-                    if script.keys_down:
-                        yield script.sleep(0.01 if script.keys else 0.05)
-                    else:
-                        yield script.sleep(0.2 if script.keys else 0.05)
+                    yield script.sleep(0.01)
             else:
                 continue
             delay = 0.1
@@ -116,24 +114,20 @@ class Intermission(State):
                         (self.terminal.size.x - len(str(val)) - 1, y * 2 + 3),
                         "white",
                     )
-                    delay **= 1.05
-                    yield script.sleep(delay)
-                else:
-                    if script.keys_down:
-                        yield script.sleep(0.01 if script.keys else 0.05)
-                    else:
-                        yield script.sleep(0.2 if script.keys else 0.05)
+                    delay **= 1.2
+                    if delay > EPSILON:
+                        yield script.sleep(delay)
             else:
-                yield script.sleep(0.2 if script.keys else 0.4)
+                yield script.sleep(0.1)
                 terminal.write(
                     str(line[1]),
                     (self.terminal.size.x - len(str(line[1])) - 1, y * 2 + 3),
                     "green",
                 )
                 self.scene.play_sound("hit.wav")
-                yield script.sleep(0.2 if script.keys else 0.4)
+                yield script.sleep(0.01)
 
-        yield script.sleep(3)
+        yield script.sleep(2)
         # while True:
 
         #     terminal.write_center("Press any key to continue", 20, "green")
