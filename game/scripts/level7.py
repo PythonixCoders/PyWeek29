@@ -40,3 +40,6 @@ class Level7(Level):
 
         yield self.huge_pause()
         yield from self.slow_type("Well done !", 5, "green", clear=True)
+        yield
+
+        self.app.state = "credits"
