@@ -30,9 +30,9 @@ class Level7(Level):
             if not boss.alive:
                 break
             self.terminal.write("                             ", 20)
-            self.terminal.write("|" * (boss.hp // 2), 20, "red")
-            boss.hp -= 1
-            if boss.hp <= 0:
+            self.terminal.write("|" * (boss.hp // 25), 20, "red")
+            # boss.hp -= 1
+            if not boss.alive or boss.hp <= 0:
                 boss.explode()
                 boss.remove()
                 break

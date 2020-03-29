@@ -42,10 +42,10 @@ class Boss(Enemy):
         size = self.frames[0].get_size()
         self.collision_size = self.size = vec3(*size, min(size))
 
-        self.solid = False
+        # self.solid = False
         self.time = 0
         self.frame = 0
-        self.hp = 50
+        self.hp = 500
         self.damage = 1
 
         # drift slightly in X/Y plane
@@ -121,10 +121,8 @@ class Boss(Enemy):
         self.fall()
         return True
 
-    def hurt(self, damage, bullet, player):
-        self.blast()
-        self.position += 500
-        return super().hurt(damage, bullet, player)
+    # def hurt(self, damage, bullet, player):
+    #     return super().hurt(damage, bullet, player)
 
     def update(self, dt):
         self.time += dt

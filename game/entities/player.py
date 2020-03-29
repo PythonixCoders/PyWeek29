@@ -14,6 +14,7 @@ from game.base.stats import Stats
 from game.constants import *
 from game.entities.bullet import Bullet
 from game.entities.blast import Blast
+from game.entities.boss import Boss
 from game.entities.butterfly import Butterfly
 from game.entities.message import Message
 from game.entities.powerup import Powerup
@@ -168,7 +169,7 @@ class Player(Being):
         # return damage
 
     def collision(self, other, dt):
-        if isinstance(other, Enemy):
+        if isinstance(other, Enemy) and not isinstance(other, Boss):
             if other.alive:
                 self.hurt(other.hp, None, other)
             other.kill(other.hp, None, self)
