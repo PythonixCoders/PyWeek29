@@ -70,12 +70,13 @@ class Camera(Entity):
         absolute_y = dot(rel, self.up)
         absolute_x = dot(rel, self.horizontal)
 
+        screen_size = vec2(self.screen_size)
         pos = (
             vec2(
                 absolute_x / dist * self.screen_dist,
                 absolute_y / dist * self.screen_dist,
             )
-            + self.screen_size / 2
+            + screen_size / 2
         )
 
         pos.y = self.screen_size.y - pos.y
@@ -145,4 +146,4 @@ class Camera(Entity):
         axis = Vector3(axis)
         vec.rotate_ip(angle * 180 / pi, axis)
 
-        return vec3(vec)
+        return vec3(*vec)

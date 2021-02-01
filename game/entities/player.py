@@ -190,7 +190,7 @@ class Player(Being):
     def find_enemy_in_crosshair(self):
         # Assuming state is Game
         camera = self.app.state.camera
-        screen_center = camera.screen_size / 2
+        screen_center = vec2(camera.screen_size) / 2
         crosshair_radius = self.crosshair_surf.get_width() / 2
 
         # Entities are sorted from far to close and we want the closest

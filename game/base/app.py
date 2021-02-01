@@ -41,6 +41,7 @@ class App:
         """Display size"""
         self.cache = {}
         """Resources with filenames as keys"""
+        pygame.display.set_caption("Butterfly Destroyers")
         self.screen = pygame.display.set_mode(self.size)
         self.on_event = Signal()
         self.quit = False
